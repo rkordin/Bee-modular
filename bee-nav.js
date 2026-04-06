@@ -42,6 +42,34 @@
     return item.file;
   }
 
+  // Smooth scroll to an element by ID, handling absolute-positioned elements inside scroll containers
+  function scrollToSection(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    // For elements inside the exploded section (absolutely positioned),
+    // we need to find the scroll container and calculate the real offset
+    const exploded = document.getElementById('explodedSection');
+    if (exploded && exploded.contains(el)) {
+      // The element's `top` style is relative to the exploded section's scroll spacer
+      // Calculate how far down the page the exploded section starts, then add the card's top offset
+      const explodedTop = exploded.getBoundingClientRect().top + window.scrollY;
+      const cardTopStyle = parseInt(el.style.top) || 0;
+      // Convert vh to px
+      const cardTopPx = (cardTopStyle / 100) * window.innerHeight;
+      window.scrollTo({ top: explodedTop + cardTopPx, behavior: 'smooth' });
+    } else {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  function linkOnClick(item) {
+    if (isIndex) {
+      const id = item.hash.replace('#', '');
+      return `event.preventDefault();(${scrollToSection.toString()})('${id}')`;
+    }
+    return '';
+  }
+
   function reserveHref() {
     if (isIndex) return '#bp-reserve';
     return 'reserve.html';
@@ -49,7 +77,7 @@
 
   function reserveOnClick() {
     if (isIndex) {
-      return `event.preventDefault();document.getElementById('bp-reserve').scrollIntoView({behavior:'smooth'})`;
+      return `event.preventDefault();(${scrollToSection.toString()})('bp-reserve')`;
     }
     return '';
   }
@@ -59,17 +87,20 @@
   }
 
   // ── Build link lists ──
-  const topLinks = navItems.map(item =>
-    `<li><a href="${linkHref(item)}"${activeClass(item.key)}>${item.labelTop}</a></li>`
-  ).join('\n    ');
+  const topLinks = navItems.map(item => {
+    const oc = linkOnClick(item);
+    return `<li><a href="${linkHref(item)}"${oc ? ` onclick="${oc}"` : ''}${activeClass(item.key)}>${item.labelTop}</a></li>`;
+  }).join('\n    ');
 
-  const bottomLinks = navItems.map(item =>
-    `<li><a href="${linkHref(item)}"${activeClass(item.key)}>${item.labelBottom}</a></li>`
-  ).join('\n    ');
+  const bottomLinks = navItems.map(item => {
+    const oc = linkOnClick(item);
+    return `<li><a href="${linkHref(item)}"${oc ? ` onclick="${oc}"` : ''}${activeClass(item.key)}>${item.labelBottom}</a></li>`;
+  }).join('\n    ');
 
-  const mobileLinks = navItems.map(item =>
-    `<li><a href="${linkHref(item)}" class="bee-mobile-link">${item.labelTop}</a></li>`
-  ).join('\n      ');
+  const mobileLinks = navItems.map(item => {
+    const oc = linkOnClick(item);
+    return `<li><a href="${linkHref(item)}"${oc ? ` onclick="${oc}"` : ''} class="bee-mobile-link">${item.labelTop}</a></li>`;
+  }).join('\n      ');
 
   // ── Hamburger button HTML (reused in top & bottom navs) ──
   const hamburgerHTML = `<button class="bee-hamburger" aria-label="Menu"><span></span><span></span><span></span></button>`;
