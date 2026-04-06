@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reserve Your Module — BEE Modular</title>
+<title>Reserve Your Slot — BEE Modular</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
 <!-- Three.js for 3D wireframe background -->
 <script type="importmap">
@@ -27,49 +27,18 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  /* Base */
   --bg: #F8F6F3;
   --bg-alt: #EEECEA;
-  --bg-alt2: #F0EFED;
   --white: #FFFFFF;
-  /* Text */
   --headline: #1A1A1A;
   --body: #4A4A4A;
-  --secondary: #9A9A9A;
+  --secondary: #8A8A8A;
   --ghost: rgba(0,0,0,0.04);
-  --section-num: #D8D8D8;
-  /* Accent */
   --accent: #b5a291;
-  --accent-light: #BFBFBD;
   --accent-dark: #262626;
-  /* Dark */
   --dark: #1A1A1A;
-  --darker: #0E0E0E;
   --on-dark: #F5F0EB;
-  /* Glass */
-  --glass-bg: rgba(255,255,255,0.75);
-  --glass-border: rgba(255,255,255,0.5);
-  /* Blueprint */
-  --bp-bg: #1A1A1A;
-  --bp-line: #b5a291;
   --bp-line-dim: rgba(181,162,145,0.15);
-  --bp-line-mid: rgba(181,162,145,0.35);
-  --bp-line-bright: rgba(181,162,145,0.7);
-  --bp-gold: #C8A84E;
-  --bp-gold-dim: rgba(200,168,78,0.3);
-  --bp-text-head: #F5F0EB;
-  --bp-text-body: rgba(245,240,235,0.5);
-  --bp-glass-bg: rgba(26,26,26,0.75);
-  --bp-glass-border: rgba(181,162,145,0.2);
-  /* Warm */
-  --warm-1: #F8F6F3;
-  --warm-2: #C8A84E;
-  --warm-3: #8B7355;
-  /* Shadows */
-  --shadow: rgba(0,0,0,0.06);
-  --shadow-deep: rgba(0,0,0,0.12);
-  --shadow-inset: rgba(0,0,0,0.04);
-  /* Fonts */
   --font-h: 'NHaasGrotesk', 'Helvetica Neue', 'Helvetica', 'Arial Black', sans-serif;
   --font-b: 'Inter', system-ui, sans-serif;
   --font-m: 'JetBrains Mono', monospace;
@@ -90,7 +59,6 @@ body {
 #bg-canvas {
   position: fixed; inset: 0; z-index: -2;
   background: var(--bg);
-  will-change: background-color;
 }
 
 #scene3d {
@@ -99,14 +67,6 @@ body {
   width: 100vw; height: 100vh;
   z-index: -1;
   pointer-events: none;
-}
-
-/* Hexagonal grid pattern */
-.blueprint-bg {
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66ZM28 100L0 84L0 50L28 34L56 50L56 84L28 100Z' fill='none' stroke='%23b5a291' stroke-width='0.4'/%3E%3C/svg%3E");
-  background-size: 56px 100px;
 }
 
 /* ═══════════ REVEAL ANIMATIONS ═══════════ */
@@ -120,242 +80,261 @@ body {
 .rd3 { transition-delay: .3s; } .rd4 { transition-delay: .4s; }
 .rd5 { transition-delay: .5s; } .rd6 { transition-delay: .6s; }
 
-/* ═══════════ DRAWING LAYOUT ═══════════ */
-.drawing-page {
+/* ═══════════ HERO ═══════════ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+  z-index: 1;
+}
+
+.hero-title {
+  font-family: var(--font-h);
+  font-weight: 900;
+  font-size: clamp(48px, 8vw, 96px);
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  color: var(--headline);
+  margin-bottom: 28px;
+}
+
+.hero-sub {
+  font-family: var(--font-b);
+  font-size: 17px;
+  color: var(--secondary);
+  max-width: 560px;
+  line-height: 1.7;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: heroSubIn 0.8s 0.4s cubic-bezier(0.25,0.1,0.25,1) forwards;
+}
+
+@keyframes heroSubIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.4;
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+.scroll-indicator span {
+  font-family: var(--font-m);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--secondary);
+}
+
+.scroll-indicator::after {
+  content: '';
+  width: 1px;
+  height: 32px;
+  background: var(--secondary);
+}
+
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.15; }
+}
+
+/* ═══════════ SECTION WRAPPER ═══════════ */
+.section {
   position: relative;
   z-index: 1;
-  min-height: 100vh;
-  padding: 120px 48px 80px;
-}
-
-.drawing-frame {
-  max-width: 1100px;
+  max-width: 780px;
   margin: 0 auto;
-  border: 1px solid var(--bp-line-dim);
-  position: relative;
-  background: rgba(248,246,243,0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  padding: 100px 24px;
 }
 
-/* Outer margin marks (architectural registration marks) */
-.drawing-frame::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border: 1px solid var(--bp-line-dim);
+.section--wide {
+  max-width: 880px;
+}
+
+/* ═══════════ SECTION 01 — WHAT A RESERVATION MEANS ═══════════ */
+.ghost-num {
+  font-family: var(--font-h);
+  font-weight: 900;
+  font-size: 120px;
+  color: rgba(0,0,0,0.04);
+  line-height: 1;
+  margin-bottom: -20px;
+  user-select: none;
   pointer-events: none;
 }
 
-/* Inner content area */
-.drawing-inner {
-  border: 1px solid var(--bp-line-dim);
-  margin: 12px;
-  padding: 40px 48px 48px;
-  position: relative;
-}
-
-/* ═══════════ TITLE BLOCK (top-right, architectural style) ═══════════ */
-.title-block {
-  position: absolute;
-  top: 0;
-  right: 0;
-  border-left: 1px solid var(--bp-line-mid);
-  border-bottom: 1px solid var(--bp-line-mid);
-  padding: 0;
-  width: 320px;
-  z-index: 2;
-  background: rgba(248,246,243,0.95);
-}
-
-.title-block-row {
-  display: flex;
-  border-bottom: 1px solid var(--bp-line-dim);
-}
-.title-block-row:last-child { border-bottom: none; }
-
-.title-block-label {
-  font-family: var(--font-m);
-  font-size: 8px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--secondary);
-  padding: 6px 12px;
-  width: 100px;
-  flex-shrink: 0;
-  border-right: 1px solid var(--bp-line-dim);
-  display: flex;
-  align-items: center;
-}
-
-.title-block-value {
-  font-family: var(--font-m);
-  font-size: 10px;
-  color: var(--headline);
-  padding: 6px 12px;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  letter-spacing: 0.04em;
-}
-
-.title-block-value.project-name {
-  font-family: var(--font-h);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-/* ═══════════ FORM HEADER ═══════════ */
-.form-header {
-  margin-bottom: 48px;
-  padding-right: 340px;
-}
-
-.form-header h1 {
-  font-family: var(--font-h);
-  font-size: clamp(28px, 4vw, 42px);
-  font-weight: 700;
-  color: var(--headline);
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  margin-bottom: 16px;
-}
-
-.form-header p {
+.section-body p {
   font-family: var(--font-b);
-  font-size: 14px;
+  font-size: 17px;
   color: var(--body);
-  max-width: 480px;
-  line-height: 1.7;
+  line-height: 1.8;
+  margin-bottom: 24px;
+  max-width: 640px;
 }
 
-.drawing-number {
-  font-family: var(--font-m);
-  font-size: 10px;
-  color: var(--secondary);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-  display: flex;
+.section-body p:last-child {
+  margin-bottom: 0;
+}
+
+/* ═══════════ EXPANDABLE ═══════════ */
+.expandable {
+  margin-top: 48px;
+}
+
+.expandable-trigger {
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
-}
-
-.drawing-number::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--bp-line-dim);
-}
-
-/* ═══════════ SECTION DIVIDERS ═══════════ */
-.section-divider {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin: 40px 0 24px;
-  position: relative;
-}
-
-.section-divider::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border: 1px solid var(--accent);
-  transform: rotate(45deg);
-  flex-shrink: 0;
-}
-
-.section-label {
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
   font-family: var(--font-m);
-  font-size: 10px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.04em;
   color: var(--accent);
-  white-space: nowrap;
+  padding: 12px 0;
+  min-height: 48px;
+  transition: color 0.3s;
 }
 
-.section-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--bp-line-dim);
+.expandable-trigger:hover {
+  color: var(--headline);
 }
 
-/* ═══════════ FORM GRID ═══════════ */
+.expandable-trigger .icon {
+  display: inline-block;
+  transition: transform 0.3s;
+}
+
+.expandable.open .expandable-trigger .icon {
+  transform: rotate(45deg);
+}
+
+.expandable-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.6s cubic-bezier(0.25,0.1,0.25,1);
+}
+
+.expandable.open .expandable-content {
+  max-height: 2000px;
+}
+
+.expandable-inner {
+  padding: 24px 0 8px;
+}
+
+.process-step {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 32px;
+  align-items: flex-start;
+}
+
+.process-step:last-child {
+  margin-bottom: 0;
+}
+
+.step-num {
+  font-family: var(--font-m);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  flex-shrink: 0;
+  width: 24px;
+  padding-top: 2px;
+}
+
+.step-content h4 {
+  font-family: var(--font-h);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--headline);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.step-content p {
+  font-size: 15px !important;
+  color: var(--body);
+  line-height: 1.7;
+  margin-bottom: 0 !important;
+}
+
+/* ═══════════ SECTION 02 — FORM ═══════════ */
+.form-header-text {
+  font-family: var(--font-h);
+  font-weight: 700;
+  font-size: clamp(28px, 4vw, 42px);
+  color: var(--headline);
+  letter-spacing: -0.02em;
+  margin-bottom: 48px;
+  line-height: 1.15;
+}
+
 .form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 0;
 }
 
 .form-field {
-  padding: 16px 0;
-  border-bottom: 1px solid var(--bp-line-dim);
   position: relative;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--bp-line-dim);
 }
 
-.form-field:nth-child(odd) {
-  padding-right: 24px;
-  border-right: 1px solid var(--bp-line-dim);
-}
-
-.form-field:nth-child(even) {
-  padding-left: 24px;
-}
-
-.form-field.full-width {
-  grid-column: 1 / -1;
-  padding-right: 0;
-  border-right: none;
-}
-
-.form-field.full-width:nth-child(odd) {
-  padding-right: 0;
-  border-right: none;
+.form-field:first-child {
+  border-top: 1px solid var(--bp-line-dim);
 }
 
 .field-label {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .field-label label {
-  font-family: var(--font-m);
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--secondary);
+  font-family: var(--font-b);
+  font-size: 15px;
+  color: var(--headline);
   cursor: pointer;
+  font-weight: 500;
 }
 
-.field-label .field-tag {
-  font-family: var(--font-m);
-  font-size: 7px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--accent);
-  border: 1px solid var(--bp-line-dim);
-  padding: 1px 6px;
-  border-radius: 2px;
+.field-label .field-hint {
+  font-family: var(--font-b);
+  font-size: 13px;
+  color: var(--secondary);
+  font-style: italic;
 }
 
-/* ═══════════ INPUT STYLES (Blueprint annotation fields) ═══════════ */
 .field-input,
 .field-select,
 .field-textarea {
   width: 100%;
   font-family: var(--font-b);
-  font-size: 14px;
+  font-size: 15px;
   color: var(--headline);
   background: transparent;
   border: none;
-  border-bottom: 1px solid var(--bp-line-mid);
-  padding: 8px 0 8px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.12);
+  padding: 10px 0;
   outline: none;
   transition: border-color 0.3s ease;
   line-height: 1.5;
@@ -363,9 +342,8 @@ body {
 
 .field-input::placeholder,
 .field-textarea::placeholder {
-  color: var(--secondary);
-  font-style: italic;
-  font-size: 13px;
+  color: #BFBFBD;
+  font-size: 14px;
 }
 
 .field-input:focus,
@@ -374,169 +352,181 @@ body {
   border-bottom-color: var(--accent);
 }
 
-/* Accent bar on focus */
-.field-input:focus ~ .focus-bar,
-.field-select:focus ~ .focus-bar,
-.field-textarea:focus ~ .focus-bar {
-  transform: scaleX(1);
-}
-
-.focus-bar {
-  position: absolute;
-  bottom: 16px;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--accent);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s cubic-bezier(0.25,0.1,0.25,1);
-  pointer-events: none;
-}
-
-.form-field:nth-child(odd) .focus-bar { right: 24px; }
-.form-field:nth-child(even) .focus-bar { left: 24px; }
-.form-field.full-width .focus-bar { left: 0; right: 0; }
-
-/* Select styling */
 .field-select {
   appearance: none;
   -webkit-appearance: none;
   cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239A9A9A'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238A8A8A'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 4px center;
-  padding-right: 20px;
+  padding-right: 24px;
 }
 
-/* Textarea */
 .field-textarea {
   resize: vertical;
-  min-height: 80px;
-  border: 1px solid var(--bp-line-dim);
-  padding: 12px;
-  font-size: 13px;
+  min-height: 120px;
+  border: 1px solid rgba(0,0,0,0.08);
+  padding: 14px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.5);
+  font-size: 15px;
   line-height: 1.6;
-  background: rgba(248,246,243,0.5);
 }
 
 .field-textarea:focus {
   border-color: var(--accent);
 }
 
-/* ═══════════ SUBMIT AREA ═══════════ */
-.submit-area {
-  margin-top: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 32px;
-  border-top: 1px solid var(--bp-line-mid);
-}
-
-.submit-note {
-  font-family: var(--font-m);
-  font-size: 9px;
+.textarea-hint {
+  font-family: var(--font-b);
+  font-size: 14px;
   color: var(--secondary);
-  letter-spacing: 0.08em;
-  max-width: 360px;
-  line-height: 1.6;
+  margin-top: 10px;
 }
 
+/* Honeypot */
+.bee-honey { position: absolute; left: -9999px; opacity: 0; height: 0; width: 0; }
+
+/* Submit button */
 .submit-btn {
-  font-family: var(--font-m);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.14em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-b);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--white);
-  background: var(--accent);
+  background: var(--accent-dark);
   border: none;
-  padding: 16px 48px;
+  padding: 18px 40px;
   cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.25,0.1,0.25,1);
+  margin-top: 40px;
+  min-height: 56px;
+  transition: background 0.3s ease;
 }
 
 .submit-btn:hover {
-  background: var(--headline);
+  background: var(--accent);
 }
 
-.submit-btn::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.6s ease;
+/* ═══════════ REASSURANCE ═══════════ */
+.reassurance {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 80px 24px;
+  max-width: 640px;
+  margin: 0 auto;
 }
 
-.submit-btn:hover::after {
-  transform: translateX(100%);
-}
-
-/* ═══════════ CORNER MARKS ═══════════ */
-.corner-mark {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  pointer-events: none;
-}
-.corner-mark::before,
-.corner-mark::after {
-  content: '';
-  position: absolute;
-  background: var(--bp-line-mid);
-}
-.corner-mark.tl { top: -1px; left: -1px; }
-.corner-mark.tl::before { top: 0; left: 0; width: 16px; height: 1px; }
-.corner-mark.tl::after { top: 0; left: 0; width: 1px; height: 16px; }
-
-.corner-mark.tr { top: -1px; right: -1px; }
-.corner-mark.tr::before { top: 0; right: 0; width: 16px; height: 1px; }
-.corner-mark.tr::after { top: 0; right: 0; width: 1px; height: 16px; }
-
-.corner-mark.bl { bottom: -1px; left: -1px; }
-.corner-mark.bl::before { bottom: 0; left: 0; width: 16px; height: 1px; }
-.corner-mark.bl::after { bottom: 0; left: 0; width: 1px; height: 16px; }
-
-.corner-mark.br { bottom: -1px; right: -1px; }
-.corner-mark.br::before { bottom: 0; right: 0; width: 16px; height: 1px; }
-.corner-mark.br::after { bottom: 0; right: 0; width: 1px; height: 16px; }
-
-/* ═══════════ REVISION STRIP (bottom of drawing) ═══════════ */
-.revision-strip {
-  display: flex;
-  border-top: 1px solid var(--bp-line-mid);
-  margin-top: 40px;
-}
-
-.revision-cell {
-  flex: 1;
-  padding: 8px 12px;
-  border-right: 1px solid var(--bp-line-dim);
-  font-family: var(--font-m);
-  font-size: 8px;
+.reassurance p {
+  font-family: var(--font-b);
+  font-size: 17px;
   color: var(--secondary);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-.revision-cell:last-child { border-right: none; }
-.revision-cell span {
-  display: block;
-  color: var(--headline);
-  font-size: 10px;
-  margin-top: 2px;
+  line-height: 1.8;
 }
 
-/* ═══════════ SUCCESS STATE ═══════════ */
+/* ═══════════ DARK SECTION — OTHER INQUIRIES ═══════════ */
+.dark-section {
+  position: relative;
+  z-index: 1;
+  background: var(--dark);
+  padding: 100px 24px;
+}
+
+.dark-section-inner {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.dark-section h2 {
+  font-family: var(--font-h);
+  font-weight: 700;
+  font-size: clamp(24px, 3.5vw, 36px);
+  color: var(--on-dark);
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.dark-section .dark-sub {
+  font-family: var(--font-b);
+  font-size: 16px;
+  color: rgba(245,240,235,0.5);
+  margin-bottom: 56px;
+  max-width: 560px;
+  line-height: 1.7;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  margin-bottom: 56px;
+}
+
+.contact-col h3 {
+  font-family: var(--font-m);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(245,240,235,0.4);
+  margin-bottom: 12px;
+}
+
+.contact-col a {
+  font-family: var(--font-b);
+  font-size: 15px;
+  color: var(--on-dark);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.contact-col a:hover {
+  color: var(--accent);
+}
+
+/* Expandable on dark */
+.dark-section .expandable-trigger {
+  color: rgba(245,240,235,0.5);
+}
+
+.dark-section .expandable-trigger:hover {
+  color: var(--on-dark);
+}
+
+.dark-section .expandable-inner p {
+  color: rgba(245,240,235,0.5);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* ═══════════ CLOSE ═══════════ */
+.close-section {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 120px 24px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.close-section p {
+  font-family: var(--font-b);
+  font-size: 17px;
+  color: var(--body);
+  line-height: 1.8;
+}
+
+/* ═══════════ FORM SUCCESS STATE ═══════════ */
+.form-wrapper { position: relative; }
+
 .form-success {
   display: none;
   text-align: center;
-  padding: 80px 40px;
+  padding: 80px 24px;
 }
 
 .form-success.show {
@@ -545,321 +535,243 @@ body {
 
 .form-success h2 {
   font-family: var(--font-h);
-  font-size: 32px;
+  font-size: clamp(28px, 4vw, 42px);
   font-weight: 700;
   color: var(--headline);
+  line-height: 1.2;
   margin-bottom: 16px;
 }
 
 .form-success p {
   font-family: var(--font-b);
-  font-size: 14px;
-  color: var(--body);
-  max-width: 400px;
+  font-size: 17px;
+  color: var(--secondary);
+  max-width: 480px;
   margin: 0 auto;
   line-height: 1.7;
 }
 
-.form-success .confirmation-number {
-  font-family: var(--font-m);
-  font-size: 12px;
-  color: var(--accent);
-  letter-spacing: 0.1em;
-  margin-top: 24px;
+/* ═══════════ RESPONSIVE ═══════════ */
+@media (max-width: 768px) {
+  .section { padding: 60px 20px; }
+  .ghost-num { font-size: 80px; }
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .dark-section { padding: 60px 20px; }
+  .close-section { padding: 80px 20px; }
+  .reassurance { padding: 60px 20px; }
+  .hero { padding: 100px 20px 80px; }
 }
 
-/* ═══════════ RESPONSIVE ═══════════ */
-@media (max-width: 900px) {
-  .drawing-page { padding: 100px 20px 60px; }
-  .drawing-inner { padding: 32px 24px 36px; }
-
-  .title-block {
-    position: relative;
-    width: 100%;
-    border-left: none;
-    border-bottom: 1px solid var(--bp-line-mid);
-    margin-bottom: 32px;
-  }
-
-  .form-header {
-    padding-right: 0;
-    margin-bottom: 32px;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .form-field:nth-child(odd) {
-    padding-right: 0;
-    border-right: none;
-  }
-
-  .form-field:nth-child(even) {
-    padding-left: 0;
-  }
-
-  .form-field:nth-child(odd) .focus-bar { right: 0; }
-  .form-field:nth-child(even) .focus-bar { left: 0; }
-
-  .submit-area {
-    flex-direction: column-reverse;
-    gap: 24px;
-    text-align: center;
-  }
-
+@media (max-width: 480px) {
+  .hero-title { font-size: clamp(36px, 10vw, 48px); }
+  .ghost-num { font-size: 60px; }
   .submit-btn {
     width: 100%;
+    justify-content: center;
   }
-
-  .revision-strip {
-    flex-wrap: wrap;
-  }
-
-  .revision-cell {
-    flex: 1 1 50%;
-    border-bottom: 1px solid var(--bp-line-dim);
-  }
-}
-
-@media (max-width: 560px) {
-  .drawing-page { padding: 90px 12px 40px; }
-  .drawing-frame { border: none; }
-  .drawing-frame::before { display: none; }
-  .drawing-inner { margin: 0; padding: 20px 16px 28px; border: 1px solid var(--bp-line-dim); }
-  .form-header h1 { font-size: 24px; }
-  .title-block-label { width: 80px; font-size: 7px; }
-  .title-block-value { font-size: 9px; }
 }
 </style>
 </head>
 <body>
 
 <!-- NAV COMPONENT -->
-<div id="bee-nav"></div>
+<div id="bee-nav" data-active="reserve"></div>
 <script type="module" src="bee-nav.js"></script>
 
 <!-- FIXED BACKGROUND CANVAS -->
 <div id="bg-canvas"></div>
 <!-- 3D WIREFRAME BACKGROUND -->
 <canvas id="scene3d"></canvas>
-<!-- HEXAGONAL GRID -->
-<div class="blueprint-bg"></div>
 
-<!-- ═══════════ DRAWING PAGE ═══════════ -->
-<section class="drawing-page">
-  <div class="drawing-frame reveal rd1">
-
-    <div class="drawing-inner">
-      <!-- Corner registration marks -->
-      <div class="corner-mark tl"></div>
-      <div class="corner-mark tr"></div>
-      <div class="corner-mark bl"></div>
-      <div class="corner-mark br"></div>
-
-      <!-- TITLE BLOCK (architectural, top-right) -->
-      <div class="title-block">
-        <div class="title-block-row">
-          <div class="title-block-label">Project</div>
-          <div class="title-block-value project-name">BEE Modular</div>
-        </div>
-        <div class="title-block-row">
-          <div class="title-block-label">Drawing</div>
-          <div class="title-block-value">Module Reservation</div>
-        </div>
-        <div class="title-block-row">
-          <div class="title-block-label">Sheet</div>
-          <div class="title-block-value">RSV-001 &mdash; Rev A</div>
-        </div>
-        <div class="title-block-row">
-          <div class="title-block-label">Scale</div>
-          <div class="title-block-value">N/A</div>
-        </div>
-        <div class="title-block-row">
-          <div class="title-block-label">Date</div>
-          <div class="title-block-value" id="titleBlockDate">2026-04-06</div>
-        </div>
-        <div class="title-block-row">
-          <div class="title-block-label">Status</div>
-          <div class="title-block-value" style="color: var(--accent);">Open for Submissions</div>
-        </div>
-      </div>
-
-      <!-- FORM HEADER -->
-      <div class="form-header reveal rd2">
-        <div class="drawing-number">DWG No. RSV-001</div>
-        <h1>Reserve Your Module</h1>
-        <p>Submit your project specifications. Our engineering team will review your requirements and respond within 48 hours with a preliminary feasibility assessment.</p>
-      </div>
-
-      <!-- RESERVATION FORM -->
-      <form id="reserveForm" action="https://formspree.io/f/placeholder" method="POST">
-
-        <!-- SECTION 01: Contact Details -->
-        <div class="section-divider reveal rd3">
-          <span class="section-label">01 &mdash; Contact Details</span>
-        </div>
-
-        <div class="form-grid">
-          <div class="form-field reveal rd3">
-            <div class="field-label">
-              <label for="fullName">Full Name</label>
-              <span class="field-tag">Required</span>
-            </div>
-            <input type="text" id="fullName" name="fullName" class="field-input" placeholder="e.g. Andrej Novak" required>
-            <div class="focus-bar"></div>
-          </div>
-
-          <div class="form-field reveal rd3">
-            <div class="field-label">
-              <label for="email">Email</label>
-              <span class="field-tag">Required</span>
-            </div>
-            <input type="email" id="email" name="email" class="field-input" placeholder="name@company.com" required>
-            <div class="focus-bar"></div>
-          </div>
-
-          <div class="form-field full-width reveal rd4">
-            <div class="field-label">
-              <label for="phone">Phone</label>
-              <span class="field-tag">Optional</span>
-            </div>
-            <input type="tel" id="phone" name="phone" class="field-input" placeholder="+386 ...">
-            <div class="focus-bar"></div>
-          </div>
-        </div>
-
-        <!-- SECTION 02: Project Brief -->
-        <div class="section-divider reveal rd4">
-          <span class="section-label">02 &mdash; Project Brief</span>
-        </div>
-
-        <div class="form-grid">
-          <div class="form-field reveal rd4">
-            <div class="field-label">
-              <label for="location">Project Location</label>
-              <span class="field-tag">Required</span>
-            </div>
-            <input type="text" id="location" name="location" class="field-input" placeholder="Country / City" required>
-            <div class="focus-bar"></div>
-          </div>
-
-          <div class="form-field reveal rd4">
-            <div class="field-label">
-              <label for="intendedUse">Intended Use</label>
-              <span class="field-tag">Required</span>
-            </div>
-            <select id="intendedUse" name="intendedUse" class="field-select" required>
-              <option value="" disabled selected>Select category</option>
-              <option value="Residential">Residential</option>
-              <option value="Hospitality">Hospitality</option>
-              <option value="Commercial">Commercial</option>
-              <option value="Defence">Defence</option>
-              <option value="Other">Other</option>
-            </select>
-            <div class="focus-bar"></div>
-          </div>
-
-          <div class="form-field reveal rd5">
-            <div class="field-label">
-              <label for="moduleCount">Approximate Module Count</label>
-              <span class="field-tag">Required</span>
-            </div>
-            <select id="moduleCount" name="moduleCount" class="field-select" required>
-              <option value="" disabled selected>Select range</option>
-              <option value="1-2">1 &ndash; 2 modules</option>
-              <option value="3-5">3 &ndash; 5 modules</option>
-              <option value="6-10">6 &ndash; 10 modules</option>
-              <option value="10+">10+ modules</option>
-            </select>
-            <div class="focus-bar"></div>
-          </div>
-
-          <div class="form-field reveal rd5">
-            <div class="field-label">
-              <label for="timeline">Desired Timeline</label>
-              <span class="field-tag">Required</span>
-            </div>
-            <select id="timeline" name="timeline" class="field-select" required>
-              <option value="" disabled selected>Select timeline</option>
-              <option value="3 months">3 months</option>
-              <option value="6 months">6 months</option>
-              <option value="12 months">12 months</option>
-              <option value="Flexible">Flexible</option>
-            </select>
-            <div class="focus-bar"></div>
-          </div>
-
-          <div class="form-field full-width reveal rd5">
-            <div class="field-label">
-              <label for="budget">Budget Range</label>
-              <span class="field-tag">Required</span>
-            </div>
-            <select id="budget" name="budget" class="field-select" required>
-              <option value="" disabled selected>Select budget range</option>
-              <option value="€80k-150k">&euro;80k &ndash; &euro;150k</option>
-              <option value="€150k-300k">&euro;150k &ndash; &euro;300k</option>
-              <option value="€300k-500k">&euro;300k &ndash; &euro;500k</option>
-              <option value="€500k+">&euro;500k+</option>
-              <option value="Not yet defined">Not yet defined</option>
-            </select>
-            <div class="focus-bar"></div>
-          </div>
-        </div>
-
-        <!-- SECTION 03: Additional Information -->
-        <div class="section-divider reveal rd5">
-          <span class="section-label">03 &mdash; Additional Information</span>
-        </div>
-
-        <div class="form-grid">
-          <div class="form-field full-width reveal rd5">
-            <div class="field-label">
-              <label for="notes">Additional Notes</label>
-              <span class="field-tag">Optional</span>
-            </div>
-            <textarea id="notes" name="notes" class="field-textarea" placeholder="Site constraints, design preferences, special requirements..."></textarea>
-          </div>
-
-          <div class="form-field full-width reveal rd6">
-            <div class="field-label">
-              <label for="referral">How did you hear about us?</label>
-              <span class="field-tag">Optional</span>
-            </div>
-            <input type="text" id="referral" name="referral" class="field-input" placeholder="e.g. Architecture conference, referral, press...">
-            <div class="focus-bar"></div>
-          </div>
-        </div>
-
-        <!-- SUBMIT -->
-        <div class="submit-area reveal rd6">
-          <div class="submit-note">
-            All submissions are reviewed by our engineering team.<br>
-            We respond within 48 hours with a preliminary assessment.
-          </div>
-          <button type="submit" class="submit-btn">Submit Reservation</button>
-        </div>
-
-      </form>
-
-      <!-- SUCCESS STATE (hidden by default) -->
-      <div class="form-success" id="formSuccess">
-        <h2>Reservation Received</h2>
-        <p>Your project specifications have been logged. Our engineering team will contact you within 48 hours with a preliminary feasibility assessment.</p>
-        <div class="confirmation-number" id="confirmationNum"></div>
-      </div>
-
-      <!-- REVISION STRIP (bottom of drawing) -->
-      <div class="revision-strip reveal rd6">
-        <div class="revision-cell">Rev <span>A</span></div>
-        <div class="revision-cell">Issued <span id="revDate">2026-04-06</span></div>
-        <div class="revision-cell">By <span>BEE Engineering</span></div>
-        <div class="revision-cell">Checked <span>&mdash;</span></div>
-      </div>
-
-    </div><!-- /.drawing-inner -->
-  </div><!-- /.drawing-frame -->
+<!-- ═══════════ HERO ═══════════ -->
+<section class="hero">
+  <h1 class="hero-title reveal rd1">WE ARE READY<br>WHEN YOU ARE.</h1>
+  <p class="hero-sub">A reservation is not a commitment. It is the beginning of a conversation.</p>
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+  </div>
 </section>
+
+<!-- ═══════════ SECTION 01 — WHAT A RESERVATION MEANS ═══════════ -->
+<section class="section">
+  <div class="ghost-num reveal rd1">01</div>
+  <div class="section-body">
+    <p class="reveal rd2">A reservation secures your production slot. It locks pricing at today's rate. It puts you in the queue.</p>
+    <p class="reveal rd3">It does not commit you to a final specification. You can refine. You can change direction entirely. You can cancel with a full refund.</p>
+    <p class="reveal rd4">Our factory builds to order &mdash; there is no warehouse of finished modules waiting. Each one is made for someone specific. That means production slots for 2026 are limited by actual manufacturing capacity, not by a marketing calendar.</p>
+  </div>
+
+  <!-- Expandable: How the reservation process works -->
+  <div class="expandable reveal rd5">
+    <button class="expandable-trigger" type="button" aria-expanded="false">
+      <span class="icon">[+]</span> How the reservation process works
+    </button>
+    <div class="expandable-content" aria-hidden="true">
+      <div class="expandable-inner">
+        <div class="process-step">
+          <span class="step-num">01</span>
+          <div class="step-content">
+            <h4>Reserve</h4>
+            <p>Fill out the form below. No payment is required at this stage. Your reservation places you in the production queue and locks current pricing.</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <span class="step-num">02</span>
+          <div class="step-content">
+            <h4>First Conversation</h4>
+            <p>Within 48 hours, one of our team contacts you. We listen. We ask questions. We begin to understand what you actually need &mdash; not what we think you should buy.</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <span class="step-num">03</span>
+          <div class="step-content">
+            <h4>Configuration</h4>
+            <p>Together we define the module specification: size, layout, systems, finishes. You see drawings. You see pricing. You approve before anything is built.</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <span class="step-num">04</span>
+          <div class="step-content">
+            <h4>Production</h4>
+            <p>Your module enters the factory. Build time is typically 8&ndash;12 weeks depending on specification. You receive progress updates throughout.</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <span class="step-num">05</span>
+          <div class="step-content">
+            <h4>Delivery + Assembly</h4>
+            <p>The finished module is transported to your site and placed on prepared foundations. Connection to services typically takes 1&ndash;3 days. Then it is yours.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SECTION 02 — THE FORM ═══════════ -->
+<section class="section section--wide">
+  <div class="form-wrapper">
+    <h2 class="form-header-text reveal rd1">Tell us where to start.</h2>
+
+    <form id="reserveForm" action="https://formspree.io/f/placeholder" method="POST">
+      <!-- Honeypot -->
+      <input type="text" name="_gotcha" class="bee-honey" tabindex="-1" autocomplete="off">
+
+      <div class="form-grid">
+        <div class="form-field reveal rd2">
+          <div class="field-label">
+            <label for="fullName">Name</label>
+          </div>
+          <input type="text" id="fullName" name="fullName" class="field-input" required autocomplete="name">
+        </div>
+
+        <div class="form-field reveal rd2">
+          <div class="field-label">
+            <label for="email">Email</label>
+          </div>
+          <input type="email" id="email" name="email" class="field-input" required autocomplete="email">
+        </div>
+
+        <div class="form-field reveal rd3">
+          <div class="field-label">
+            <label for="country">Country</label>
+          </div>
+          <input type="text" id="country" name="country" class="field-input" required autocomplete="country-name">
+        </div>
+
+        <div class="form-field reveal rd3">
+          <div class="field-label">
+            <label for="phone">Phone</label>
+            <span class="field-hint">if you prefer a call</span>
+          </div>
+          <input type="tel" id="phone" name="phone" class="field-input" autocomplete="tel">
+        </div>
+
+        <div class="form-field reveal rd4">
+          <div class="field-label">
+            <label for="interest">Interest</label>
+          </div>
+          <select id="interest" name="interest" class="field-select" required>
+            <option value="" disabled selected>Select</option>
+            <option value="Home">Home</option>
+            <option value="Hospitality">Hospitality</option>
+            <option value="Wellness">Wellness</option>
+            <option value="Workspace">Workspace</option>
+            <option value="Protection">Protection</option>
+            <option value="Storage">Storage</option>
+            <option value="Investment">Investment</option>
+            <option value="Not sure yet">Not sure yet</option>
+          </select>
+        </div>
+
+        <div class="form-field reveal rd5">
+          <div class="field-label">
+            <label for="project">Your Project</label>
+          </div>
+          <textarea id="project" name="project" class="field-textarea" rows="5" placeholder="Tell us about what you have in mind..."></textarea>
+          <p class="textarea-hint">The more you share, the more useful our first conversation will be.</p>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn reveal rd6">RESERVE YOUR SLOT &rarr;</button>
+    </form>
+
+    <!-- SUCCESS STATE -->
+    <div class="form-success" id="formSuccess">
+      <h2 id="successHeading">Thank you.</h2>
+      <p>We will be in touch within 48 hours.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ REASSURANCE ═══════════ -->
+<div class="reassurance reveal rd1">
+  <p>There is no risk in beginning. There is only the question of whether you want to begin now or later.</p>
+</div>
+
+<!-- ═══════════ OTHER INQUIRIES (dark) ═══════════ -->
+<section class="dark-section">
+  <div class="dark-section-inner">
+    <h2 class="reveal rd1">Not ready to reserve?<br>That is fine.</h2>
+    <p class="dark-sub reveal rd2">Here are some other ways to reach us.</p>
+
+    <div class="contact-grid reveal rd3">
+      <div class="contact-col">
+        <h3>General Inquiries</h3>
+        <a href="mailto:info@bee-modular.com">info@bee-modular.com</a>
+      </div>
+      <div class="contact-col">
+        <h3>Defence + Government</h3>
+        <a href="mailto:defence@bee-modular.com">defence@bee-modular.com</a>
+      </div>
+      <div class="contact-col">
+        <h3>Hospitality + Investment</h3>
+        <a href="mailto:invest@bee-modular.com">invest@bee-modular.com</a>
+      </div>
+    </div>
+
+    <div class="expandable reveal rd4">
+      <button class="expandable-trigger" type="button" aria-expanded="false">
+        <span class="icon">[+]</span> Visit us
+      </button>
+      <div class="expandable-content" aria-hidden="true">
+        <div class="expandable-inner">
+          <p>BEE Modular factory and showroom<br>
+          Trzin, Slovenia<br>
+          Visits by appointment only &mdash; <a href="mailto:info@bee-modular.com" style="color: var(--on-dark); text-decoration: underline;">get in touch</a> to arrange.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CLOSE ═══════════ -->
+<div class="close-section reveal rd1">
+  <p>A building should begin with a conversation, not a contract.<br>This is the conversation.</p>
+</div>
 
 <!-- FOOTER COMPONENT -->
 <div id="bee-footer"></div>
@@ -875,21 +787,38 @@ body {
 })();
 </script>
 
+<!-- ═══════════ EXPANDABLE SECTIONS ═══════════ -->
+<script>
+(function() {
+  document.querySelectorAll('.expandable-trigger').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const parent = this.closest('.expandable');
+      const isOpen = parent.classList.contains('open');
+      parent.classList.toggle('open');
+      this.setAttribute('aria-expanded', !isOpen);
+      parent.querySelector('.expandable-content').setAttribute('aria-hidden', isOpen);
+    });
+  });
+})();
+</script>
+
 <!-- ═══════════ FORM HANDLING ═══════════ -->
 <script>
 (function() {
   const form = document.getElementById('reserveForm');
   const success = document.getElementById('formSuccess');
-  const confirmNum = document.getElementById('confirmationNum');
+  const heading = document.getElementById('successHeading');
   if (!form) return;
 
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
 
     const btn = form.querySelector('.submit-btn');
-    const origText = btn.textContent;
+    const origText = btn.innerHTML;
     btn.textContent = 'SUBMITTING...';
     btn.disabled = true;
+
+    const nameVal = form.querySelector('#fullName').value.trim();
 
     try {
       const response = await fetch(form.action, {
@@ -900,21 +829,42 @@ body {
 
       if (response.ok) {
         form.style.display = 'none';
-        form.parentElement.querySelectorAll('.section-divider').forEach(d => d.style.display = 'none');
+        if (nameVal) {
+          heading.textContent = 'Thank you, ' + nameVal + '.';
+        }
         success.classList.add('show');
-        const ref = 'BEE-RSV-' + Date.now().toString(36).toUpperCase();
-        confirmNum.textContent = 'Reference: ' + ref;
+        success.scrollIntoView({ behavior: 'smooth', block: 'center' });
       } else {
-        btn.textContent = 'ERROR — RETRY';
+        btn.innerHTML = 'ERROR &mdash; RETRY';
         btn.disabled = false;
-        setTimeout(() => { btn.textContent = origText; }, 3000);
+        setTimeout(() => { btn.innerHTML = origText; }, 3000);
       }
     } catch (err) {
-      btn.textContent = 'ERROR — RETRY';
+      btn.innerHTML = 'ERROR &mdash; RETRY';
       btn.disabled = false;
-      setTimeout(() => { btn.textContent = origText; }, 3000);
+      setTimeout(() => { btn.innerHTML = origText; }, 3000);
     }
   });
+})();
+</script>
+
+<!-- ═══════════ AUTO-FOCUS NAME ON DESKTOP ═══════════ -->
+<script>
+(function() {
+  if (window.innerWidth > 768 && !('ontouchstart' in window)) {
+    const nameField = document.getElementById('fullName');
+    if (nameField) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            nameField.focus({ preventScroll: true });
+            observer.disconnect();
+          }
+        });
+      }, { threshold: 0.5 });
+      observer.observe(nameField);
+    }
+  }
 })();
 </script>
 
@@ -947,7 +897,6 @@ import * as THREE from 'three';
   function lerpVec3(a, b, t) { return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t]; }
   function lerpScalar(a, b, t) { return a + (b - a) * t; }
 
-  /* Gentle orbit camera for reserve page */
   const cameraScript = [
     { t: 0.00, pos: [1.5, 0.8, 2.5],  target: [0, 0, 0], fov: 35 },
     { t: 0.25, pos: [2.0, 0.5, 1.8],  target: [0, 0, 0], fov: 36 },
@@ -1028,7 +977,6 @@ import * as THREE from 'three';
       camera.far = scaleFactor * 20;
       camera.updateProjectionMatrix();
 
-      /* Lines fully drawn from the start on this page */
       allLines.forEach(line => {
         const total = line.geometry.attributes.position.count;
         line.geometry.setDrawRange(0, total);
@@ -1038,7 +986,6 @@ import * as THREE from 'three';
 
       function animate() {
         requestAnimationFrame(animate);
-
         currentScroll += (rawScroll - currentScroll) * 0.04;
 
         const cam = getCameraState(currentScroll);
