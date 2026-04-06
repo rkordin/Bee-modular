@@ -110,185 +110,7 @@ body {
 /* Parallax layers */
 .parallax-bg { will-change: transform; }
 
-/* ════════════════════════════════════════════════ */
-/* NAV — Technical top bar + floating bottom bar     */
-/* ════════════════════════════════════════════════ */
-
-/* TOP NAV — technical / editorial */
-.nav-top {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-  height: 72px; padding: 0 48px;
-  display: flex; align-items: center; justify-content: space-between;
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
-.nav-top.hide {
-  opacity: 0; transform: translateY(-20px); pointer-events: none;
-}
-.nav-top-left { display: flex; align-items: center; gap: 10px; }
-.nav-top-logo-img { height: 20px; width: auto; }
-.nav-top-links {
-  display: flex; align-items: center; gap: 28px;
-  list-style: none;
-}
-.nav-top-links a {
-  font-family: var(--font-m); font-size: 11px; font-weight: 400;
-  color: var(--secondary); text-decoration: none;
-  letter-spacing: 0.08em; text-transform: uppercase;
-  transition: color 0.3s;
-}
-.nav-top-links a:hover { color: var(--headline); }
-.nav-top-right {
-  display: flex; align-items: center; gap: 20px;
-}
-.nav-top-cta {
-  font-family: var(--font-m); font-size: 10px; font-weight: 500;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--headline); background: none;
-  border: 1px solid rgba(26,26,26,0.15);
-  padding: 8px 20px; cursor: pointer;
-  transition: all 0.3s;
-}
-.nav-top-cta:hover { border-color: var(--headline); background: var(--headline); color: var(--bg); }
-
-/* BOTTOM NAV — floating glass bar */
-.nav-bottom {
-  position: fixed; bottom: 4vh; left: 50%;
-  transform: translateX(-50%) translateY(30px);
-  width: calc(100% - 80px); max-width: 1100px;
-  height: 56px; z-index: 1000;
-  background: rgba(26,26,26,0.92);
-  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 8px 40px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.12);
-  padding: 0 24px;
-  display: flex; align-items: center; justify-content: space-between;
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.4,0,0.2,1);
-}
-.nav-bottom.show {
-  opacity: 1; pointer-events: all;
-  transform: translateX(-50%) translateY(0);
-}
-.nav-bottom-left { display: flex; align-items: center; gap: 8px; }
-.nav-bottom-logo-img { height: 18px; width: auto; filter: brightness(0) invert(1); }
-.nav-bottom-links {
-  display: flex; align-items: center; gap: 24px;
-  list-style: none;
-}
-.nav-bottom-links a {
-  font-family: var(--font-m); font-size: 10px; font-weight: 400;
-  color: var(--secondary); text-decoration: none;
-  letter-spacing: 0.06em; text-transform: uppercase;
-  transition: color 0.3s;
-}
-.nav-bottom-links a:hover { color: var(--headline); }
-.nav-bottom-cta {
-  font-family: var(--font-m); font-size: 10px; font-weight: 500;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  background: none; color: var(--on-dark);
-  border: 1px solid rgba(245,240,235,0.25);
-  padding: 8px 20px; cursor: pointer; transition: all 0.3s;
-}
-.nav-bottom-cta:hover { border-color: var(--on-dark); background: rgba(245,240,235,0.1); }
-.nav-bottom-links a { color: rgba(245,240,235,0.5) !important; }
-.nav-bottom-links a:hover { color: var(--on-dark) !important; }
-
-/* Dark mode for navs */
-.nav-top.nav-dark .nav-top-logo-img { filter: brightness(0) invert(1); }
-.nav-top.nav-dark .nav-top-links a { color: rgba(245,240,235,0.5); }
-.nav-top.nav-dark .nav-top-links a:hover { color: var(--on-dark); }
-.nav-top.nav-dark .nav-top-cta { color: var(--on-dark); border-color: rgba(245,240,235,0.2); }
-.nav-bottom.nav-dark-mode .nav-bottom-links a { color: rgba(245,240,235,0.5); }
-
-/* ════════════════════════════════════════════════ */
-/* MUSIC PLAYER (inside bottom nav)                  */
-/* ════════════════════════════════════════════════ */
-.nav-bottom-music {
-  display: flex; align-items: center; gap: 10px;
-  margin-left: 16px;
-}
-.music-toggle-btn {
-  display: flex; align-items: center; gap: 8px;
-  background: none; border: none;
-  cursor: pointer; padding: 4px;
-}
-.music-icon {
-  width: 14px; height: 14px;
-  position: relative;
-  display: flex; align-items: center; justify-content: center;
-}
-/* Play triangle (default — music off) */
-.music-icon::before {
-  content: '';
-  display: block;
-  width: 0; height: 0;
-  border-style: solid;
-  border-width: 6px 0 6px 10px;
-  border-color: transparent transparent transparent rgba(245,240,235,0.6);
-  transition: all 0.3s ease;
-}
-/* Pause bars (music on) */
-.nav-bottom.music-playing .music-icon::before {
-  border-width: 0;
-  width: 3px; height: 12px;
-  border-radius: 1px;
-  background: var(--accent);
-  box-shadow: 6px 0 0 var(--accent);
-}
-.music-bars {
-  display: flex; align-items: flex-end; gap: 2px;
-  height: 16px; width: 20px;
-}
-.music-bars span {
-  display: block; width: 3px;
-  background: var(--accent);
-  transition: height 0.2s ease;
-  height: 3px;
-}
-.nav-bottom.music-playing .music-bars span:nth-child(1) { animation: bar1 0.8s ease-in-out infinite; }
-.nav-bottom.music-playing .music-bars span:nth-child(2) { animation: bar2 0.7s ease-in-out infinite 0.1s; }
-.nav-bottom.music-playing .music-bars span:nth-child(3) { animation: bar3 0.9s ease-in-out infinite 0.2s; }
-.nav-bottom.music-playing .music-bars span:nth-child(4) { animation: bar1 0.75s ease-in-out infinite 0.15s; }
-.nav-bottom:not(.music-playing) .music-bars span { height: 3px !important; }
-@keyframes bar1 { 0%,100%{height:4px} 50%{height:16px} }
-@keyframes bar2 { 0%,100%{height:8px} 50%{height:4px} }
-@keyframes bar3 { 0%,100%{height:6px} 50%{height:14px} }
-.music-label {
-  font-family: var(--font-m); font-size: 9px;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: rgba(245,240,235,0.5);
-  user-select: none;
-}
-.nav-bottom.music-playing .music-label { color: var(--accent); }
-.music-vol {
-  -webkit-appearance: none; appearance: none;
-  width: 60px; height: 2px;
-  background: rgba(245,240,235,0.15);
-  outline: none; cursor: pointer;
-  border-radius: 1px;
-}
-.music-vol::-webkit-slider-thumb {
-  -webkit-appearance: none; appearance: none;
-  width: 10px; height: 10px;
-  background: var(--accent);
-  border-radius: 50%; cursor: pointer;
-}
-.music-vol::-moz-range-thumb {
-  width: 10px; height: 10px;
-  background: var(--accent);
-  border-radius: 50%; border: none; cursor: pointer;
-}
-
-@media (max-width: 1024px) {
-  .nav-top-links, .nav-bottom-links { display: none; }
-  .nav-bottom { width: calc(100% - 32px); bottom: calc(16px + env(safe-area-inset-bottom)); height: 52px; }
-  .music-vol { width: 40px; }
-}
-@media (max-width: 768px) {
-  .nav-top { padding: 0 24px; }
-  .music-label { display: none; }
-  .music-vol { width: 36px; }
-}
+/* Nav CSS now injected by bee-nav.js */
 
 /* ════════════════════════════════════════════════ */
 /* PLACEHOLDER IMAGES                               */
@@ -2407,9 +2229,37 @@ html.lenis, html.lenis body { height: auto; }
   .ec-card { max-width: 100%; padding: 32px 24px; }
   .ec-image { width: 92vw; }
 }
+
+/* Frosted glass cursor */
+.glass-cursor {
+  position: fixed; width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(181,162,145,0.08);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(181,162,145,0.15);
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%, -50%);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; opacity: 0;
+  transition: width 0.4s cubic-bezier(0.22,1,0.36,1),
+              height 0.4s cubic-bezier(0.22,1,0.36,1),
+              border-radius 0.4s cubic-bezier(0.22,1,0.36,1),
+              opacity 0.3s ease;
+}
+.glass-cursor.visible { opacity: 1; }
+.glass-cursor .cursor-label {
+  font-family: var(--font-m); font-size: 9px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent); opacity: 0; white-space: nowrap;
+  transition: opacity 0.3s ease 0.1s;
+}
+.glass-cursor.hovering { width: 90px; height: 90px; background: rgba(181,162,145,0.1); border-color: rgba(181,162,145,0.25); }
+.glass-cursor.hovering .cursor-label { opacity: 1; }
+@media (hover: none) { .glass-cursor { display: none; } }
 </style>
 </head>
 <body>
+
+<div class="glass-cursor" id="glassCursor"><span class="cursor-label">Read more</span></div>
 
 <!-- ═══════════ BEE HERO (scroll to fade) ═══════════ -->
 <div id="bee-hero" data-fade-out="true"></div>
@@ -2431,53 +2281,9 @@ html.lenis, html.lenis body { height: auto; }
   <div class="preloader-status" id="preloaderStatus">Initializing<span class="dot-pulse">.</span><span class="dot-pulse">.</span><span class="dot-pulse">.</span></div>
 </div>
 
-<!-- TOP NAV -->
-<nav class="nav-top" id="navTop">
-  <div class="nav-top-left">
-    <img src="LOGO/BEE%20MODULAR%20LOGO%20ON%20WHITE.svg" alt="BEE Modular" class="nav-top-logo-img">
-  </div>
-  <ul class="nav-top-links">
-    <li><a href="#system">The System</a></li>
-    <li><a href="#bp-configs">Configurations</a></li>
-    <li><a href="#bp-defence">Defence</a></li>
-    <li><a href="#bp-process">Process</a></li>
-    <li><a href="#bp-about">About</a></li>
-  </ul>
-  <div class="nav-top-right">
-    <button class="nav-top-cta" onclick="document.getElementById('bp-reserve').scrollIntoView({behavior:'smooth'})">Reserve</button>
-  </div>
-</nav>
-
-<!-- BOTTOM NAV -->
-<nav class="nav-bottom" id="navBottom">
-  <div class="nav-bottom-left">
-    <img src="LOGO/BEE%20MODULAR%20LOGO%20ON%20BLACK.svg" alt="BEE Modular" class="nav-bottom-logo-img">
-  </div>
-  <ul class="nav-bottom-links">
-    <li><a href="#system">System</a></li>
-    <li><a href="#bp-configs">Configurations</a></li>
-    <li><a href="#bp-defence">Defence</a></li>
-    <li><a href="#bp-process">Process</a></li>
-    <li><a href="#bp-about">About</a></li>
-  </ul>
-  <div class="nav-bottom-right" style="display:flex;align-items:center;gap:16px;">
-    <div class="nav-bottom-music" id="navMusic">
-      <button class="music-toggle-btn" id="musicToggle" title="Toggle music">
-        <div class="music-icon"></div>
-        <div class="music-bars">
-          <span></span><span></span><span></span><span></span>
-        </div>
-        <span class="music-label">Sound</span>
-      </button>
-      <input type="range" class="music-vol" id="musicVol" min="0" max="100" value="25" title="Volume">
-    </div>
-    <button class="nav-bottom-cta" onclick="document.getElementById('bp-reserve').scrollIntoView({behavior:'smooth'})">Reserve</button>
-  </div>
-</nav>
-
-<audio id="bgMusic" loop preload="auto">
-  <source src="MUSIC/epic-2026-03-02-14-05-19-utc/AudioCopper_Epic_Main.mp3" type="audio/mpeg">
-</audio>
+<!-- ═══════════ NAV (bee-nav.js component) ═══════════ -->
+<div id="bee-nav"></div>
+<script src="bee-nav.js"></script>
 
 <!-- ═══════════ SECTION 1 — HERO (Immersive Scroll-Through) ═══════════ -->
 <section class="hero" id="hero">
@@ -2487,12 +2293,12 @@ html.lenis, html.lenis body { height: auto; }
 
     <div class="hero-3d-stage" id="hero3dStage">
       <div class="hero-product-wrapper" id="heroProductWrapper">
-        <img src="PNG%20IMAGES%20FRAMES/BEE_MODULAR-1.webp" alt="Stage 1 — Skeleton" class="active" data-hero-img="0">
-        <img src="PNG%20IMAGES%20FRAMES/BEE_MODULAR-2.webp" alt="Stage 2 — Chassis" data-hero-img="1">
-        <img src="PNG%20IMAGES%20FRAMES/BEE_MODULAR-3.webp" alt="Stage 3 — Enclosure" data-hero-img="2">
-        <img src="PNG%20IMAGES%20FRAMES/BEE_MODULAR-4.webp" alt="Stage 4 — Warmth" data-hero-img="3">
-        <img src="PNG%20IMAGES%20FRAMES/BEE_MODULAR-5.webp" alt="Stage 5 — Glass" data-hero-img="4">
-        <img src="PNG%20IMAGES%20FRAMES/BEE_MODULAR-6.webp" alt="Stage 6 — Complete" data-hero-img="5">
+        <img src="PNG%20IMAGES%20FRAMES/BEE_MODULAR-1.webp" alt="Stage 1 — Skeleton" class="active" data-hero-img="0" data-cms="true" data-cms-key="hero-1">
+        <img src="PNG%20IMAGES%20FRAMES/BEE_MODULAR-2.webp" alt="Stage 2 — Chassis" data-hero-img="1" data-cms="true" data-cms-key="hero-2">
+        <img src="PNG%20IMAGES%20FRAMES/BEE_MODULAR-3.webp" alt="Stage 3 — Enclosure" data-hero-img="2" data-cms="true" data-cms-key="hero-3">
+        <img src="PNG%20IMAGES%20FRAMES/BEE_MODULAR-4.webp" alt="Stage 4 — Warmth" data-hero-img="3" data-cms="true" data-cms-key="hero-4">
+        <img src="PNG%20IMAGES%20FRAMES/BEE_MODULAR-5.webp" alt="Stage 5 — Glass" data-hero-img="4" data-cms="true" data-cms-key="hero-5">
+        <img src="PNG%20IMAGES%20FRAMES/BEE_MODULAR-6.webp" alt="Stage 6 — Complete" data-hero-img="5" data-cms="true" data-cms-key="hero-6">
         <video id="heroVideo" muted playsinline preload="auto" style="pointer-events:none;">
           <source src="VIDEO/BEE_MOCULAR%20HERO%201920x1600px.mp4" type="video/mp4">
         </video>
@@ -2609,7 +2415,7 @@ html.lenis, html.lenis body { height: auto; }
 
     <!-- ── 01 The Origin Story ── -->
     <div class="exploded-content has-pair" style="top: 50vh;">
-      <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-13.jpg" alt="Original sketch" class="ec-image">
+      <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-13.jpg" alt="Original sketch" class="ec-image" data-cms="true" data-cms-key="section-01-origin">
       <div class="ec-card">
         <h2>It began with a sketch.</h2>
         <div class="ec-label">THE ORIGIN</div>
@@ -2623,7 +2429,7 @@ html.lenis, html.lenis body { height: auto; }
 
     <!-- ── 02 The Platform ── -->
     <div class="exploded-content has-pair" style="top: 200vh;">
-      <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-8.jpg" alt="Steel chassis frame" class="ec-image">
+      <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-8.jpg" alt="Steel chassis frame" class="ec-image" data-cms="true" data-cms-key="section-02-platform">
       <div class="ec-card">
         <h2>The Platform</h2>
         <div class="ec-label">WHAT IF ONE SHAPE COULD DO EVERYTHING</div>
@@ -2637,7 +2443,7 @@ html.lenis, html.lenis body { height: auto; }
 
     <!-- ── 03 Manufacturing ── -->
     <div class="exploded-content has-pair" style="top: 350vh;">
-      <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-16.jpg" alt="CNC plasma cutting steel" class="ec-image">
+      <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-16.jpg" alt="CNC plasma cutting steel" class="ec-image" data-cms="true" data-cms-key="section-03-manufacturing">
       <div class="ec-card">
         <h2>Your life. Your shape.</h2>
         <div class="ec-label">EIGHT POSSIBILITIES</div>
@@ -2657,7 +2463,7 @@ html.lenis, html.lenis body { height: auto; }
 
     <!-- ── 04 Three Crises ── -->
     <div class="exploded-content has-pair" style="top: 500vh;">
-      <img src="BASE%20IMAGES/BEE%20MODULAR_BASE.jpg" alt="Multi-module compound" class="ec-image">
+      <img src="BASE%20IMAGES/BEE%20MODULAR_BASE.jpg" alt="Multi-module compound" class="ec-image" data-cms="true" data-cms-key="section-04-crises">
       <div class="ec-card">
         <h2>Three crises. One solution.</h2>
         <div class="ec-label">SECURITY · HOUSING · CLIMATE</div>
@@ -2672,7 +2478,7 @@ html.lenis, html.lenis body { height: auto; }
 
     <!-- ── 05 Engineering ── -->
     <div class="exploded-content has-pair" style="top: 650vh;">
-      <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-7.jpg" alt="Exposed structural skeleton" class="ec-image">
+      <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-7.jpg" alt="Exposed structural skeleton" class="ec-image" data-cms="true" data-cms-key="section-05-engineering">
       <div class="ec-card">
         <h2>Under the skin.</h2>
         <div class="ec-label">UNAPOLOGETICALLY HIGH-SPEC</div>
@@ -2685,7 +2491,7 @@ html.lenis, html.lenis body { height: auto; }
 
     <!-- ── 06 BEE.safe Philosophy ── -->
     <div class="exploded-content has-pair" style="top: 800vh;">
-      <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-15.jpg" alt="Module with safe room below" class="ec-image">
+      <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-15.jpg" alt="Module with safe room below" class="ec-image" data-cms="true" data-cms-key="section-06-safe">
       <div class="ec-card">
         <h2>Not a bunker.</h2>
         <div class="ec-label">BEE.SAFE PHILOSOPHY</div>
@@ -2697,7 +2503,7 @@ html.lenis, html.lenis body { height: auto; }
 
     <!-- ── 07 Modular Growth ── -->
     <div class="exploded-content has-pair" style="top: 950vh;">
-      <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-12.jpg" alt="Architectural sketch" class="ec-image">
+      <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-12.jpg" alt="Architectural sketch" class="ec-image" data-cms="true" data-cms-key="section-07-modular">
       <div class="ec-card">
         <h2>One becomes many.</h2>
         <div class="ec-label">MODULAR GROWTH</div>
@@ -2814,46 +2620,9 @@ const revealObs = new IntersectionObserver((entries) => {
 }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
 reveals.forEach(el => revealObs.observe(el));
 
-// ── Dual Nav ──
+// ── Dual Nav (HTML + CSS + music now injected by bee-nav.js) ──
 const navTop = document.getElementById('navTop');
 const navBottom = document.getElementById('navBottom');
-
-// ── Music Player (in bottom nav) ──
-const musicToggle = document.getElementById('musicToggle');
-const musicVol = document.getElementById('musicVol');
-const bgMusic = document.getElementById('bgMusic');
-bgMusic.volume = 0.25;
-let musicPlaying = false;
-let musicAutoStarted = false;
-
-function toggleMusic() {
-  if (musicPlaying) {
-    bgMusic.pause();
-    navBottom.classList.remove('music-playing');
-  } else {
-    bgMusic.play().catch(() => {});
-    navBottom.classList.add('music-playing');
-  }
-  musicPlaying = !musicPlaying;
-}
-
-musicToggle.addEventListener('click', toggleMusic);
-
-musicVol.addEventListener('input', (e) => {
-  bgMusic.volume = e.target.value / 100;
-});
-
-// Autoplay after scrolling past hero (~80% of first viewport)
-window.addEventListener('scroll', function autoStart() {
-  if (musicAutoStarted) return;
-  if (window.scrollY > window.innerHeight * 0.8) {
-    musicAutoStarted = true;
-    bgMusic.play().then(() => {
-      musicPlaying = true;
-      navBottom.classList.add('music-playing');
-    }).catch(() => {});
-  }
-}, { passive: true });
 
 // ── Hero: Immersive scroll-through ──
 const heroEl = document.getElementById('hero');
@@ -3831,5 +3600,29 @@ import * as THREE from 'three';
 <!-- BEE Footer Component -->
 <script type="module" src="bee-footer.js"></script>
 
+<!-- Frosted glass cursor -->
+<script>
+(() => {
+  const cursor = document.getElementById('glassCursor');
+  if (!cursor || matchMedia('(hover: none)').matches) return;
+  let mx = 0, my = 0, cx = 0, cy = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function tick() {
+    cx += (mx - cx) * 0.12; cy += (my - cy) * 0.12;
+    cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px';
+    requestAnimationFrame(tick);
+  }
+  tick();
+  document.addEventListener('mouseenter', () => cursor.classList.add('visible'));
+  document.addEventListener('mouseleave', () => cursor.classList.remove('visible'));
+  document.addEventListener('mousemove', function s() { cursor.classList.add('visible'); document.removeEventListener('mousemove', s); });
+  document.querySelectorAll('.ec-card').forEach(c => {
+    c.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+    c.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+  });
+})();
+</script>
+
+<script src="bee-cms.js"></script>
 </body>
 </html>
