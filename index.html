@@ -948,6 +948,25 @@ body {
   margin-top: 8px;
   opacity: 0; animation: preloaderFadeIn 0.8s ease 0.6s forwards;
 }
+.preloader-status {
+  font-family: var(--font-m);
+  font-size: 9px; letter-spacing: 0.08em;
+  color: var(--secondary);
+  margin-top: 20px;
+  height: 14px;
+  opacity: 0; animation: preloaderFadeIn 0.8s ease 0.8s forwards;
+  transition: opacity 0.4s ease;
+}
+.preloader-status .dot-pulse {
+  display: inline-block;
+  animation: dotPulse 1.4s ease-in-out infinite;
+}
+.preloader-status .dot-pulse:nth-child(2) { animation-delay: 0.2s; }
+.preloader-status .dot-pulse:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dotPulse {
+  0%, 80%, 100% { opacity: 0.2; }
+  40% { opacity: 1; }
+}
 @keyframes preloaderFadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
 /* ════════════════════════════════════════════════════════════════ */
@@ -2409,6 +2428,7 @@ html.lenis, html.lenis body { height: auto; }
   </div>
   <div class="preloader-percent" id="preloaderPercent">0%</div>
   <div class="preloader-coords">46&deg;03'N 14&deg;30'E &middot; LOADING</div>
+  <div class="preloader-status" id="preloaderStatus">Initializing<span class="dot-pulse">.</span><span class="dot-pulse">.</span><span class="dot-pulse">.</span></div>
 </div>
 
 <!-- TOP NAV -->
@@ -2700,30 +2720,91 @@ html.lenis, html.lenis body { height: auto; }
 <!-- ═══════════ BEE FOOTER COMPONENT ═══════════ -->
 <div id="bee-footer"></div>
 <script>
-// ── Preloader ──
+// ── Preloader — paced to match actual load time ──
 const preloader = document.getElementById('preloader');
 const preloaderFill = document.getElementById('preloaderFill');
 const preloaderPercent = document.getElementById('preloaderPercent');
+const preloaderStatus = document.getElementById('preloaderStatus');
 let loadProgress = 0;
+let loadComplete = false;
 
+// Rotating status phrases — BEE Modular construction language
+const statusPhrases = [
+  'Cutting S355 steel profiles',
+  'Aligning hexagonal geometry',
+  'Welding structural nodes',
+  'Verifying EN 1090-2 tolerances',
+  'Loading wireframe model',
+  'Assembling modular chassis',
+  'Calibrating CNC plasma path',
+  'Inspecting weld penetration',
+  'Computing edge geometry',
+  'Positioning ISO 1161 corners',
+  'Testing air tightness seal',
+  'Levelling foundation points',
+  'Mapping thermal envelope',
+  'Rendering structural skeleton',
+  'Fitting insulation layers',
+  'Commissioning building systems',
+  'Verifying dimensional accuracy',
+  'Preparing 3D wireframe view',
+  'Connecting inter-module joints',
+  'Running quality assurance checks',
+];
+
+let phraseIndex = 0;
+function rotateStatus() {
+  if (loadComplete) return;
+  const phrase = statusPhrases[phraseIndex % statusPhrases.length];
+  preloaderStatus.innerHTML = phrase + '<span class="dot-pulse">.</span><span class="dot-pulse">.</span><span class="dot-pulse">.</span>';
+  phraseIndex++;
+  setTimeout(rotateStatus, 1800 + Math.random() * 1200);
+}
+setTimeout(rotateStatus, 1200);
+
+// Slow, realistic progress — decelerates as it approaches 95%
 function simulateLoad() {
-  const increment = Math.random() * 12 + 3;
-  loadProgress = Math.min(loadProgress + increment, 95);
+  if (loadComplete) return;
+  // Slow down as we approach 95%: big jumps early, tiny crawl later
+  const remaining = 95 - loadProgress;
+  const speed = Math.max(0.15, remaining * 0.04);
+  const jitter = (Math.random() - 0.3) * speed * 0.5;
+  loadProgress = Math.min(loadProgress + speed + jitter, 95);
   preloaderFill.style.width = loadProgress + '%';
   preloaderPercent.textContent = Math.floor(loadProgress) + '%';
   if (loadProgress < 95) {
-    setTimeout(simulateLoad, 100 + Math.random() * 200);
+    // Interval slows down: ~150ms at start, ~600ms near 95%
+    const delay = 150 + (1 - remaining / 95) * 500 + Math.random() * 100;
+    setTimeout(simulateLoad, delay);
   }
 }
 simulateLoad();
 
 window.addEventListener('load', () => {
-  preloaderFill.style.width = '100%';
-  preloaderPercent.textContent = '100%';
-  setTimeout(() => {
-    preloader.classList.add('done');
-    setTimeout(() => preloader.remove(), 600);
-  }, 400);
+  loadComplete = true;
+  // Smooth final sprint from wherever we are to 100%
+  const startProg = loadProgress;
+  const startTime = performance.now();
+  const sprintDuration = 600;
+
+  function sprint() {
+    const elapsed = performance.now() - startTime;
+    const t = Math.min(1, elapsed / sprintDuration);
+    const eased = t * (2 - t); // ease-out
+    loadProgress = startProg + (100 - startProg) * eased;
+    preloaderFill.style.width = loadProgress + '%';
+    preloaderPercent.textContent = Math.floor(loadProgress) + '%';
+    if (t < 1) {
+      requestAnimationFrame(sprint);
+    } else {
+      preloaderStatus.innerHTML = 'Ready';
+      setTimeout(() => {
+        preloader.classList.add('done');
+        setTimeout(() => preloader.remove(), 600);
+      }, 300);
+    }
+  }
+  requestAnimationFrame(sprint);
 });
 
 // ── Scroll Reveal ──
