@@ -360,15 +360,38 @@
 @media (max-width: 1024px) {
   .nav-top-links, .nav-bottom-links { display: none; }
   .nav-top-cta { display: none; }
-  .nav-bottom-cta { display: none; }
   .bee-hamburger { display: block; }
-  .nav-bottom { width: calc(100% - 32px); bottom: calc(16px + env(safe-area-inset-bottom)); height: 52px; }
-  .music-vol { width: 40px; }
+
+  /* Compact mobile bottom bar — logo left, controls right */
+  .nav-bottom {
+    width: calc(100% - 32px);
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    height: 52px;
+    padding: 0 16px;
+  }
+  .nav-bottom-right {
+    gap: 8px !important;
+  }
+
+  /* Hide volume slider — just play/mute toggle */
+  .music-vol { display: none; }
+  .music-label { display: none; }
+  .music-bars { display: none; }
+
+  /* Compact music button */
+  .music-toggle-btn { padding: 10px; }
+
+  /* Reserve as compact pill in bottom bar */
+  .nav-bottom-cta {
+    display: inline-block !important;
+    font-size: 9px !important;
+    padding: 8px 14px !important;
+    letter-spacing: 0.08em !important;
+    white-space: nowrap;
+  }
 }
 @media (max-width: 768px) {
   .nav-top { padding: 0 24px; }
-  .music-label { display: none; }
-  .music-vol { width: 36px; }
 }
 `;
   document.head.appendChild(style);
@@ -397,10 +420,10 @@
   <ul class="nav-bottom-links">
     ${bottomLinks}
   </ul>
-  <div class="nav-bottom-right" style="display:flex;align-items:center;gap:16px;">
+  <div class="nav-bottom-right" style="display:flex;align-items:center;gap:12px;">
     ${musicHTML}
-    ${hamburgerHTML}
     <a href="${reserveHref()}" class="nav-bottom-cta"${reserveOnClick() ? ` onclick="${reserveOnClick()}"` : ''}>Reserve</a>
+    ${hamburgerHTML}
   </div>
 </nav>
 <!-- MOBILE OVERLAY -->
