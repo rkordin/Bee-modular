@@ -37,70 +37,32 @@
     { key: 'about',    labelTop: 'About',           labelBottom: 'About',          hash: '#bp-about',   file: 'about.html' },
   ];
 
+  // On index: use hash links + JS scroll. On subpages: use file links.
   function linkHref(item) {
     if (isIndex) return item.hash;
     return item.file;
   }
 
-  // Smooth scroll to an element by ID, handling absolute-positioned elements inside scroll containers
-  function scrollToSection(id) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    // For elements inside the exploded section (absolutely positioned),
-    // we need to find the scroll container and calculate the real offset
-    const exploded = document.getElementById('explodedSection');
-    if (exploded && exploded.contains(el)) {
-      // The element's `top` style is relative to the exploded section's scroll spacer
-      // Calculate how far down the page the exploded section starts, then add the card's top offset
-      const explodedTop = exploded.getBoundingClientRect().top + window.scrollY;
-      const cardTopStyle = parseInt(el.style.top) || 0;
-      // Convert vh to px
-      const cardTopPx = (cardTopStyle / 100) * window.innerHeight;
-      window.scrollTo({ top: explodedTop + cardTopPx, behavior: 'smooth' });
-    } else {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  }
-
-  function linkOnClick(item) {
-    if (isIndex) {
-      const id = item.hash.replace('#', '');
-      return `event.preventDefault();(${scrollToSection.toString()})('${id}')`;
-    }
-    return '';
-  }
-
   function reserveHref() {
-    if (isIndex) return '#bp-reserve';
     return 'reserve.html';
-  }
-
-  function reserveOnClick() {
-    if (isIndex) {
-      return `event.preventDefault();(${scrollToSection.toString()})('bp-reserve')`;
-    }
-    return '';
   }
 
   function activeClass(key) {
     return key === activePage ? ' style="color:var(--on-dark)"' : '';
   }
 
-  // ── Build link lists ──
-  const topLinks = navItems.map(item => {
-    const oc = linkOnClick(item);
-    return `<li><a href="${linkHref(item)}"${oc ? ` onclick="${oc}"` : ''}${activeClass(item.key)}>${item.labelTop}</a></li>`;
-  }).join('\n    ');
+  // ── Build link lists (all links are plain <a> tags — JS scroll attached after injection) ──
+  const topLinks = navItems.map(item =>
+    `<li><a href="${linkHref(item)}" data-nav-target="${item.hash.replace('#','')}"${activeClass(item.key)}>${item.labelTop}</a></li>`
+  ).join('\n    ');
 
-  const bottomLinks = navItems.map(item => {
-    const oc = linkOnClick(item);
-    return `<li><a href="${linkHref(item)}"${oc ? ` onclick="${oc}"` : ''}${activeClass(item.key)}>${item.labelBottom}</a></li>`;
-  }).join('\n    ');
+  const bottomLinks = navItems.map(item =>
+    `<li><a href="${linkHref(item)}" data-nav-target="${item.hash.replace('#','')}"${activeClass(item.key)}>${item.labelBottom}</a></li>`
+  ).join('\n    ');
 
-  const mobileLinks = navItems.map(item => {
-    const oc = linkOnClick(item);
-    return `<li><a href="${linkHref(item)}"${oc ? ` onclick="${oc}"` : ''} class="bee-mobile-link">${item.labelTop}</a></li>`;
-  }).join('\n      ');
+  const mobileLinks = navItems.map(item =>
+    `<li><a href="${linkHref(item)}" data-nav-target="${item.hash.replace('#','')}" class="bee-mobile-link">${item.labelTop}</a></li>`
+  ).join('\n      ');
 
   // ── Hamburger button HTML (reused in top & bottom navs) ──
   const hamburgerHTML = `<button class="bee-hamburger" aria-label="Menu"><span></span><span></span><span></span></button>`;
@@ -438,7 +400,7 @@
     ${topLinks}
   </ul>
   <div class="nav-top-right">
-    <a href="${reserveHref()}" class="nav-top-cta"${reserveOnClick() ? ` onclick="${reserveOnClick()}"` : ''}>Reserve</a>
+    <a href="${reserveHref()}" class="nav-top-cta">Reserve</a>
     ${hamburgerHTML}
   </div>
 </nav>
@@ -453,7 +415,7 @@
   </ul>
   <div class="nav-bottom-right" style="display:flex;align-items:center;gap:12px;">
     ${musicHTML}
-    <a href="${reserveHref()}" class="nav-bottom-cta"${reserveOnClick() ? ` onclick="${reserveOnClick()}"` : ''}>Reserve</a>
+    <a href="${reserveHref()}" class="nav-bottom-cta">Reserve</a>
     ${hamburgerHTML}
   </div>
 </nav>
@@ -463,7 +425,7 @@
   <ul>
     ${mobileLinks}
   </ul>
-  <a href="${reserveHref()}" class="bee-mobile-cta bee-mobile-link"${reserveOnClick() ? ` onclick="${reserveOnClick()}"` : ''}>Reserve</a>
+  <a href="${reserveHref()}" class="bee-mobile-cta bee-mobile-link">Reserve</a>
 </div>
 ${audioHTML}
 `;
@@ -574,5 +536,31 @@ ${audioHTML}
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeMobileMenu();
   });
+
+  // ── Nav link scroll handling (index page only) ──
+  if (isIndex) {
+    document.querySelectorAll('[data-nav-target]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        const targetId = link.getAttribute('data-nav-target');
+        const el = document.getElementById(targetId);
+        if (!el) return; // let the link navigate normally if element not found
+
+        e.preventDefault();
+        closeMobileMenu();
+
+        // Elements inside the exploded section are absolutely positioned —
+        // browser can't scroll to them normally. Calculate real page offset.
+        const exploded = document.getElementById('explodedSection');
+        if (exploded && exploded.contains(el)) {
+          const explodedTop = exploded.getBoundingClientRect().top + window.scrollY;
+          const cardTopVh = parseInt(el.style.top) || 0;
+          const cardTopPx = (cardTopVh / 100) * window.innerHeight;
+          window.scrollTo({ top: explodedTop + cardTopPx, behavior: 'smooth' });
+        } else {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  }
 
 })();
