@@ -67,6 +67,13 @@
     `<li><a href="${linkHref(item)}"${activeClass(item.key)}>${item.labelBottom}</a></li>`
   ).join('\n    ');
 
+  const mobileLinks = navItems.map(item =>
+    `<li><a href="${linkHref(item)}" class="bee-mobile-link">${item.labelTop}</a></li>`
+  ).join('\n      ');
+
+  // ── Hamburger button HTML (reused in top & bottom navs) ──
+  const hamburgerHTML = `<button class="bee-hamburger" aria-label="Menu"><span></span><span></span><span></span></button>`;
+
   // ── Music player HTML ──
   const musicHTML = showMusic ? `
     <div class="nav-bottom-music" id="navMusic">
@@ -260,8 +267,100 @@
   border-radius: 50%; border: none; cursor: pointer;
 }
 
+/* ════════════════════════════════════════════════
+   HAMBURGER BUTTON
+   ════════════════════════════════════════════════ */
+.bee-hamburger {
+  display: none; /* hidden on desktop */
+  width: 28px; height: 20px;
+  position: relative; cursor: pointer;
+  background: none; border: none; padding: 0;
+  z-index: 10001;
+  flex-shrink: 0;
+}
+.bee-hamburger span {
+  display: block; position: absolute; left: 0;
+  width: 100%; height: 2px;
+  background: var(--headline, #1A1A1A);
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1),
+              opacity 0.25s ease,
+              top 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.bee-hamburger span:nth-child(1) { top: 0; }
+.bee-hamburger span:nth-child(2) { top: 9px; }
+.bee-hamburger span:nth-child(3) { top: 18px; }
+
+/* Animate to X when open */
+.bee-hamburger.open span:nth-child(1) { top: 9px; transform: rotate(45deg); }
+.bee-hamburger.open span:nth-child(2) { opacity: 0; }
+.bee-hamburger.open span:nth-child(3) { top: 9px; transform: rotate(-45deg); }
+
+/* Dark context (nav-top.nav-dark or when inside bottom nav) */
+.nav-top.nav-dark .bee-hamburger span,
+.nav-bottom .bee-hamburger span {
+  background: var(--on-dark, #F5F0EB);
+}
+/* When overlay is open, force light color on hamburger */
+.bee-hamburger.open span {
+  background: #F5F0EB;
+}
+
+/* ════════════════════════════════════════════════
+   MOBILE OVERLAY MENU
+   ════════════════════════════════════════════════ */
+.bee-mobile-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  background: #1A1A1A;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0;
+  opacity: 0; visibility: hidden;
+  transform: translateX(100%);
+  transition: opacity 0.4s ease, transform 0.45s cubic-bezier(0.4,0,0.2,1), visibility 0s 0.45s;
+}
+.bee-mobile-overlay.open {
+  opacity: 1; visibility: visible;
+  transform: translateX(0);
+  transition: opacity 0.4s ease, transform 0.45s cubic-bezier(0.4,0,0.2,1), visibility 0s 0s;
+}
+.bee-mobile-overlay ul {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 28px;
+}
+.bee-mobile-overlay ul li a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px; font-weight: 400;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: #b5a291; text-decoration: none;
+  transition: color 0.3s;
+}
+.bee-mobile-overlay ul li a:hover { color: #F5F0EB; }
+.bee-mobile-overlay .bee-mobile-cta {
+  margin-top: 40px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: #F5F0EB; background: none;
+  border: 1px solid rgba(245,240,235,0.25);
+  padding: 14px 40px; cursor: pointer;
+  text-decoration: none; display: inline-block;
+  transition: all 0.3s;
+}
+.bee-mobile-overlay .bee-mobile-cta:hover {
+  border-color: #F5F0EB; background: rgba(245,240,235,0.08);
+}
+.bee-mobile-overlay .bee-mobile-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 0.15em;
+  text-transform: uppercase; color: rgba(245,240,235,0.35);
+  margin-bottom: 32px;
+}
+
 @media (max-width: 1024px) {
   .nav-top-links, .nav-bottom-links { display: none; }
+  .nav-top-cta { display: none; }
+  .bee-hamburger { display: block; }
   .nav-bottom { width: calc(100% - 32px); bottom: calc(16px + env(safe-area-inset-bottom)); height: 52px; }
   .music-vol { width: 40px; }
 }
@@ -285,6 +384,7 @@
   </ul>
   <div class="nav-top-right">
     <a href="${reserveHref()}" class="nav-top-cta"${reserveOnClick() ? ` onclick="${reserveOnClick()}"` : ''}>Reserve</a>
+    ${hamburgerHTML}
   </div>
 </nav>
 
@@ -301,6 +401,14 @@
     <a href="${reserveHref()}" class="nav-bottom-cta"${reserveOnClick() ? ` onclick="${reserveOnClick()}"` : ''}>Reserve</a>
   </div>
 </nav>
+<!-- MOBILE OVERLAY -->
+<div class="bee-mobile-overlay" id="beeMobileOverlay">
+  <span class="bee-mobile-label">Navigation</span>
+  <ul>
+    ${mobileLinks}
+  </ul>
+  <a href="${reserveHref()}" class="bee-mobile-cta bee-mobile-link"${reserveOnClick() ? ` onclick="${reserveOnClick()}"` : ''}>Reserve</a>
+</div>
 ${audioHTML}
 `;
 
@@ -371,5 +479,44 @@ ${audioHTML}
     subpageScrollHandler();
   }
   // On index page, the existing ScrollTrigger/GSAP code controls show/hide via navTop/navBottom IDs.
+
+  // ── Mobile hamburger menu logic ──
+  const overlay = document.getElementById('beeMobileOverlay');
+  const hamburgers = document.querySelectorAll('.bee-hamburger');
+  let mobileMenuOpen = false;
+
+  function toggleMobileMenu() {
+    mobileMenuOpen = !mobileMenuOpen;
+    overlay.classList.toggle('open', mobileMenuOpen);
+    hamburgers.forEach(btn => btn.classList.toggle('open', mobileMenuOpen));
+    document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
+  }
+
+  function closeMobileMenu() {
+    if (!mobileMenuOpen) return;
+    mobileMenuOpen = false;
+    overlay.classList.remove('open');
+    hamburgers.forEach(btn => btn.classList.remove('open'));
+    document.body.style.overflow = '';
+  }
+
+  hamburgers.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMobileMenu();
+    });
+  });
+
+  // Close on link click
+  document.querySelectorAll('.bee-mobile-link').forEach(link => {
+    link.addEventListener('click', () => {
+      closeMobileMenu();
+    });
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMobileMenu();
+  });
 
 })();

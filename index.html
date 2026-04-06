@@ -268,7 +268,7 @@ body {
 
 /* ── Glass Zone (wrapper for panel + scroll track) ── */
 .hero-glass-zone {
-  position: fixed; top: 50%; left: 48px;
+  position: absolute; top: 50%; left: 48px;
   transform: translateY(-50%);
   z-index: 11;
   max-height: 80vh;
@@ -2111,8 +2111,49 @@ html.lenis, html.lenis body { height: auto; }
   .hero-bottom-left { left: 24px; }
   .hero-bottom-right { right: 24px; }
   .hero-finale-tag { top: 24px; right: 24px; }
-  .hero-spacer { height: 800vh; }
+  .hero-spacer { height: 1000vh; }
   .bp-layer-bar { grid-template-columns: 1fr; gap: 8px; }
+
+  /* Fix glass panel positioning — absolute instead of fixed (iOS bug) */
+  .hero-glass-zone {
+    position: absolute;
+    left: 0; right: 0;
+    top: auto; bottom: 0;
+    transform: none;
+    max-height: 50vh;
+    width: 100%;
+    padding: 0 16px;
+  }
+
+  /* Reposition product images */
+  .hero-3d-stage { padding-left: 0; justify-content: center; }
+  .hero-product-wrapper { width: 80vw; height: 35vh; }
+  .hero-product-wrapper img { height: 35vh; }
+
+  /* Kill expensive animations on mobile */
+  .hero-sticky { perspective: none; }
+  .hero-product-wrapper { animation: none; }
+  .hero-stage-inner .si .word {
+    filter: none; transform: none;
+    transition: opacity 0.25s ease;
+  }
+
+  /* Enlarge touch targets to 44px minimum */
+  .hero-nav-btn { padding: 14px 24px; min-height: 44px; }
+  .btn-accent, .btn-ghost { padding: 14px 24px; font-size: 11px; min-height: 44px; }
+
+  /* Fix small font sizes */
+  .hero-stage-body, .hero-stage-body2,
+  .hero-intro-body, .bp-build-spec,
+  .bp-becomes-card .desc, .bp-process-desc {
+    font-size: 14px;
+  }
+
+  /* Reduce backdrop-filter intensity */
+  .hero-glass-panel, .hero-nav-btn, .ec-card {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
 }
 .exploded-section { position: relative; }
 #explodedScene {
@@ -2299,7 +2340,7 @@ html.lenis, html.lenis body { height: auto; }
         <img src="PNG%20IMAGES%20FRAMES/BEE_MODULAR-4.webp" alt="Stage 4 — Warmth" data-hero-img="3" data-cms="true" data-cms-key="hero-4">
         <img src="PNG%20IMAGES%20FRAMES/BEE_MODULAR-5.webp" alt="Stage 5 — Glass" data-hero-img="4" data-cms="true" data-cms-key="hero-5">
         <img src="PNG%20IMAGES%20FRAMES/BEE_MODULAR-6.webp" alt="Stage 6 — Complete" data-hero-img="5" data-cms="true" data-cms-key="hero-6">
-        <video id="heroVideo" muted playsinline preload="auto" style="pointer-events:none;">
+        <video id="heroVideo" muted playsinline preload="metadata" style="pointer-events:none;">
           <source src="VIDEO/BEE_MOCULAR%20HERO%201920x1600px.mp4" type="video/mp4">
         </video>
       </div>
@@ -2692,6 +2733,10 @@ function updateHero() {
     if (shadowEl) shadowEl.style.opacity = '0';
     if (heroProductWrapperEl) heroProductWrapperEl.style.transform = '';
     if (heroVideo) { heroVideo.style.opacity = ''; heroVideo.style.transform = ''; }
+    if (heroVideo && heroVideo.paused) {
+      heroVideo.loop = true;
+      heroVideo.play().catch(() => {});
+    }
     if (heroVideo && heroVideo.readyState >= 2 && window.innerWidth >= 768) {
       heroVideo.currentTime = withinStage * heroVideo.duration;
     }
@@ -2813,11 +2858,11 @@ window.addEventListener('scroll', () => {
   updateScrollDots(stageIndex);
 }, { passive: true });
 
-// Mobile video autoplay
-(function() {
-  const heroVideo = document.getElementById('heroVideo');
-  if (window.innerWidth < 768 && heroVideo) { heroVideo.loop = true; heroVideo.play().catch(() => {}); }
-})();
+// Mobile video autoplay — disabled, now triggered in finale stage instead
+// (function() {
+//   const heroVideo = document.getElementById('heroVideo');
+//   if (window.innerWidth < 768 && heroVideo) { heroVideo.loop = true; heroVideo.play().catch(() => {}); }
+// })();
 
 // Mouse glow
 heroSticky.addEventListener('mousemove', (e) => {
@@ -3019,14 +3064,17 @@ updateHero();
   'use strict';
 
   // ── Lenis (driven ONLY by GSAP ticker, no standalone rAF) ──
-  const lenis = new Lenis({
-    duration: 1.2,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    smooth: true,
-  });
+  const isMobileLenis = window.innerWidth < 768;
+  if (!isMobileLenis) {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smooth: true,
+    });
 
-  lenis.on('scroll', ScrollTrigger.update);
-  gsap.ticker.add((time) => lenis.raf(time * 1000));
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => lenis.raf(time * 1000));
+  }
   gsap.ticker.lagSmoothing(0);
   gsap.registerPlugin(ScrollTrigger);
 
@@ -3250,9 +3298,14 @@ import * as THREE from 'three';
 
       let currentScroll = 0;
       let currentBrightness = 200;
+      const frameInterval = isMobile ? 1000 / 30 : 0;
+      let lastFrame = 0;
 
       function animate() {
         requestAnimationFrame(animate);
+        const now = performance.now();
+        if (isMobile && now - lastFrame < frameInterval) return;
+        lastFrame = now;
 
         currentScroll += (rawScroll - currentScroll) * 0.06;
 
