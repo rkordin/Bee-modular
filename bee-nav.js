@@ -360,6 +360,7 @@
 @media (max-width: 1024px) {
   .nav-top-links, .nav-bottom-links { display: none; }
   .nav-top-cta { display: none; }
+  .nav-bottom-cta { display: none; }
   .bee-hamburger { display: block; }
   .nav-bottom { width: calc(100% - 32px); bottom: calc(16px + env(safe-area-inset-bottom)); height: 52px; }
   .music-vol { width: 40px; }
@@ -398,6 +399,7 @@
   </ul>
   <div class="nav-bottom-right" style="display:flex;align-items:center;gap:16px;">
     ${musicHTML}
+    ${hamburgerHTML}
     <a href="${reserveHref()}" class="nav-bottom-cta"${reserveOnClick() ? ` onclick="${reserveOnClick()}"` : ''}>Reserve</a>
   </div>
 </nav>

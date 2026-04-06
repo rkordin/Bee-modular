@@ -2105,34 +2105,101 @@ html.lenis, html.lenis body { height: auto; }
   .bp-footer-bottom { flex-direction: column; text-align: center; }
   .bp-stats-grid { flex-direction: column; align-items: center; }
   .hero-intro { padding: 0 24px; left: 24px; }
-  .hero-product-wrapper img { height: 40vh; }
   .hero-stage { left: 24px; max-width: 280px; }
-  .hero-glass-panel { width: 100% !important; min-width: 0 !important; padding: 80px 24px 40px; }
   .hero-bottom-left { left: 24px; }
   .hero-bottom-right { right: 24px; }
   .hero-finale-tag { top: 24px; right: 24px; }
   .hero-spacer { height: 1000vh; }
   .bp-layer-bar { grid-template-columns: 1fr; gap: 8px; }
 
-  /* Fix glass panel positioning — absolute instead of fixed (iOS bug) */
-  .hero-glass-zone {
+  /* ── Mobile Hero: Image Top / Text Bottom ── */
+
+  /* Product image area — top 45% of viewport */
+  .hero-3d-stage {
     position: absolute;
-    left: 0; right: 0;
-    top: auto; bottom: 0;
-    transform: none;
-    max-height: 50vh;
-    width: 100%;
-    padding: 0 16px;
+    top: 0; left: 0; right: 0;
+    height: 45vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
   }
 
-  /* Reposition product images */
-  .hero-3d-stage { padding-left: 0; justify-content: center; }
-  .hero-product-wrapper { width: 80vw; height: 35vh; }
-  .hero-product-wrapper img { height: 35vh; }
+  .hero-product-wrapper {
+    width: 75vw;
+    height: 38vh;
+    animation: none;
+  }
+
+  .hero-product-wrapper img {
+    height: 38vh;
+    max-width: 75vw;
+    object-fit: contain;
+  }
+
+  /* Glass zone — bottom 55% as a card sheet */
+  .hero-glass-zone {
+    position: absolute;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 55vh;
+    transform: none;
+    width: 100%;
+    max-height: none;
+    padding: 0;
+    z-index: 11;
+  }
+
+  /* Glass panel — full bottom sheet with rounded top corners */
+  .hero-glass-panel {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    height: 100%;
+    padding: 24px 24px 80px;
+    overflow-y: auto;
+    border-radius: 16px 16px 0 0;
+    background: rgba(248, 246, 243, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .hero-stage-inner {
+    max-height: none;
+    padding: 20px 24px 24px 24px;
+    border-left: none;
+    border-top: 2px solid rgba(181,162,145,0.25);
+  }
+
+  /* Stage counter repositioned between image and panel */
+  .hero-counter {
+    position: absolute;
+    top: 42vh;
+    right: 24px;
+    z-index: 12;
+  }
+
+  /* Stage nav buttons fixed at bottom of screen */
+  .hero-stage-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 15;
+    padding: 12px 24px;
+    background: rgba(248, 246, 243, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: space-between;
+    transform: none;
+  }
 
   /* Kill expensive animations on mobile */
   .hero-sticky { perspective: none; }
-  .hero-product-wrapper { animation: none; }
+
   .hero-stage-inner .si .word {
     filter: none; transform: none;
     transition: opacity 0.25s ease;
@@ -2149,11 +2216,14 @@ html.lenis, html.lenis body { height: auto; }
     font-size: 14px;
   }
 
-  /* Reduce backdrop-filter intensity */
-  .hero-glass-panel, .hero-nav-btn, .ec-card {
+  /* Reduce backdrop-filter on nav btn and cards only */
+  .hero-nav-btn, .ec-card {
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
   }
+
+  /* Contact shadow hidden on mobile — image is cropped at 45vh */
+  .hero-contact-shadow { display: none; }
 }
 .exploded-section { position: relative; }
 #explodedScene {
