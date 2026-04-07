@@ -406,15 +406,63 @@ import * as THREE from 'three';
   renderer.setClearColor(0x000000, 0);
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 500);
-  camera.position.set(0, 0.4, 3.0);
+  const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 50000);
 
-  const lineMaterial = new THREE.LineBasicMaterial({
-    color: 0xb5a291, transparent: true, opacity: 0.15, linewidth: 1,
-  });
+  let rawScroll = 0;
+  let smoothScroll = 0;
+  window.addEventListener('scroll', () => {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    rawScroll = max > 0 ? window.scrollY / max : 0;
+  }, { passive: true });
 
-  let wrapper = null;
-  let baseScale = 1;
+  const cameraScript = [
+    { t: 0.00, pos: [0, 0.4, 3.0],     target: [0, 0, 0],      fov: 35 },
+    { t: 0.05, pos: [0.8, 0.3, 2.2],   target: [0, 0, 0],      fov: 38 },
+    { t: 0.10, pos: [1.5, 0.2, 1.5],   target: [0, 0, 0],      fov: 40 },
+    { t: 0.16, pos: [0.6, 0.5, 0.5],   target: [0.3, 0.4, 0],  fov: 30 },
+    { t: 0.22, pos: [0.3, 0.35, 0.25], target: [0.2, 0.3, 0],  fov: 25 },
+    { t: 0.30, pos: [-1.8, 0.6, 1.8],  target: [0, 0.1, 0],    fov: 35 },
+    { t: 0.38, pos: [-1.2, 0.1, -1.8], target: [0, 0, 0],       fov: 40 },
+    { t: 0.45, pos: [0, 2.8, 0.3],     target: [0, 0, 0],       fov: 38 },
+    { t: 0.52, pos: [0.1, 2.0, 0.8],   target: [0, 0.3, 0],     fov: 35 },
+    { t: 0.60, pos: [1.0, -0.3, 1.2],  target: [0, 0.4, 0],     fov: 42 },
+    { t: 0.68, pos: [1.6, 0.4, 1.4],   target: [0, 0.1, 0],     fov: 36 },
+    { t: 0.76, pos: [1.0, 0.6, 2.0],   target: [0, 0, 0],       fov: 34 },
+    { t: 0.84, pos: [0, 0.5, 2.8],     target: [0, 0, 0],       fov: 32 },
+    { t: 0.92, pos: [-0.5, 0.3, 3.2],  target: [0, 0, 0],       fov: 30 },
+    { t: 1.00, pos: [0, 0.2, 3.5],     target: [0, 0, 0],       fov: 28 },
+  ];
+
+  function smoothstep(t) { return t * t * (3 - 2 * t); }
+  function lerpVec3(a, b, t) { return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t]; }
+  function lerpScalar(a, b, t) { return a + (b - a) * t; }
+
+  function getCameraState(scroll) {
+    let i = 0;
+    for (; i < cameraScript.length - 1; i++) {
+      if (cameraScript[i + 1].t >= scroll) break;
+    }
+    i = Math.min(i, cameraScript.length - 2);
+    const kf1 = cameraScript[i];
+    const kf2 = cameraScript[i + 1];
+    const range = kf2.t - kf1.t;
+    const raw = range > 0 ? (scroll - kf1.t) / range : 0;
+    const t = smoothstep(Math.max(0, Math.min(1, raw)));
+    return {
+      pos: lerpVec3(kf1.pos, kf2.pos, t),
+      target: lerpVec3(kf1.target, kf2.target, t),
+      fov: lerpScalar(kf1.fov, kf2.fov, t),
+    };
+  }
+
+  function getBgBrightness() {
+    const bgCanvas = document.getElementById('bg-canvas');
+    if (!bgCanvas) return 200;
+    const bg = getComputedStyle(bgCanvas).backgroundColor;
+    const m = bg.match(/(\d+)/g);
+    if (!m || m.length < 3) return 200;
+    return parseInt(m[0]) * 0.299 + parseInt(m[1]) * 0.587 + parseInt(m[2]) * 0.114;
+  }
 
   fetch('3d%20files/base-frame-edges.bin')
     .then(r => r.arrayBuffer())
@@ -424,6 +472,7 @@ import * as THREE from 'three';
       const meshCount = new Uint32Array(buffer, 24, 1)[0];
       let offset = 28;
 
+      const allLines = [];
       const edgesGroup = new THREE.Group();
 
       for (let m = 0; m < meshCount; m++) {
@@ -441,46 +490,86 @@ import * as THREE from 'three';
 
         const geom = new THREE.BufferGeometry();
         geom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        edgesGroup.add(new THREE.LineSegments(geom, lineMaterial));
+        const mat = new THREE.LineBasicMaterial({
+          color: 0xb5a291, transparent: true, opacity: 0.30, linewidth: 1,
+        });
+        const lines = new THREE.LineSegments(geom, mat);
+        edgesGroup.add(lines);
+        allLines.push(lines);
       }
 
       const box = new THREE.Box3().setFromObject(edgesGroup);
       const center = box.getCenter(new THREE.Vector3());
+      const size = box.getSize(new THREE.Vector3());
       edgesGroup.position.set(-center.x, -center.y, -center.z);
 
-      wrapper = new THREE.Group();
+      const wrapper = new THREE.Group();
       wrapper.add(edgesGroup);
       scene.add(wrapper);
 
-      const size = box.getSize(new THREE.Vector3());
-      baseScale = 2.0 / Math.max(size.x, size.y, size.z);
-      wrapper.scale.setScalar(baseScale);
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const scaleFactor = maxDim * 0.5;
 
-      animate(performance.now());
+      camera.near = scaleFactor * 0.001;
+      camera.far = scaleFactor * 20;
+      camera.updateProjectionMatrix();
+
+      // Start hidden — lines draw in as you scroll
+      allLines.forEach(line => line.geometry.setDrawRange(0, 0));
+
+      let currentScroll = 0;
+      let currentBrightness = 200;
+      const frameInterval = isMobile ? 1000 / 30 : 0;
+      let lastFrame = 0;
+
+      function animate() {
+        requestAnimationFrame(animate);
+        const now = performance.now();
+        if (isMobile && now - lastFrame < frameInterval) return;
+        lastFrame = now;
+
+        currentScroll += (rawScroll - currentScroll) * 0.06;
+
+        // Camera choreography
+        const cam = getCameraState(currentScroll);
+        camera.position.set(cam.pos[0]*scaleFactor, cam.pos[1]*scaleFactor, cam.pos[2]*scaleFactor);
+        camera.lookAt(cam.target[0]*scaleFactor, cam.target[1]*scaleFactor, cam.target[2]*scaleFactor);
+        if (Math.abs(camera.fov - cam.fov) > 0.1) {
+          camera.fov = cam.fov;
+          camera.updateProjectionMatrix();
+        }
+
+        // Gentle continuous rotation
+        wrapper.rotation.y = currentScroll * Math.PI * 0.8 + performance.now() * 0.000015;
+
+        // Progressive line drawing
+        const drawProgress = Math.min(1, currentScroll * 1.8);
+        allLines.forEach((line, i) => {
+          const total = line.geometry.attributes.position.count;
+          const stagger = (i / Math.max(1, allLines.length - 1)) * 0.25;
+          const localProg = Math.max(0, Math.min(1, (drawProgress - stagger) / 0.75));
+          const eased = smoothstep(localProg);
+          line.geometry.setDrawRange(0, Math.floor(total * eased));
+        });
+
+        // Adapt line color to background brightness
+        const targetBrightness = getBgBrightness();
+        currentBrightness += (targetBrightness - currentBrightness) * 0.05;
+        const isDark = currentBrightness < 100;
+
+        const pulse = Math.sin(currentScroll * Math.PI * 6) * 0.03;
+        const baseOpacity = isDark ? (0.18 + pulse) : (0.28 + pulse);
+
+        allLines.forEach(line => {
+          line.material.opacity = baseOpacity;
+          line.material.color.setHex(0xb5a291);
+        });
+
+        renderer.render(scene, camera);
+      }
+      animate();
     })
-    .catch(err => console.warn('3D load failed:', err));
-
-  const startTime = performance.now();
-  const frameInterval = isMobile ? 1000 / 30 : 0;
-  let lastFrame = 0;
-
-  function animate(now) {
-    requestAnimationFrame(animate);
-    if (isMobile && now - lastFrame < frameInterval) return;
-    lastFrame = now;
-
-    if (wrapper) {
-      const elapsed = (performance.now() - startTime) * 0.001;
-      wrapper.rotation.y = elapsed * 0.08;
-      const breathe = 1.0 + Math.sin(elapsed * 0.5) * 0.015;
-      wrapper.scale.setScalar(baseScale * breathe);
-    }
-    renderer.render(scene, camera);
-  }
-
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && wrapper) animate(performance.now());
-  });
+    .catch(err => console.warn('3D wireframe load failed:', err));
 
   let resizeTimer;
   window.addEventListener('resize', () => {
