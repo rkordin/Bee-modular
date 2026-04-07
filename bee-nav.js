@@ -51,17 +51,17 @@
     return key === activePage ? ' style="color:var(--on-dark)"' : '';
   }
 
-  // ── Build link lists (all links are plain <a> tags — JS scroll attached after injection) ──
+  // ── Build link lists — plain <a> tags, always navigate to file ──
   const topLinks = navItems.map(item =>
-    `<li><a href="${linkHref(item)}" data-nav-target="${item.hash.replace('#','')}"${activeClass(item.key)}>${item.labelTop}</a></li>`
+    `<li><a href="${linkHref(item)}"${activeClass(item.key)}>${item.labelTop}</a></li>`
   ).join('\n    ');
 
   const bottomLinks = navItems.map(item =>
-    `<li><a href="${linkHref(item)}" data-nav-target="${item.hash.replace('#','')}"${activeClass(item.key)}>${item.labelBottom}</a></li>`
+    `<li><a href="${linkHref(item)}"${activeClass(item.key)}>${item.labelBottom}</a></li>`
   ).join('\n    ');
 
   const mobileLinks = navItems.map(item =>
-    `<li><a href="${linkHref(item)}" data-nav-target="${item.hash.replace('#','')}" class="bee-mobile-link">${item.labelTop}</a></li>`
+    `<li><a href="${linkHref(item)}" class="bee-mobile-link">${item.labelTop}</a></li>`
   ).join('\n      ');
 
   // ── Hamburger button HTML (reused in top & bottom navs) ──
@@ -536,31 +536,5 @@ ${audioHTML}
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeMobileMenu();
   });
-
-  // ── Nav link scroll handling (index page only) ──
-  if (isIndex) {
-    document.querySelectorAll('[data-nav-target]').forEach(link => {
-      link.addEventListener('click', (e) => {
-        const targetId = link.getAttribute('data-nav-target');
-        const el = document.getElementById(targetId);
-        if (!el) return; // let the link navigate normally if element not found
-
-        e.preventDefault();
-        closeMobileMenu();
-
-        // Elements inside the exploded section are absolutely positioned —
-        // browser can't scroll to them normally. Calculate real page offset.
-        const exploded = document.getElementById('explodedSection');
-        if (exploded && exploded.contains(el)) {
-          const explodedTop = exploded.getBoundingClientRect().top + window.scrollY;
-          const cardTopVh = parseInt(el.style.top) || 0;
-          const cardTopPx = (cardTopVh / 100) * window.innerHeight;
-          window.scrollTo({ top: explodedTop + cardTopPx, behavior: 'smooth' });
-        } else {
-          el.scrollIntoView({ behavior: 'smooth' });
-        }
-      });
-    });
-  }
 
 })();
