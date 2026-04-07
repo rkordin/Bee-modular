@@ -2380,6 +2380,7 @@ html.lenis, html.lenis body { height: auto; }
 .ec-slideshow:hover .ec-slide { filter: saturate(0.8) contrast(1.0); }
 .ec-hover-points > div {
   cursor: pointer;
+  pointer-events: all;
   transition: color 0.25s ease, opacity 0.25s ease;
   opacity: 0.55;
 }
@@ -3879,27 +3880,32 @@ import * as THREE from 'three';
     });
   });
 
-  // ── Hover Slideshow — Eight Possibilities ──
+})();
+</script>
+
+<!-- ── Hover Slideshow — Eight Possibilities ── -->
+<script>
+(function() {
   const hoverPoints = document.querySelectorAll('#ecHoverPoints [data-hover-slide]');
   const slides = document.querySelectorAll('#ecSlideshow .ec-slide');
-  if (hoverPoints.length && slides.length) {
-    // Set first point active
-    hoverPoints[0].classList.add('ec-point-active');
+  if (!hoverPoints.length || !slides.length) return;
 
-    hoverPoints.forEach(point => {
-      point.addEventListener('mouseenter', () => {
-        const idx = parseInt(point.getAttribute('data-hover-slide'));
-        // Remove active from all
-        slides.forEach(s => s.classList.remove('active'));
-        hoverPoints.forEach(p => p.classList.remove('ec-point-active'));
-        // Activate target
-        slides[idx]?.classList.add('active');
-        point.classList.add('ec-point-active');
-      });
-      // Prevent card click when clicking a slideshow item
-      point.addEventListener('click', (e) => e.stopPropagation());
+  // Set first point active
+  hoverPoints[0].classList.add('ec-point-active');
+
+  hoverPoints.forEach(function(point) {
+    point.addEventListener('mouseenter', function() {
+      const idx = parseInt(point.getAttribute('data-hover-slide'));
+      // Remove active from all
+      slides.forEach(function(s) { s.classList.remove('active'); });
+      hoverPoints.forEach(function(p) { p.classList.remove('ec-point-active'); });
+      // Activate target
+      if (slides[idx]) slides[idx].classList.add('active');
+      point.classList.add('ec-point-active');
     });
-  }
+    // Prevent card navigation when hovering slideshow items
+    point.addEventListener('click', function(e) { e.stopPropagation(); });
+  });
 })();
 </script>
 
