@@ -2237,7 +2237,7 @@ html.lenis, html.lenis body { height: auto; }
   /* Contact shadow hidden on mobile — image is cropped at 45vh */
   .hero-contact-shadow { display: none; }
 }
-.exploded-section { position: relative; }
+.exploded-section { position: relative; margin-top: -50vh; }
 #explodedScene {
   position: sticky; top: 0; left: 0;
   width: 100vw; height: 100vh;
@@ -2354,6 +2354,44 @@ html.lenis, html.lenis body { height: auto; }
   color: var(--accent);
   font-style: italic;
   font-size: 14px;
+}
+
+/* ── Hover Slideshow (Eight Possibilities) ── */
+.ec-slideshow {
+  position: relative;
+  width: 65vw; max-width: 900px; height: auto;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  border: 1px solid rgba(181,162,145,0.08);
+  flex-shrink: 1;
+  pointer-events: all;
+}
+.ec-slide {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
+  transition: clip-path 0.7s cubic-bezier(0.33, 1, 0.68, 1);
+  filter: saturate(0.4) contrast(1.05);
+}
+.ec-slide.active {
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+}
+.ec-slideshow:hover .ec-slide { filter: saturate(0.8) contrast(1.0); }
+.ec-hover-points > div {
+  cursor: pointer;
+  transition: color 0.25s ease, opacity 0.25s ease;
+  opacity: 0.55;
+}
+.ec-hover-points > div.ec-point-active {
+  opacity: 1;
+  color: var(--accent);
+}
+@media (max-width: 1024px) {
+  .ec-slideshow { width: 85vw; max-width: none; aspect-ratio: 16/10; }
+}
+@media (max-width: 768px) {
+  .ec-slideshow { width: 92vw; aspect-ratio: 4/3; }
 }
 .ec-image {
   width: 65vw; max-width: 1100px; height: auto;
@@ -2606,21 +2644,31 @@ html.lenis, html.lenis body { height: auto; }
       </div>
     </div>
 
-    <!-- ── 03 Manufacturing ── -->
+    <!-- ── 03 Eight Possibilities — Hover Slideshow ── -->
     <div id="bp-configs" class="exploded-content has-pair" style="top: 350vh;">
-      <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-16.jpg" alt="CNC plasma cutting steel" class="ec-image" data-cms="true" data-cms-key="section-03-manufacturing">
+      <!-- Image stack — only the active one is visible via clip-path -->
+      <div class="ec-slideshow" id="ecSlideshow">
+        <img src="CONFIG%20IMAGES/bee-safe.jpg" alt="BEE.safe — Protection" class="ec-slide active" data-slide="0">
+        <img src="CONFIG%20IMAGES/bee-cozy.jpg" alt="BEE.cozy — Home" class="ec-slide" data-slide="1">
+        <img src="CONFIG%20IMAGES/bee-guest.jpg" alt="BEE.guest — Hospitality" class="ec-slide" data-slide="2">
+        <img src="CONFIG%20IMAGES/bee-well.jpg" alt="BEE.well — Wellness" class="ec-slide" data-slide="3">
+        <img src="CONFIG%20IMAGES/bee-productive.jpg" alt="BEE.productive — Workspace" class="ec-slide" data-slide="4">
+        <img src="CONFIG%20IMAGES/bee-mobile.jpg" alt="BEE.mobile — Rapid Deployment" class="ec-slide" data-slide="5">
+        <img src="CONFIG%20IMAGES/bee-cellar.jpg" alt="BEE.cellar — Wine & Archive" class="ec-slide" data-slide="6">
+        <img src="CONFIG%20IMAGES/bee-stored.jpg" alt="BEE.stored — Secure Storage" class="ec-slide" data-slide="7">
+      </div>
       <div class="ec-card" data-link="configurations.html">
         <h2>Your life. Your shape.</h2>
         <div class="ec-label">EIGHT POSSIBILITIES</div>
-        <div class="ec-points">
-          <div><span class="ec-num">01</span> <strong>BEE.safe</strong> — Protection. When certainty matters.</div>
-          <div><span class="ec-num">02</span> <strong>BEE.cozy</strong> — Home. Reduced to its essence.</div>
-          <div><span class="ec-num">03</span> <strong>BEE.guest</strong> — Hospitality. Welcome without compromise.</div>
-          <div><span class="ec-num">04</span> <strong>BEE.well</strong> — Wellness. Restoration begins at home.</div>
-          <div><span class="ec-num">05</span> <strong>BEE.productive</strong> — Workspace. Work where you think best.</div>
-          <div><span class="ec-num">06</span> <strong>BEE.mobile</strong> — Rapid deployment. 24h to operational.</div>
-          <div><span class="ec-num">07</span> <strong>BEE.cellar</strong> — Wine &amp; storage. Age well.</div>
-          <div><span class="ec-num">08</span> <strong>BEE.stored</strong> — Secure storage. Secure what you value.</div>
+        <div class="ec-points ec-hover-points" id="ecHoverPoints">
+          <div data-hover-slide="0"><span class="ec-num">01</span> <strong>BEE.safe</strong> — Protection. When certainty matters.</div>
+          <div data-hover-slide="1"><span class="ec-num">02</span> <strong>BEE.cozy</strong> — Home. Reduced to its essence.</div>
+          <div data-hover-slide="2"><span class="ec-num">03</span> <strong>BEE.guest</strong> — Hospitality. Welcome without compromise.</div>
+          <div data-hover-slide="3"><span class="ec-num">04</span> <strong>BEE.well</strong> — Wellness. Restoration begins at home.</div>
+          <div data-hover-slide="4"><span class="ec-num">05</span> <strong>BEE.productive</strong> — Workspace. Work where you think best.</div>
+          <div data-hover-slide="5"><span class="ec-num">06</span> <strong>BEE.mobile</strong> — Rapid deployment. 24h to operational.</div>
+          <div data-hover-slide="6"><span class="ec-num">07</span> <strong>BEE.cellar</strong> — Wine &amp; storage. Age well.</div>
+          <div data-hover-slide="7"><span class="ec-num">08</span> <strong>BEE.stored</strong> — Secure storage. Secure what you value.</div>
         </div>
         <p>Every configuration begins with the same frame. A customer who purchases BEE.cozy today can reconfigure to BEE.guest tomorrow.</p>
         <div class="ec-expand">
@@ -3830,6 +3878,28 @@ import * as THREE from 'three';
       window.location.href = card.getAttribute('data-link');
     });
   });
+
+  // ── Hover Slideshow — Eight Possibilities ──
+  const hoverPoints = document.querySelectorAll('#ecHoverPoints [data-hover-slide]');
+  const slides = document.querySelectorAll('#ecSlideshow .ec-slide');
+  if (hoverPoints.length && slides.length) {
+    // Set first point active
+    hoverPoints[0].classList.add('ec-point-active');
+
+    hoverPoints.forEach(point => {
+      point.addEventListener('mouseenter', () => {
+        const idx = parseInt(point.getAttribute('data-hover-slide'));
+        // Remove active from all
+        slides.forEach(s => s.classList.remove('active'));
+        hoverPoints.forEach(p => p.classList.remove('ec-point-active'));
+        // Activate target
+        slides[idx]?.classList.add('active');
+        point.classList.add('ec-point-active');
+      });
+      // Prevent card click when clicking a slideshow item
+      point.addEventListener('click', (e) => e.stopPropagation());
+    });
+  }
 })();
 </script>
 
