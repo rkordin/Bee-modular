@@ -2272,6 +2272,10 @@ html.lenis, html.lenis body { height: auto; }
   border: 1px solid rgba(181,162,145,0.15);
   pointer-events: all;
   transition: color 0.6s, background 0.6s, border-color 0.6s;
+  cursor: pointer;
+}
+.ec-card[data-link]:hover {
+  border-color: rgba(181,162,145,0.35);
 }
 .ec-card.dark {
   color: #F5F0EB;
@@ -2539,7 +2543,7 @@ html.lenis, html.lenis body { height: auto; }
     <!-- ── 01 The Origin Story ── -->
     <div id="system" class="exploded-content has-pair" style="top: 50vh;">
       <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-13.jpg" alt="Original sketch" class="ec-image" data-cms="true" data-cms-key="section-01-origin">
-      <div class="ec-card">
+      <div class="ec-card" data-link="system.html">
         <h2>It began with a sketch.</h2>
         <div class="ec-label">THE ORIGIN</div>
         <p>One drawing. One question. What if a building could evolve? The pencil moved. A hexagon emerged. Then another. Then the realisation: this shape connects. It expands. It grows without losing itself.</p>
@@ -2553,7 +2557,7 @@ html.lenis, html.lenis body { height: auto; }
     <!-- ── 02 The Platform ── -->
     <div class="exploded-content has-pair" style="top: 200vh;">
       <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-8.jpg" alt="Steel chassis frame" class="ec-image" data-cms="true" data-cms-key="section-02-platform">
-      <div class="ec-card">
+      <div class="ec-card" data-link="system.html">
         <h2>The Platform</h2>
         <div class="ec-label">WHAT IF ONE SHAPE COULD DO EVERYTHING</div>
         <p>BEE Modular is not a building. It is a decision. The decision to invest in infrastructure that adapts rather than expires. A patented hexagon-inspired steel frame. 200 × 200 mm profile. 12 mm wall thickness. S355 structural steel.</p>
@@ -2567,7 +2571,7 @@ html.lenis, html.lenis body { height: auto; }
     <!-- ── 03 Manufacturing ── -->
     <div id="bp-configs" class="exploded-content has-pair" style="top: 350vh;">
       <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-16.jpg" alt="CNC plasma cutting steel" class="ec-image" data-cms="true" data-cms-key="section-03-manufacturing">
-      <div class="ec-card">
+      <div class="ec-card" data-link="configurations.html">
         <h2>Your life. Your shape.</h2>
         <div class="ec-label">EIGHT POSSIBILITIES</div>
         <div class="ec-points">
@@ -2587,7 +2591,7 @@ html.lenis, html.lenis body { height: auto; }
     <!-- ── 04 Three Crises ── -->
     <div id="bp-defence" class="exploded-content has-pair" style="top: 500vh;">
       <img src="BASE%20IMAGES/BEE%20MODULAR_BASE.jpg" alt="Multi-module compound" class="ec-image" data-cms="true" data-cms-key="section-04-crises">
-      <div class="ec-card">
+      <div class="ec-card" data-link="defence.html">
         <h2>Three crises. One solution.</h2>
         <div class="ec-label">SECURITY · HOUSING · CLIMATE</div>
         <div class="ec-points">
@@ -2602,7 +2606,7 @@ html.lenis, html.lenis body { height: auto; }
     <!-- ── 05 Engineering ── -->
     <div id="bp-process" class="exploded-content has-pair" style="top: 650vh;">
       <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-7.jpg" alt="Exposed structural skeleton" class="ec-image" data-cms="true" data-cms-key="section-05-engineering">
-      <div class="ec-card">
+      <div class="ec-card" data-link="process.html">
         <h2>Under the skin.</h2>
         <div class="ec-label">UNAPOLOGETICALLY HIGH-SPEC</div>
         <p>Defence-grade engineering meets architectural beauty. The outer shell: Armox 500T armour steel, ~10.5 mm, ~500 HBW. The structural core: S355 steel. The inner layer: Kevlar anti-spall liner. HVAC with HEPA H14 filtration. Overpressure capability. Optional CBRN systems.</p>
@@ -2615,7 +2619,7 @@ html.lenis, html.lenis body { height: auto; }
     <!-- ── 06 BEE.safe Philosophy ── -->
     <div id="bp-about" class="exploded-content has-pair" style="top: 800vh;">
       <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-15.jpg" alt="Module with safe room below" class="ec-image" data-cms="true" data-cms-key="section-06-safe">
-      <div class="ec-card">
+      <div class="ec-card" data-link="about.html">
         <h2>Not a bunker.</h2>
         <div class="ec-label">BEE.SAFE PHILOSOPHY</div>
         <p>BEE.safe is not a bunker. It is a room. A beautiful, functional, light-filled room that happens to stop bullets. That filters air. That maintains pressure. That keeps your family safe.</p>
@@ -2627,7 +2631,7 @@ html.lenis, html.lenis body { height: auto; }
     <!-- ── 07 Modular Growth ── -->
     <div class="exploded-content has-pair" style="top: 950vh;">
       <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-12.jpg" alt="Architectural sketch" class="ec-image" data-cms="true" data-cms-key="section-07-modular">
-      <div class="ec-card">
+      <div class="ec-card" data-link="configurations.html">
         <h2>One becomes many.</h2>
         <div class="ec-label">MODULAR GROWTH</div>
         <p>The 120° corner angle allows modules to cluster around a central point — creating courtyards, enclosing gardens, sheltering outdoor living.</p>
@@ -3754,6 +3758,12 @@ import * as THREE from 'three';
   document.querySelectorAll('.ec-card, .hero-glass-panel, .hero-product-wrapper').forEach(c => {
     c.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
     c.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+  });
+  // Make ec-cards with data-link clickable → navigate to subpage
+  document.querySelectorAll('.ec-card[data-link]').forEach(card => {
+    card.addEventListener('click', () => {
+      window.location.href = card.getAttribute('data-link');
+    });
   });
 })();
 </script>
