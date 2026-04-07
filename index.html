@@ -2378,21 +2378,75 @@ html.lenis, html.lenis body { height: auto; }
   clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
 }
 .ec-slideshow:hover .ec-slide { filter: saturate(0.8) contrast(1.0); }
+
+/* Slide headline overlay on image */
+.ec-slide-headline {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  z-index: 2; pointer-events: none;
+  padding: 24px 28px 20px;
+  background: linear-gradient(0deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.0) 100%);
+  opacity: 0; transition: opacity 0.5s ease;
+}
+.ec-slide-headline.active { opacity: 1; }
+.ec-slide-headline .slide-title {
+  font-family: var(--font-h); font-weight: 900;
+  font-size: clamp(18px, 2vw, 28px);
+  color: #F5F0EB; letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.ec-slide-headline .slide-subtitle {
+  font-family: var(--font-m); font-size: 10px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(245,240,235,0.6); margin-top: 4px;
+}
+
+/* Progress bar under image */
+.ec-slide-progress {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 2px; z-index: 3; background: rgba(255,255,255,0.1);
+}
+.ec-slide-progress-fill {
+  height: 100%; width: 0%; background: var(--accent);
+  transition: width 0.15s linear;
+}
+.ec-slideshow.autoplay .ec-slide-progress-fill {
+  transition: width 3s linear;
+  width: 100%;
+}
+
+/* Dot indicators */
+.ec-slide-dots {
+  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+  z-index: 4; display: flex; gap: 6px; pointer-events: all;
+}
+.ec-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,0.3); border: none;
+  cursor: pointer; transition: all 0.3s; padding: 0;
+}
+.ec-dot.active { background: var(--accent); width: 18px; border-radius: 3px; }
+
+/* Hover points — right side list */
 .ec-hover-points > div {
   cursor: pointer;
   pointer-events: all;
-  transition: color 0.25s ease, opacity 0.25s ease;
+  transition: color 0.25s ease, opacity 0.25s ease, padding-left 0.25s ease;
   opacity: 0.55;
+  padding-left: 0;
 }
 .ec-hover-points > div.ec-point-active {
   opacity: 1;
   color: var(--accent);
+  padding-left: 8px;
+  border-left: 2px solid var(--accent);
 }
 @media (max-width: 1024px) {
   .ec-slideshow { width: 85vw; max-width: none; aspect-ratio: 16/10; }
 }
 @media (max-width: 768px) {
   .ec-slideshow { width: 92vw; aspect-ratio: 4/3; }
+  .ec-slide-headline .slide-title { font-size: 16px; }
+  .ec-slide-dots { bottom: 12px; }
 }
 .ec-image {
   width: 65vw; max-width: 1100px; height: auto;
@@ -2648,7 +2702,7 @@ html.lenis, html.lenis body { height: auto; }
     <!-- ── 03 Eight Possibilities — Hover Slideshow ── -->
     <div id="bp-configs" class="exploded-content has-pair" style="top: 350vh;">
       <!-- Image stack — only the active one is visible via clip-path -->
-      <div class="ec-slideshow" id="ecSlideshow">
+      <div class="ec-slideshow autoplay" id="ecSlideshow">
         <img src="CONFIG%20IMAGES/bee-safe.jpg" alt="BEE.safe — Protection" class="ec-slide active" data-slide="0">
         <img src="CONFIG%20IMAGES/bee-cozy.jpg" alt="BEE.cozy — Home" class="ec-slide" data-slide="1">
         <img src="CONFIG%20IMAGES/bee-guest.jpg" alt="BEE.guest — Hospitality" class="ec-slide" data-slide="2">
@@ -2657,6 +2711,28 @@ html.lenis, html.lenis body { height: auto; }
         <img src="CONFIG%20IMAGES/bee-mobile.jpg" alt="BEE.mobile — Rapid Deployment" class="ec-slide" data-slide="5">
         <img src="CONFIG%20IMAGES/bee-cellar.jpg" alt="BEE.cellar — Wine & Archive" class="ec-slide" data-slide="6">
         <img src="CONFIG%20IMAGES/bee-stored.jpg" alt="BEE.stored — Secure Storage" class="ec-slide" data-slide="7">
+        <!-- Headlines -->
+        <div class="ec-slide-headline active" data-headline="0"><span class="slide-title">BEE.safe</span><div class="slide-subtitle">Protection</div></div>
+        <div class="ec-slide-headline" data-headline="1"><span class="slide-title">BEE.cozy</span><div class="slide-subtitle">Home</div></div>
+        <div class="ec-slide-headline" data-headline="2"><span class="slide-title">BEE.guest</span><div class="slide-subtitle">Hospitality</div></div>
+        <div class="ec-slide-headline" data-headline="3"><span class="slide-title">BEE.well</span><div class="slide-subtitle">Wellness</div></div>
+        <div class="ec-slide-headline" data-headline="4"><span class="slide-title">BEE.productive</span><div class="slide-subtitle">Workspace</div></div>
+        <div class="ec-slide-headline" data-headline="5"><span class="slide-title">BEE.mobile</span><div class="slide-subtitle">Rapid Deployment</div></div>
+        <div class="ec-slide-headline" data-headline="6"><span class="slide-title">BEE.cellar</span><div class="slide-subtitle">Wine & Storage</div></div>
+        <div class="ec-slide-headline" data-headline="7"><span class="slide-title">BEE.stored</span><div class="slide-subtitle">Secure Storage</div></div>
+        <!-- Progress bar -->
+        <div class="ec-slide-progress"><div class="ec-slide-progress-fill" id="ecProgressFill"></div></div>
+        <!-- Dot indicators -->
+        <div class="ec-slide-dots" id="ecDots">
+          <button class="ec-dot active" data-dot="0"></button>
+          <button class="ec-dot" data-dot="1"></button>
+          <button class="ec-dot" data-dot="2"></button>
+          <button class="ec-dot" data-dot="3"></button>
+          <button class="ec-dot" data-dot="4"></button>
+          <button class="ec-dot" data-dot="5"></button>
+          <button class="ec-dot" data-dot="6"></button>
+          <button class="ec-dot" data-dot="7"></button>
+        </div>
       </div>
       <div class="ec-card" data-link="configurations.html">
         <h2>Your life. Your shape.</h2>
@@ -3883,29 +3959,96 @@ import * as THREE from 'three';
 })();
 </script>
 
-<!-- ── Hover Slideshow — Eight Possibilities ── -->
+<!-- ── Hover Slideshow — Eight Possibilities (autoplay + manual) ── -->
 <script>
 (function() {
-  const hoverPoints = document.querySelectorAll('#ecHoverPoints [data-hover-slide]');
-  const slides = document.querySelectorAll('#ecSlideshow .ec-slide');
+  var hoverPoints = document.querySelectorAll('#ecHoverPoints [data-hover-slide]');
+  var slides = document.querySelectorAll('#ecSlideshow .ec-slide');
+  var headlines = document.querySelectorAll('#ecSlideshow .ec-slide-headline');
+  var dots = document.querySelectorAll('#ecDots .ec-dot');
+  var slideshow = document.getElementById('ecSlideshow');
+  var progressFill = document.getElementById('ecProgressFill');
   if (!hoverPoints.length || !slides.length) return;
 
-  // Set first point active
-  hoverPoints[0].classList.add('ec-point-active');
+  var current = 0;
+  var total = slides.length;
+  var autoplayTimer = null;
+  var autoplayInterval = 3000;
+  var isAutoplay = true;
 
+  function goTo(idx) {
+    current = idx;
+    slides.forEach(function(s) { s.classList.remove('active'); });
+    headlines.forEach(function(h) { h.classList.remove('active'); });
+    hoverPoints.forEach(function(p) { p.classList.remove('ec-point-active'); });
+    dots.forEach(function(d) { d.classList.remove('active'); });
+
+    if (slides[idx]) slides[idx].classList.add('active');
+    if (headlines[idx]) headlines[idx].classList.add('active');
+    if (hoverPoints[idx]) hoverPoints[idx].classList.add('ec-point-active');
+    if (dots[idx]) dots[idx].classList.add('active');
+
+    // Reset progress bar
+    if (progressFill && isAutoplay) {
+      progressFill.style.transition = 'none';
+      progressFill.style.width = '0%';
+      // Force reflow
+      progressFill.offsetWidth;
+      progressFill.style.transition = 'width ' + (autoplayInterval / 1000) + 's linear';
+      progressFill.style.width = '100%';
+    }
+  }
+
+  function startAutoplay() {
+    isAutoplay = true;
+    if (slideshow) slideshow.classList.add('autoplay');
+    goTo(current);
+    autoplayTimer = setInterval(function() {
+      goTo((current + 1) % total);
+    }, autoplayInterval);
+  }
+
+  function stopAutoplay() {
+    isAutoplay = false;
+    if (slideshow) slideshow.classList.remove('autoplay');
+    if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }
+    if (progressFill) {
+      progressFill.style.transition = 'none';
+      progressFill.style.width = '0%';
+    }
+  }
+
+  // Init
+  goTo(0);
+  startAutoplay();
+
+  // Manual hover on text items — stops autoplay
   hoverPoints.forEach(function(point) {
     point.addEventListener('mouseenter', function() {
-      const idx = parseInt(point.getAttribute('data-hover-slide'));
-      // Remove active from all
-      slides.forEach(function(s) { s.classList.remove('active'); });
-      hoverPoints.forEach(function(p) { p.classList.remove('ec-point-active'); });
-      // Activate target
-      if (slides[idx]) slides[idx].classList.add('active');
-      point.classList.add('ec-point-active');
+      stopAutoplay();
+      goTo(parseInt(point.getAttribute('data-hover-slide')));
     });
-    // Prevent card navigation when hovering slideshow items
     point.addEventListener('click', function(e) { e.stopPropagation(); });
   });
+
+  // Dot clicks
+  dots.forEach(function(dot) {
+    dot.addEventListener('click', function(e) {
+      e.stopPropagation();
+      stopAutoplay();
+      goTo(parseInt(dot.getAttribute('data-dot')));
+    });
+  });
+
+  // Resume autoplay when mouse leaves the card area
+  var card = slideshow ? slideshow.closest('.exploded-content') : null;
+  if (card) {
+    card.addEventListener('mouseleave', function() {
+      if (!isAutoplay) {
+        startAutoplay();
+      }
+    });
+  }
 })();
 </script>
 
