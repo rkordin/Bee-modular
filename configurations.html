@@ -411,66 +411,107 @@ body {
 <!-- 3D wireframe background -->
 <script type="module">
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
-const canvas = document.getElementById('scene3d-bg');
-const renderer = new THREE.WebGLRenderer({ canvas, alpha: false, antialias: true });
-renderer.setClearColor(0xF8F6F3, 1);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setSize(window.innerWidth, window.innerHeight);
+(function() {
+  const canvas = document.getElementById('scene3d-bg');
+  if (!canvas) return;
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
-camera.position.set(0, 0.4, 3.0);
-camera.lookAt(0, 0, 0);
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+  const maxDPR = isMobile ? 1.0 : Math.min(window.devicePixelRatio, 1.5);
 
-const wrapper = new THREE.Group();
-scene.add(wrapper);
-
-const dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/libs/draco/');
-
-const loader = new GLTFLoader();
-loader.setDRACOLoader(dracoLoader);
-
-loader.load('3d%20files/BEE%20MODUL%20EXPLODE%20VIEW%2010.glb', (gltf) => {
-  const wireframeMaterial = new THREE.LineBasicMaterial({
-    color: 0xb5a291,
-    transparent: true,
-    opacity: 0.15
-  });
-
-  gltf.scene.traverse((child) => {
-    if (child.isMesh) {
-      const edges = new THREE.EdgesGeometry(child.geometry, 30);
-      const line = new THREE.LineSegments(edges, wireframeMaterial);
-      line.position.copy(child.position);
-      line.rotation.copy(child.rotation);
-      line.scale.copy(child.scale);
-      // Apply parent transforms
-      child.updateWorldMatrix(true, false);
-      line.applyMatrix4(child.matrixWorld);
-      wrapper.add(line);
-    }
-  });
-});
-
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: !isMobile, alpha: false, powerPreference: 'high-performance' });
   renderer.setSize(window.innerWidth, window.innerHeight);
-});
+  renderer.setPixelRatio(maxDPR);
+  renderer.setClearColor(0xF8F6F3, 1);
 
-function animate() {
-  requestAnimationFrame(animate);
-  const t = performance.now() * 0.001;
-  wrapper.rotation.y = performance.now() * 0.00008;
-  const s = 1 + Math.sin(t * 0.5) * 0.05;
-  wrapper.scale.set(s, s, s);
-  renderer.render(scene, camera);
-}
-animate();
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xF8F6F3);
+  const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 500);
+  camera.position.set(0, 0.4, 3.0);
+
+  const lineMaterial = new THREE.LineBasicMaterial({
+    color: 0xb5a291, transparent: true, opacity: 0.15, linewidth: 1,
+  });
+
+  let wrapper = null;
+  let baseScale = 1;
+
+  fetch('3d%20files/base-frame-edges.bin')
+    .then(r => r.arrayBuffer())
+    .then(buffer => {
+      const header = new Float32Array(buffer, 0, 6);
+      const [minX, minY, minZ, rangeX, rangeY, rangeZ] = header;
+      const meshCount = new Uint32Array(buffer, 24, 1)[0];
+      let offset = 28;
+
+      const edgesGroup = new THREE.Group();
+
+      for (let m = 0; m < meshCount; m++) {
+        const vertCount = new Uint32Array(buffer, offset, 1)[0];
+        offset += 4;
+        const data = new Int16Array(buffer, offset, vertCount * 3);
+        offset += vertCount * 3 * 2;
+
+        const positions = new Float32Array(vertCount * 3);
+        for (let i = 0; i < vertCount; i++) {
+          positions[i*3+0] = (data[i*3+0] / 32767) * rangeX + minX;
+          positions[i*3+1] = (data[i*3+1] / 32767) * rangeY + minY;
+          positions[i*3+2] = (data[i*3+2] / 32767) * rangeZ + minZ;
+        }
+
+        const geom = new THREE.BufferGeometry();
+        geom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        edgesGroup.add(new THREE.LineSegments(geom, lineMaterial));
+      }
+
+      const box = new THREE.Box3().setFromObject(edgesGroup);
+      const center = box.getCenter(new THREE.Vector3());
+      edgesGroup.position.set(-center.x, -center.y, -center.z);
+
+      wrapper = new THREE.Group();
+      wrapper.add(edgesGroup);
+      scene.add(wrapper);
+
+      const size = box.getSize(new THREE.Vector3());
+      baseScale = 2.0 / Math.max(size.x, size.y, size.z);
+      wrapper.scale.setScalar(baseScale);
+
+      animate(performance.now());
+    })
+    .catch(err => console.warn('3D load failed:', err));
+
+  const startTime = performance.now();
+  const frameInterval = isMobile ? 1000 / 30 : 0;
+  let lastFrame = 0;
+
+  function animate(now) {
+    requestAnimationFrame(animate);
+    if (isMobile && now - lastFrame < frameInterval) return;
+    lastFrame = now;
+
+    if (wrapper) {
+      const elapsed = (performance.now() - startTime) * 0.001;
+      wrapper.rotation.y = elapsed * 0.08;
+      const breathe = 1.0 + Math.sin(elapsed * 0.5) * 0.015;
+      wrapper.scale.setScalar(baseScale * breathe);
+    }
+    renderer.render(scene, camera);
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && wrapper) animate(performance.now());
+  });
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }, 150);
+  });
+})();
 </script>
 
 </body>

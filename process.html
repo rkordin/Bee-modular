@@ -386,64 +386,62 @@ body {
 
 </div><!-- end .page-content -->
 
-<!-- ═══════════ 3D WIREFRAME BACKGROUND ENGINE ═══════════ -->
+<!-- 3D wireframe background -->
 <script type="module">
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
 (function() {
   const canvas = document.getElementById('scene3d-bg');
   if (!canvas) return;
 
-  // ── Renderer ──
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+  const maxDPR = isMobile ? 1.0 : Math.min(window.devicePixelRatio, 1.5);
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: !isMobile, alpha: false, powerPreference: 'high-performance' });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(maxDPR);
   renderer.setClearColor(0xF8F6F3, 1);
 
-  // ── Scene + Camera ──
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xF8F6F3);
-  const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.01, 1000);
+  const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 500);
   camera.position.set(0, 0.4, 3.0);
 
-  // ── DRACO Loader ──
-  const dracoLoader = new DRACOLoader();
-  dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/libs/draco/');
-
-  // ── GLTF Loader ──
-  const loader = new GLTFLoader();
-  loader.setDRACOLoader(dracoLoader);
+  const lineMaterial = new THREE.LineBasicMaterial({
+    color: 0xb5a291, transparent: true, opacity: 0.15, linewidth: 1,
+  });
 
   let wrapper = null;
-  let allLines = [];
   let baseScale = 1;
 
-  loader.load(
-    '3d%20files/BEE%20MODUL%20EXPLODE%20VIEW%2010.glb',
+  fetch('3d%20files/base-frame-edges.bin')
+    .then(r => r.arrayBuffer())
+    .then(buffer => {
+      const header = new Float32Array(buffer, 0, 6);
+      const [minX, minY, minZ, rangeX, rangeY, rangeZ] = header;
+      const meshCount = new Uint32Array(buffer, 24, 1)[0];
+      let offset = 28;
 
-    (gltf) => {
-      const model = gltf.scene;
       const edgesGroup = new THREE.Group();
 
-      model.traverse((child) => {
-        if (child.isMesh && child.geometry) {
-          child.updateWorldMatrix(true, false);
-          const edges = new THREE.EdgesGeometry(child.geometry, 10);
-          const material = new THREE.LineBasicMaterial({
-            color: 0xb5a291,
-            transparent: true,
-            opacity: 0.15,
-            linewidth: 1,
-          });
-          const lines = new THREE.LineSegments(edges, material);
-          lines.applyMatrix4(child.matrixWorld);
-          edgesGroup.add(lines);
-        }
-      });
+      for (let m = 0; m < meshCount; m++) {
+        const vertCount = new Uint32Array(buffer, offset, 1)[0];
+        offset += 4;
+        const data = new Int16Array(buffer, offset, vertCount * 3);
+        offset += vertCount * 3 * 2;
 
-      // Center at origin
+        const positions = new Float32Array(vertCount * 3);
+        for (let i = 0; i < vertCount; i++) {
+          positions[i*3+0] = (data[i*3+0] / 32767) * rangeX + minX;
+          positions[i*3+1] = (data[i*3+1] / 32767) * rangeY + minY;
+          positions[i*3+2] = (data[i*3+2] / 32767) * rangeZ + minZ;
+        }
+
+        const geom = new THREE.BufferGeometry();
+        geom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        edgesGroup.add(new THREE.LineSegments(geom, lineMaterial));
+      }
+
       const box = new THREE.Box3().setFromObject(edgesGroup);
       const center = box.getCenter(new THREE.Vector3());
       edgesGroup.position.set(-center.x, -center.y, -center.z);
@@ -452,54 +450,44 @@ import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
       wrapper.add(edgesGroup);
       scene.add(wrapper);
 
-      // Fit camera
       const size = box.getSize(new THREE.Vector3());
-      const maxDim = Math.max(size.x, size.y, size.z);
-      baseScale = 2.0 / maxDim;
+      baseScale = 2.0 / Math.max(size.x, size.y, size.z);
       wrapper.scale.setScalar(baseScale);
 
-      // Collect all lines
-      edgesGroup.traverse(c => { if (c.isLineSegments) allLines.push(c); });
+      animate(performance.now());
+    })
+    .catch(err => console.warn('3D load failed:', err));
 
-      animate();
-    },
-
-    (xhr) => {
-      if (xhr.total > 0) {
-        console.log('3D model loading:', Math.round(xhr.loaded / xhr.total * 100) + '%');
-      }
-    },
-
-    (error) => {
-      console.warn('3D wireframe load failed:', error.message || error);
-    }
-  );
-
-  // ── Animation loop ──
   const startTime = performance.now();
+  const frameInterval = isMobile ? 1000 / 30 : 0;
+  let lastFrame = 0;
 
-  function animate() {
+  function animate(now) {
     requestAnimationFrame(animate);
-
-    const elapsed = (performance.now() - startTime) * 0.001;
+    if (isMobile && now - lastFrame < frameInterval) return;
+    lastFrame = now;
 
     if (wrapper) {
-      // Slow auto-rotation
+      const elapsed = (performance.now() - startTime) * 0.001;
       wrapper.rotation.y = elapsed * 0.08;
-
-      // Gentle breathing scale
       const breathe = 1.0 + Math.sin(elapsed * 0.5) * 0.015;
       wrapper.scale.setScalar(baseScale * breathe);
     }
-
     renderer.render(scene, camera);
   }
 
-  // ── Resize ──
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && wrapper) animate(performance.now());
+  });
+
+  let resizeTimer;
   window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }, 150);
   });
 })();
 </script>
