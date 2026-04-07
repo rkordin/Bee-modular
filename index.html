@@ -3751,7 +3751,7 @@ import * as THREE from 'three';
   document.addEventListener('mouseenter', () => cursor.classList.add('visible'));
   document.addEventListener('mouseleave', () => cursor.classList.remove('visible'));
   document.addEventListener('mousemove', function s() { cursor.classList.add('visible'); document.removeEventListener('mousemove', s); });
-  document.querySelectorAll('.ec-card').forEach(c => {
+  document.querySelectorAll('.ec-card, .hero-glass-panel, .hero-product-wrapper').forEach(c => {
     c.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
     c.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
   });

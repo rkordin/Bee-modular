@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Process — BEE Modular</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+  }
+}
+</script>
+<style>
+@font-face {
+  font-family: 'NHaasGrotesk';
+  src: local('Neue Haas Grotesk Display'), local('NeueHaasGroteskDisp'), local('NHaasGroteskDSPro');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #F8F6F3;
+  --headline: #1A1A1A;
+  --body: #4A4A4A;
+  --secondary: #9A9A9A;
+  --accent: #b5a291;
+  --dark: #1A1A1A;
+  --on-dark: #F5F0EB;
+  --font-h: 'NHaasGrotesk', 'Helvetica Neue', 'Helvetica', 'Arial Black', sans-serif;
+  --font-b: 'Inter', system-ui, sans-serif;
+  --font-m: 'JetBrains Mono', monospace;
+}
+
+html { scroll-behavior: auto; }
+body {
+  font-family: var(--font-b);
+  background: var(--bg);
+  color: var(--body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  line-height: 1.7;
+}
+
+/* ── Nav ── */
+.cfg-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 72px; padding: 0 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(248,246,243,0.85);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+.cfg-nav-logo { height: 20px; }
+.cfg-nav-links { display: flex; gap: 28px; list-style: none; }
+.cfg-nav-links a {
+  font-family: var(--font-m); font-size: 11px; font-weight: 400;
+  color: var(--secondary); text-decoration: none;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  transition: color 0.3s;
+}
+.cfg-nav-links a:hover { color: var(--headline); }
+.cfg-nav-links a.active { color: var(--accent); }
+.cfg-nav-cta {
+  font-family: var(--font-m); font-size: 10px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--headline); background: none;
+  border: 1px solid rgba(26,26,26,0.15);
+  padding: 8px 20px; cursor: pointer; transition: all 0.3s;
+}
+.cfg-nav-cta:hover { background: var(--headline); color: var(--bg); }
+
+/* ── Hero intro ── */
+.cfg-hero {
+  min-height: 100vh; display: flex; align-items: center;
+  padding: 120px 48px 80px;
+  position: relative;
+}
+.cfg-hero-text {
+  max-width: 600px;
+  border-left: 2px solid var(--accent);
+  padding-left: 32px;
+}
+.cfg-hero-text h1 {
+  font-family: var(--font-h); font-weight: 900;
+  font-size: clamp(32px, 4vw, 52px);
+  letter-spacing: -0.04em; line-height: 1.1;
+  color: var(--headline); margin-bottom: 24px;
+}
+.cfg-hero-text h1 span { color: var(--accent); }
+.cfg-hero-body {
+  font-family: var(--font-m); font-size: clamp(12px, 1.1vw, 14px);
+  line-height: 1.8; color: var(--body);
+}
+.cfg-hero-body p { margin-bottom: 16px; }
+
+/* ── Section layout (image + card) ── */
+.cfg-section {
+  padding: 80px 48px;
+  display: flex; align-items: flex-start; gap: 40px;
+  justify-content: center;
+  min-height: 80vh;
+  border-top: 1px solid rgba(0,0,0,0.04);
+}
+.cfg-section:nth-child(even) { flex-direction: row-reverse; }
+.cfg-img {
+  width: 65vw; max-width: 900px; height: auto;
+  object-fit: cover;
+  border: 1px solid rgba(181,162,145,0.08);
+  filter: saturate(0.3) contrast(1.05);
+  transition: filter 0.6s ease;
+  flex-shrink: 1;
+}
+.cfg-img:hover { filter: saturate(0.8) contrast(1.0); }
+.cfg-card {
+  width: 25vw; min-width: 280px; max-width: 420px;
+  flex-shrink: 0; padding: 32px;
+  border-left: 2px solid var(--accent);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.cfg-card h2 {
+  font-family: var(--font-h); font-weight: 900;
+  font-size: clamp(20px, 2.2vw, 30px);
+  letter-spacing: -0.02em; line-height: 1.15;
+  color: var(--headline); margin-bottom: 4px;
+}
+.cfg-card h3 {
+  font-family: var(--font-m); font-size: 10px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 20px;
+}
+.cfg-card p {
+  font-family: var(--font-m); font-size: clamp(11px, 1.1vw, 14px);
+  line-height: 1.8; color: var(--body); margin-bottom: 12px;
+}
+/* Expandable specs — hidden by default */
+.cfg-expand {
+  max-height: 0; overflow: hidden; opacity: 0;
+  transition: max-height 0.9s cubic-bezier(0.4,0,0.2,1),
+              opacity 0.6s cubic-bezier(0.4,0,0.2,1),
+              margin 0.6s cubic-bezier(0.4,0,0.2,1);
+  margin-top: 0;
+}
+.cfg-card:hover .cfg-expand {
+  max-height: 800px; opacity: 1; margin-top: 16px;
+  transition: max-height 0.9s cubic-bezier(0.4,0,0.2,1) 0.05s,
+              opacity 0.5s ease 0.15s,
+              margin 0.5s ease 0.05s;
+}
+.cfg-expand p {
+  font-size: clamp(10px, 0.9vw, 12px);
+  color: var(--secondary);
+}
+.cfg-spec-row {
+  display: grid; grid-template-columns: 90px 1fr; gap: 8px;
+  font-family: var(--font-m); font-size: 11px;
+  line-height: 1.8; padding: 4px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.cfg-spec-label { color: var(--secondary); text-transform: uppercase; letter-spacing: 0.08em; font-size: 9px; }
+.cfg-spec-val { color: var(--body); }
+
+/* Frosted glass cursor */
+.glass-cursor {
+  position: fixed; width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(181,162,145,0.08);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(181,162,145,0.15);
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%, -50%);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; opacity: 0;
+  transition: width 0.4s cubic-bezier(0.22,1,0.36,1),
+              height 0.4s cubic-bezier(0.22,1,0.36,1),
+              border-radius 0.4s cubic-bezier(0.22,1,0.36,1),
+              opacity 0.3s ease;
+}
+.glass-cursor.visible { opacity: 1; }
+.glass-cursor .cursor-label {
+  font-family: var(--font-m); font-size: 9px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent); opacity: 0; white-space: nowrap;
+  transition: opacity 0.3s ease 0.1s;
+}
+.glass-cursor.hovering { width: 90px; height: 90px; background: rgba(181,162,145,0.1); border-color: rgba(181,162,145,0.25); }
+.glass-cursor.hovering .cursor-label { opacity: 1; }
+@media (hover: none) { .glass-cursor { display: none; } }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .cfg-section { flex-direction: column !important; padding: 40px 24px; }
+  .cfg-img { width: 100%; max-width: none; }
+  .cfg-card { width: 100%; max-width: none; min-width: 0; }
+}
+@media (max-width: 768px) {
+  .cfg-nav { padding: 0 24px; }
+  .cfg-nav-links { display: none; }
+  .cfg-hero { padding: 100px 24px 60px; }
+}
+
+/* ── 3D wireframe background ── */
+#scene3d-blur { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; background: rgba(248,246,243,0.3); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); pointer-events: none; }
+#scene3d-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; }
+.page-content { position: relative; z-index: 1; }
+</style>
+</head>
+<body>
+
+<div id="bee-nav" data-active="process"></div>
+<script type="module" src="bee-nav.js"></script>
+
+<canvas id="scene3d-bg"></canvas>
+<div id="scene3d-blur"></div>
+
+<div class="page-content">
+
+<div class="glass-cursor" id="glassCursor"><span class="cursor-label">Read more</span></div>
+<!-- Hero -->
+<section class="cfg-hero">
+  <div class="cfg-hero-text">
+    <h1>How it <span>works</span></h1>
+    <div class="cfg-hero-body">
+      <p>Six stages. Clear deliverables. A decision point at every step.</p>
+      <p>You will never wonder what happens next.</p>
+      <p>Twenty-eight years of manufacturing practice, applied to a straightforward question: how do you want to live?</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 01 — Discovery ═══ -->
+<div class="cfg-section">
+  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-2.jpg" alt="Discovery — Site visit" class="cfg-img">
+  <div class="cfg-card">
+    <h2>01 — Discovery</h2>
+    <h3>A conversation. Not a presentation.</h3>
+    <p>We listen more than we talk. The most important thing is not what you want to build. It is how you want to live.</p>
+    <p>So we start there. Not in a conference room. On your hillside. Feeling the wind. Seeing where the light falls at four in the afternoon. Understanding the slope, the access road, the neighbour's tree line.</p>
+    <p>Context matters more than most people think.</p>
+    <div class="cfg-expand">
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Survey</span><span class="cfg-spec-val">Site visit or detailed remote survey (topography, orientation, soil, access)</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Mapping</span><span class="cfg-spec-val">Constraint mapping: planning regulations, utility connections, environmental factors</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Brief</span><span class="cfg-spec-val">Structured brief developed together &mdash; function, capacity, timeline, budget parameters</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Outcome</span><span class="cfg-spec-val">Shared understanding. Project brief. Budget range.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 02 — Configuration ═══ -->
+<div class="cfg-section">
+  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-3.jpg" alt="Configuration — 3D model" class="cfg-img">
+  <div class="cfg-card">
+    <h2>02 — Configuration</h2>
+    <h3>Not design. Configuration.</h3>
+    <p>We propose: number of modules, layout, orientation, exterior skin, interior finish, building systems. You see it in 3D before a single sheet of steel is cut.</p>
+    <p>This is not design. Design implies invention from scratch. This is configuration. The hexagonal structural system exists. The connection details are proven. We are adapting it to your life.</p>
+    <div class="cfg-expand">
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Modules</span><span class="cfg-spec-val">Selection from standard range (3.0m, 6.0m, 9.0m, 12.0m lengths)</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Layout</span><span class="cfg-spec-val">Options generated in parametric model. Material and finish specification.</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Systems</span><span class="cfg-spec-val">MEP systems defined. Energy modelling where applicable.</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Outcome</span><span class="cfg-spec-val">Configuration document. 3D visualisations. Detailed quotation.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 03 — Confirmation ═══ -->
+<div class="cfg-section">
+  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-4.jpg" alt="Confirmation — Agreement" class="cfg-img">
+  <div class="cfg-card">
+    <h2>03 — Confirmation</h2>
+    <h3>Everything is agreed before production begins.</h3>
+    <p>Review. Refine. Confirm. Specification locked. Layout final. Price fixed.</p>
+    <p>No surprises. No scope creep. No "we discovered something on site and it costs more." The factory knows exactly what it builds. You know exactly what you receive.</p>
+    <div class="cfg-expand">
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Review</span><span class="cfg-spec-val">Final specification review meeting. All material selections confirmed.</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Drawings</span><span class="cfg-spec-val">Engineering drawings issued for production.</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Contract</span><span class="cfg-spec-val">Fixed-price contract signed. Deposit secures production slot.</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Outcome</span><span class="cfg-spec-val">Signed agreement. Deposit received. Production slot scheduled.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 04 — Production ═══ -->
+<div class="cfg-section">
+  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-5.jpg" alt="Production — Factory floor" class="cfg-img">
+  <div class="cfg-card">
+    <h2>04 — Production</h2>
+    <h3>Kr&scaron;ko, Slovenia. A factory floor, not a building site.</h3>
+    <p>CNC-cut steel. EN 729-3 certified welding. Every weld documented. Every dimension verified against the model. Interiors fitted in controlled conditions. No rain. No mud. No wind delays.</p>
+    <p>A great cabinet maker finishes the back of a drawer. Even though it will never be seen. We finish what you will never see. Because what you do when no one is looking is the truest measure of who you are.</p>
+    <div class="cfg-expand">
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Facility</span><span class="cfg-spec-val">ISO 9001 facility. Structural steel S355J2, CNC plasma cut, welding per EN 1090-2.</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Testing</span><span class="cfg-spec-val">Non-destructive testing on critical joints. Dimensional inspection at each stage.</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Insulation</span><span class="cfg-spec-val">Mineral wool + PIR composite, U-values to specification.</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">QA</span><span class="cfg-spec-val">Air tightness, electrical continuity, plumbing pressure test. Full photo documentation.</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Outcome</span><span class="cfg-spec-val">Completed modules. Test documentation package. Shipping clearance.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 05 — Delivery ═══ -->
+<div class="cfg-section">
+  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-6.jpg" alt="Delivery — Transport" class="cfg-img">
+  <div class="cfg-card">
+    <h2>05 — Delivery</h2>
+    <h3>From factory to site. Straightforward logistics.</h3>
+    <p>Two modules per truck. Standard transport, standard roads, standard construction equipment on site. No specialist cranes. No wide-load permits for standard modules.</p>
+    <p>ISO 1161 corner nodes &mdash; the same connection system used in global shipping. Proven. Simple. Strong.</p>
+    <div class="cfg-expand">
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Planning</span><span class="cfg-spec-val">Transport planning included in project scope. Route survey for access constraints.</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Transport</span><span class="cfg-spec-val">Standard flatbed trailers. Lifting via crane or telehandler at site.</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Accuracy</span><span class="cfg-spec-val">Positioning accuracy: &pm;5mm on prepared foundations.</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Outcome</span><span class="cfg-spec-val">Modules on site. Positioned. Levelled.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 06 — Commissioning ═══ -->
+<div class="cfg-section">
+  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-7.jpg" alt="Commissioning — Handover" class="cfg-img">
+  <div class="cfg-card">
+    <h2>06 — Commissioning</h2>
+    <h3>Engineering becomes architecture. A project becomes a place.</h3>
+    <p>Systems connected. Utilities tested. Final adjustments made. Then we walk through it together.</p>
+    <p>You turn on the lights. Feel the warmth. Look through glass at the landscape that is now yours.</p>
+    <div class="cfg-expand">
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Structure</span><span class="cfg-spec-val">Inter-module structural connections completed.</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Systems</span><span class="cfg-spec-val">Mechanical, electrical, and plumbing systems joined and commissioned.</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">BMS</span><span class="cfg-spec-val">Building management system configured (where specified). Air tightness verification.</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Handover</span><span class="cfg-spec-val">Final snagging inspection. Client walkthrough and handover.</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Outcome</span><span class="cfg-spec-val">Operational handover. Complete documentation package. Warranty period begins.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Timeline section -->
+<section class="cfg-hero" style="min-height:60vh;">
+  <div class="cfg-hero-text">
+    <h1>10&ndash;16 weeks. One clear <span>path</span>.</h1>
+    <div class="cfg-hero-body">
+      <p>Standard project: 10&ndash;16 weeks from confirmed order to modules leaving the factory. Complex configurations or defence-specification builds may take longer. We will tell you at confirmation, not after.</p>
+      <p>Site preparation is your responsibility. We recommend partners and provide foundation specifications from day one. Deployment on site: approximately 24 hours.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Closing statement -->
+<section class="cfg-hero" style="min-height:60vh;">
+  <div class="cfg-hero-text">
+    <h1>From conversation to <span>keys</span></h1>
+    <div class="cfg-hero-body">
+      <p>Every step has an outcome. Every outcome moves you closer.</p>
+      <p>No mysteries. No surprises. Just the quiet certainty of a process that has been refined over a long time, now working for you.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<div id="bee-footer"></div>
+<script type="module" src="bee-footer.js"></script>
+
+<!-- Frosted glass cursor -->
+<script>
+(() => {
+  const cursor = document.getElementById('glassCursor');
+  if (!cursor || matchMedia('(hover: none)').matches) return;
+  let mx = 0, my = 0, cx = 0, cy = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function tick() {
+    cx += (mx - cx) * 0.12; cy += (my - cy) * 0.12;
+    cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px';
+    requestAnimationFrame(tick);
+  }
+  tick();
+  document.addEventListener('mouseenter', () => cursor.classList.add('visible'));
+  document.addEventListener('mouseleave', () => cursor.classList.remove('visible'));
+  document.addEventListener('mousemove', function s() { cursor.classList.add('visible'); document.removeEventListener('mousemove', s); });
+  document.querySelectorAll('.cfg-card').forEach(c => {
+    c.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+    c.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+  });
+})();
+</script>
+
+</div><!-- end .page-content -->
+
+<!-- ═══════════ 3D WIREFRAME BACKGROUND ENGINE ═══════════ -->
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+
+(function() {
+  const canvas = document.getElementById('scene3d-bg');
+  if (!canvas) return;
+
+  // ── Renderer ──
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0xF8F6F3, 1);
+
+  // ── Scene + Camera ──
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xF8F6F3);
+  const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.01, 1000);
+  camera.position.set(0, 0.4, 3.0);
+
+  // ── DRACO Loader ──
+  const dracoLoader = new DRACOLoader();
+  dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/libs/draco/');
+
+  // ── GLTF Loader ──
+  const loader = new GLTFLoader();
+  loader.setDRACOLoader(dracoLoader);
+
+  let wrapper = null;
+  let allLines = [];
+  let baseScale = 1;
+
+  loader.load(
+    '3d%20files/BEE%20MODUL%20EXPLODE%20VIEW%2010.glb',
+
+    (gltf) => {
+      const model = gltf.scene;
+      const edgesGroup = new THREE.Group();
+
+      model.traverse((child) => {
+        if (child.isMesh && child.geometry) {
+          child.updateWorldMatrix(true, false);
+          const edges = new THREE.EdgesGeometry(child.geometry, 10);
+          const material = new THREE.LineBasicMaterial({
+            color: 0xb5a291,
+            transparent: true,
+            opacity: 0.15,
+            linewidth: 1,
+          });
+          const lines = new THREE.LineSegments(edges, material);
+          lines.applyMatrix4(child.matrixWorld);
+          edgesGroup.add(lines);
+        }
+      });
+
+      // Center at origin
+      const box = new THREE.Box3().setFromObject(edgesGroup);
+      const center = box.getCenter(new THREE.Vector3());
+      edgesGroup.position.set(-center.x, -center.y, -center.z);
+
+      wrapper = new THREE.Group();
+      wrapper.add(edgesGroup);
+      scene.add(wrapper);
+
+      // Fit camera
+      const size = box.getSize(new THREE.Vector3());
+      const maxDim = Math.max(size.x, size.y, size.z);
+      baseScale = 2.0 / maxDim;
+      wrapper.scale.setScalar(baseScale);
+
+      // Collect all lines
+      edgesGroup.traverse(c => { if (c.isLineSegments) allLines.push(c); });
+
+      animate();
+    },
+
+    (xhr) => {
+      if (xhr.total > 0) {
+        console.log('3D model loading:', Math.round(xhr.loaded / xhr.total * 100) + '%');
+      }
+    },
+
+    (error) => {
+      console.warn('3D wireframe load failed:', error.message || error);
+    }
+  );
+
+  // ── Animation loop ──
+  const startTime = performance.now();
+
+  function animate() {
+    requestAnimationFrame(animate);
+
+    const elapsed = (performance.now() - startTime) * 0.001;
+
+    if (wrapper) {
+      // Slow auto-rotation
+      wrapper.rotation.y = elapsed * 0.08;
+
+      // Gentle breathing scale
+      const breathe = 1.0 + Math.sin(elapsed * 0.5) * 0.015;
+      wrapper.scale.setScalar(baseScale * breathe);
+    }
+
+    renderer.render(scene, camera);
+  }
+
+  // ── Resize ──
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+</script>
+
+</body>
+</html>

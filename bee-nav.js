@@ -37,9 +37,8 @@
     { key: 'about',    labelTop: 'About',           labelBottom: 'About',          hash: '#bp-about',   file: 'about.html' },
   ];
 
-  // On index: use hash links + JS scroll. On subpages: use file links.
+  // Always link to subpages
   function linkHref(item) {
-    if (isIndex) return item.hash;
     return item.file;
   }
 

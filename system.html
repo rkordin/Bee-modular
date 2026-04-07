@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The System — BEE Modular</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+  }
+}
+</script>
+<style>
+@font-face {
+  font-family: 'NHaasGrotesk';
+  src: local('Neue Haas Grotesk Display'), local('NeueHaasGroteskDisp'), local('NHaasGroteskDSPro');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #F8F6F3;
+  --headline: #1A1A1A;
+  --body: #4A4A4A;
+  --secondary: #9A9A9A;
+  --accent: #b5a291;
+  --dark: #1A1A1A;
+  --on-dark: #F5F0EB;
+  --font-h: 'NHaasGrotesk', 'Helvetica Neue', 'Helvetica', 'Arial Black', sans-serif;
+  --font-b: 'Inter', system-ui, sans-serif;
+  --font-m: 'JetBrains Mono', monospace;
+}
+
+html { scroll-behavior: auto; }
+body {
+  font-family: var(--font-b);
+  background: var(--bg);
+  color: var(--body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  line-height: 1.7;
+}
+
+/* ── 3D Background Canvas ── */
+#scene3d-bg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── Nav ── */
+.cfg-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 72px; padding: 0 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(248,246,243,0.85);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+.cfg-nav-logo { height: 20px; }
+.cfg-nav-links { display: flex; gap: 28px; list-style: none; }
+.cfg-nav-links a {
+  font-family: var(--font-m); font-size: 11px; font-weight: 400;
+  color: var(--secondary); text-decoration: none;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  transition: color 0.3s;
+}
+.cfg-nav-links a:hover { color: var(--headline); }
+.cfg-nav-links a.active { color: var(--accent); }
+.cfg-nav-cta {
+  font-family: var(--font-m); font-size: 10px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--headline); background: none;
+  border: 1px solid rgba(26,26,26,0.15);
+  padding: 8px 20px; cursor: pointer; transition: all 0.3s;
+}
+.cfg-nav-cta:hover { background: var(--headline); color: var(--bg); }
+
+/* ── Hero intro ── */
+.cfg-hero {
+  min-height: 100vh; display: flex; align-items: center;
+  padding: 120px 48px 80px;
+  position: relative; z-index: 1;
+}
+.cfg-hero-text {
+  max-width: 600px;
+  border-left: 2px solid var(--accent);
+  padding-left: 32px;
+}
+.cfg-hero-text h1 {
+  font-family: var(--font-h); font-weight: 900;
+  font-size: clamp(32px, 4vw, 52px);
+  letter-spacing: -0.04em; line-height: 1.1;
+  color: var(--headline); margin-bottom: 24px;
+}
+.cfg-hero-text h1 span { color: var(--accent); }
+.cfg-hero-body {
+  font-family: var(--font-m); font-size: clamp(12px, 1.1vw, 14px);
+  line-height: 1.8; color: var(--body);
+}
+.cfg-hero-body p { margin-bottom: 16px; }
+
+/* ── Section layout ── */
+.cfg-section {
+  padding: 80px 48px;
+  display: flex; align-items: flex-start; gap: 40px;
+  justify-content: center;
+  min-height: 80vh;
+  border-top: 1px solid rgba(0,0,0,0.04);
+  position: relative; z-index: 1;
+}
+.cfg-section:nth-child(even) { flex-direction: row-reverse; }
+.cfg-img {
+  width: 65vw; max-width: 900px; height: auto;
+  object-fit: cover;
+  border: 1px solid rgba(181,162,145,0.08);
+  filter: saturate(0.3) contrast(1.05);
+  transition: filter 0.6s ease;
+  flex-shrink: 1;
+}
+.cfg-img:hover { filter: saturate(0.8) contrast(1.0); }
+.cfg-card {
+  width: 25vw; min-width: 280px; max-width: 420px;
+  flex-shrink: 0; padding: 32px;
+  border-left: 2px solid var(--accent);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.cfg-card h2 {
+  font-family: var(--font-h); font-weight: 900;
+  font-size: clamp(20px, 2.2vw, 30px);
+  letter-spacing: -0.02em; line-height: 1.15;
+  color: var(--headline); margin-bottom: 4px;
+}
+.cfg-card h3 {
+  font-family: var(--font-m); font-size: 10px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 20px;
+}
+.cfg-card p {
+  font-family: var(--font-m); font-size: clamp(11px, 1.1vw, 14px);
+  line-height: 1.8; color: var(--body); margin-bottom: 12px;
+}
+/* Expandable specs — hidden by default */
+.cfg-expand {
+  max-height: 0; overflow: hidden; opacity: 0;
+  transition: max-height 0.9s cubic-bezier(0.4,0,0.2,1),
+              opacity 0.6s cubic-bezier(0.4,0,0.2,1),
+              margin 0.6s cubic-bezier(0.4,0,0.2,1);
+  margin-top: 0;
+}
+.cfg-card:hover .cfg-expand {
+  max-height: 800px; opacity: 1; margin-top: 16px;
+  transition: max-height 0.9s cubic-bezier(0.4,0,0.2,1) 0.05s,
+              opacity 0.5s ease 0.15s,
+              margin 0.5s ease 0.05s;
+}
+.cfg-expand p {
+  font-size: clamp(10px, 0.9vw, 12px);
+  color: var(--secondary);
+}
+.cfg-spec-row {
+  display: grid; grid-template-columns: 90px 1fr; gap: 8px;
+  font-family: var(--font-m); font-size: 11px;
+  line-height: 1.8; padding: 4px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.cfg-spec-label { color: var(--secondary); text-transform: uppercase; letter-spacing: 0.08em; font-size: 9px; }
+.cfg-spec-val { color: var(--body); }
+
+/* ── Dark section ── */
+.cfg-dark {
+  background: var(--dark);
+  padding: 120px 48px;
+  position: relative; z-index: 1;
+}
+.cfg-dark .cfg-hero-text { border-left-color: var(--accent); }
+.cfg-dark h1 { color: var(--on-dark) !important; }
+.cfg-dark h1 span { color: var(--accent) !important; }
+.cfg-dark p, .cfg-dark .cfg-hero-body p { color: var(--on-dark) !important; opacity: 0.8; }
+
+/* ── Split section (Living / Defence skins) ── */
+.cfg-split {
+  display: flex; min-height: 80vh;
+  position: relative; z-index: 1;
+}
+.cfg-split-col {
+  flex: 1; padding: 80px 48px;
+}
+.cfg-split-col.light { background: var(--bg); }
+.cfg-split-col.dark { background: var(--dark); }
+.cfg-split-col.dark h2 { color: var(--on-dark); }
+.cfg-split-col.dark h3 { color: var(--accent); }
+.cfg-split-col.dark p { color: var(--on-dark); opacity: 0.8; }
+.cfg-split-col.dark .cfg-spec-label { color: var(--accent); }
+.cfg-split-col.dark .cfg-spec-val { color: var(--on-dark); opacity: 0.8; }
+.cfg-split-col.dark .cfg-expand p { color: rgba(245,240,235,0.5); }
+.cfg-split-col .cfg-card {
+  width: 100%; max-width: none; min-width: 0;
+}
+
+/* ── Statement banner ── */
+.cfg-statement {
+  padding: 120px 48px;
+  text-align: center;
+  position: relative; z-index: 1;
+  background: var(--dark);
+}
+.cfg-statement h2 {
+  font-family: var(--font-h); font-weight: 900;
+  font-size: clamp(24px, 3.5vw, 48px);
+  letter-spacing: -0.03em; line-height: 1.2;
+  color: var(--on-dark);
+  max-width: 800px; margin: 0 auto;
+}
+.cfg-statement h2 span { color: var(--accent); }
+
+/* ── Specs grid (dark) ── */
+.cfg-specs-grid {
+  background: var(--dark);
+  padding: 80px 48px;
+  position: relative; z-index: 1;
+}
+.cfg-specs-inner {
+  max-width: 1000px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+.cfg-specs-block h3 {
+  font-family: var(--font-m); font-size: 10px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 16px;
+}
+.cfg-specs-block .cfg-spec-row {
+  border-bottom-color: rgba(255,255,255,0.06);
+}
+.cfg-specs-block .cfg-spec-label { color: var(--accent); }
+.cfg-specs-block .cfg-spec-val { color: var(--on-dark); opacity: 0.8; }
+
+/* ── CTA button ── */
+.cfg-cta-btn {
+  display: inline-block;
+  font-family: var(--font-m); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--on-dark); background: #262626;
+  border: 1px solid rgba(181,162,145,0.2);
+  padding: 16px 40px; text-decoration: none;
+  transition: all 0.3s;
+}
+.cfg-cta-btn:hover { background: var(--accent); color: var(--dark); }
+
+/* Frosted glass cursor */
+.glass-cursor {
+  position: fixed; width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(181,162,145,0.08);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(181,162,145,0.15);
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%, -50%);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; opacity: 0;
+  transition: width 0.4s cubic-bezier(0.22,1,0.36,1),
+              height 0.4s cubic-bezier(0.22,1,0.36,1),
+              border-radius 0.4s cubic-bezier(0.22,1,0.36,1),
+              opacity 0.3s ease;
+}
+.glass-cursor.visible { opacity: 1; }
+.glass-cursor .cursor-label {
+  font-family: var(--font-m); font-size: 9px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent); opacity: 0; white-space: nowrap;
+  transition: opacity 0.3s ease 0.1s;
+}
+.glass-cursor.hovering { width: 90px; height: 90px; background: rgba(181,162,145,0.1); border-color: rgba(181,162,145,0.25); }
+.glass-cursor.hovering .cursor-label { opacity: 1; }
+@media (hover: none) { .glass-cursor { display: none; } }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .cfg-section { flex-direction: column !important; padding: 40px 24px; }
+  .cfg-img { width: 100%; max-width: none; }
+  .cfg-card { width: 100%; max-width: none; min-width: 0; }
+  .cfg-split { flex-direction: column; }
+  .cfg-specs-inner { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .cfg-nav { padding: 0 24px; }
+  .cfg-nav-links { display: none; }
+  .cfg-hero { padding: 100px 24px 60px; }
+  .cfg-dark { padding: 80px 24px; }
+  .cfg-statement { padding: 80px 24px; }
+  .cfg-specs-grid { padding: 40px 24px; }
+}
+</style>
+</head>
+<body>
+
+<div id="bee-nav" data-active="system"></div>
+<script type="module" src="bee-nav.js"></script>
+
+<!-- 3D Wireframe Background -->
+<canvas id="scene3d-bg"></canvas>
+<div id="scene3d-blur"></div>
+
+<div class="glass-cursor" id="glassCursor"><span class="cursor-label">Read more</span></div>
+<!-- Hero -->
+<section class="cfg-hero">
+  <div class="cfg-hero-text">
+    <h1>One frame. Everything else <span>follows</span>.</h1>
+    <div class="cfg-hero-body">
+      <p>200 mm &times; 200 mm profile. 12 mm wall. S355 structural steel. Held to &pm;0.5 mm. This is where it all starts.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 01 — The Geometry ═══ -->
+<div class="cfg-section">
+  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-2.jpg" alt="Hexagonal geometry" class="cfg-img">
+  <div class="cfg-card">
+    <h2>The Geometry</h2>
+    <h3>01 &mdash; Start with a hexagon</h3>
+    <p>Not because it is interesting. Because it is correct.</p>
+    <p>Six sides. 120-degree corners. Every edge meets its neighbour with zero material wasted. No gaps. No fillers. No tolerance stacked on tolerance hoping things line up.</p>
+    <p>Hexagons tessellate. They have done this for a very long time.</p>
+    <div class="cfg-expand">
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Profile</span><span class="cfg-spec-val">200 &times; 200 mm, 12 mm wall thickness, S355 structural steel</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Tolerance</span><span class="cfg-spec-val">&pm;0.5 mm across every frame, ISO 9001 &amp; AQAP 2110 verified</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Nodes</span><span class="cfg-spec-val">ISO 1161 compatible &mdash; any standard crane, truck, or port</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Floor area</span><span class="cfg-spec-val">~28 m&sup2; usable per module</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 02 — Why Hexagons ═══ -->
+<div class="cfg-section">
+  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-3.jpg" alt="Nature's hexagons" class="cfg-img">
+  <div class="cfg-card">
+    <h2>Why Hexagons</h2>
+    <h3>02 &mdash; Nature recognised it first</h3>
+    <p>Honeycomb is over a hundred million years old. Bees did not invent it. Physics did. They simply followed the math.</p>
+    <p>Basalt columns at the Giant's Causeway. Carbon molecules. Turtle shells. The compound eyes of a dragonfly. The same shape appears wherever nature needs to cover area with minimal material and maximal strength.</p>
+    <p>We did not choose the hexagon. We recognised it.</p>
+    <div class="cfg-expand">
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Load</span><span class="cfg-spec-val">120&deg; angles distribute load across more of the structure</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">vs. rect</span><span class="cfg-spec-val">90&deg; corners concentrate stress; hexagons spread it</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Result</span><span class="cfg-spec-val">Less material, more strength, better thermal behaviour</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Connect</span><span class="cfg-spec-val">No adapters, brackets, or compromise between neighbours</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Statement: Two Skins ═══ -->
+<section class="cfg-statement">
+  <h2>The same frame that holds floor-to-ceiling <span>glass</span> also stops a <span>7.62 mm round</span>.</h2>
+</section>
+
+<!-- ═══ 03 — Living Skin ═══ -->
+<div class="cfg-section">
+  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-5.jpg" alt="Living skin — timber, glass, warmth" class="cfg-img">
+  <div class="cfg-card">
+    <h2>Living Skin</h2>
+    <h3>03 &mdash; The skin people live inside</h3>
+    <p>Oak floors, 20 mm thick. Linen on the walls. Brass fittings that age the way brass should &mdash; slowly, honestly. Floor-to-ceiling glass where the view earns it. Corten steel outside, rusting on purpose, getting more itself with every season.</p>
+    <p>Charred timber cladding &mdash; Shou Sugi Ban &mdash; burned to protect. A 300-year-old Japanese technique applied to a frame built last month.</p>
+    <p>Nothing here is decorative. The oak is structural dampening. The linen is acoustic. The brass will outlast the owner.</p>
+    <div class="cfg-expand">
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Exterior</span><span class="cfg-spec-val">Timber cladding, Corten steel, floor-to-ceiling glazing, green roof, solar</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Interior</span><span class="cfg-spec-val">20 mm oak flooring, linen acoustic panels, brass hardware, natural stone</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Climate</span><span class="cfg-spec-val">Full HVAC, passive thermal from geometry, cross-ventilation</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 04 — Defence Skin ═══ -->
+<div class="cfg-section">
+  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-7.jpg" alt="Defence skin — armour plate, Kevlar" class="cfg-img">
+  <div class="cfg-card">
+    <h2>Defence Skin</h2>
+    <h3>04 &mdash; Same frame. Different day.</h3>
+    <p>The outer layer is Armox 500T. Approximately 10.5 mm thick. Hardness around 500 on the Brinell scale. This is the same steel used in armoured personnel carriers. It stops what needs to be stopped.</p>
+    <p>Behind it, the S355 structural core carries the load. Inside that, a Kevlar anti-spall liner. Three layers. Each one does exactly one job.</p>
+    <div class="cfg-expand">
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Layer 1</span><span class="cfg-spec-val">Armox 500T, ~10.5 mm, ~500 HBW (SSAB, Sweden)</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Layer 2</span><span class="cfg-spec-val">S355 structural core, 200 &times; 200 mm, 12 mm wall</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Layer 3</span><span class="cfg-spec-val">Kevlar composite &mdash; fragment capture, thermal separation</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">HVAC</span><span class="cfg-spec-val">HEPA H14, overpressure, CBRN options</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Target</span><span class="cfg-spec-val">VPAM PM 9 (ballistic) / STANAG 2280 (blast)</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 05 — Modularity ═══ -->
+<div class="cfg-section">
+  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-9.jpg" alt="Modular configurations" class="cfg-img">
+  <div class="cfg-card">
+    <h2>One to Many</h2>
+    <h3>05 &mdash; Modularity</h3>
+    <p>One module is a retreat. Two modules are a home. Three modules are a residence. Six modules are a resort. Twelve modules are a crisis centre.</p>
+    <p>The frame does not know what it will become. That is the point.</p>
+    <div class="cfg-expand">
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Transport</span><span class="cfg-spec-val">2 modules per truck, ISO 1161 nodes, road/rail/sea/air</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Assembly</span><span class="cfg-spec-val">2-person crew, ~24 h to operational, no wet trades</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Layouts</span><span class="cfg-spec-val">Linear, L-shape, T-shape, U-shape, H-shape, tower, campus</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Logic</span><span class="cfg-spec-val">Same connection logic everywhere &mdash; no adapters, no custom brackets</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 06 — The Skin Changes ═══ -->
+<div class="cfg-section">
+  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-11.jpg" alt="Skin change scenarios" class="cfg-img">
+  <div class="cfg-card">
+    <h2>The Skin Changes</h2>
+    <h3>06 &mdash; Your life is not static</h3>
+    <p>The same module starts as a garden pergola &mdash; open sides, timber posts, a roof for shade. When autumn comes, add glass. Now it is a greenhouse. When winter comes, insulate. Now it is a heated studio. When the world gets loud, add Armox. Now it is a vault.</p>
+    <p>One frame. Four lives. No demolition. No rebuilding. Just a skin change.</p>
+    <div class="cfg-expand">
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Pergola</span><span class="cfg-spec-val">Open structure, timber posts, shade roof</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Greenhouse</span><span class="cfg-spec-val">Add glazing panels &mdash; year-round growing, sunroom</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Studio</span><span class="cfg-spec-val">Add insulated panels + HVAC &mdash; office, art studio, guest room</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Vault</span><span class="cfg-spec-val">Add Armox 500T &mdash; equipment storage, safe room</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Crew</span><span class="cfg-spec-val">2-person crew, skin swap in under a day</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Specifications Grid ═══ -->
+<section class="cfg-specs-grid">
+  <div class="cfg-specs-inner">
+    <div class="cfg-specs-block">
+      <h3>Frame</h3>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Profile</span><span class="cfg-spec-val">200 &times; 200 mm</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Wall</span><span class="cfg-spec-val">12 mm thickness</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Steel</span><span class="cfg-spec-val">S355 structural</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Tolerance</span><span class="cfg-spec-val">&pm;0.5 mm</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Area</span><span class="cfg-spec-val">~28 m&sup2; per module</span></div>
+    </div>
+    <div class="cfg-specs-block">
+      <h3>Transport</h3>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Capacity</span><span class="cfg-spec-val">2 modules per truck</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Nodes</span><span class="cfg-spec-val">ISO 1161 corner nodes</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Deploy</span><span class="cfg-spec-val">~24 h site to operational</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Crew</span><span class="cfg-spec-val">2-person assembly</span></div>
+    </div>
+    <div class="cfg-specs-block">
+      <h3>Certifications</h3>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Quality</span><span class="cfg-spec-val">ISO 9001</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">NATO</span><span class="cfg-spec-val">AQAP 2110</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Welding</span><span class="cfg-spec-val">EN 729-3, full traceability</span></div>
+    </div>
+    <div class="cfg-specs-block">
+      <h3>Defence (when configured)</h3>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Armour</span><span class="cfg-spec-val">Armox 500T, ~10.5 mm, ~500 HBW</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Liner</span><span class="cfg-spec-val">Kevlar anti-spall</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">HVAC</span><span class="cfg-spec-val">HEPA H14, CBRN options</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Target</span><span class="cfg-spec-val">VPAM PM 9 / STANAG 2280</span></div>
+    </div>
+    <div class="cfg-specs-block" style="grid-column: 1 / -1;">
+      <h3>Origin</h3>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Made in</span><span class="cfg-spec-val">Slovenia, EU</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Facility</span><span class="cfg-spec-val">In-house manufacturing</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Lead time</span><span class="cfg-spec-val">10&ndash;16 weeks production</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Heritage</span><span class="cfg-spec-val">28 years of metalwork behind every frame</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Closing statement -->
+<section class="cfg-hero" style="min-height:60vh; z-index:1;">
+  <div class="cfg-hero-text" style="text-align:left;">
+    <h1>Twenty-eight years of metalwork taught us one thing. Get the frame right. Everything else <span>follows</span>.</h1>
+    <div class="cfg-hero-body" style="margin-top:32px;">
+      <a href="configurations.html" class="cfg-cta-btn">See what it becomes &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<div id="bee-footer"></div>
+<script type="module" src="bee-footer.js"></script>
+
+<!-- 3D wireframe background -->
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+
+const canvas = document.getElementById('scene3d-bg');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+renderer.setClearColor(0xF8F6F3, 1);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 0.4, 3.0);
+
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/libs/draco/');
+
+const loader = new GLTFLoader();
+loader.setDRACOLoader(dracoLoader);
+
+let wireframeGroup = new THREE.Group();
+scene.add(wireframeGroup);
+
+loader.load('3d%20files/BEE%20MODUL%20EXPLODE%20VIEW%2010.glb', (gltf) => {
+  const wireframeMat = new THREE.LineBasicMaterial({
+    color: 0xb5a291,
+    transparent: true,
+    opacity: 0.15
+  });
+
+  gltf.scene.traverse((child) => {
+    if (child.isMesh) {
+      const edges = new THREE.EdgesGeometry(child.geometry, 15);
+      const line = new THREE.LineSegments(edges, wireframeMat);
+      line.position.copy(child.position);
+      line.rotation.copy(child.rotation);
+      line.scale.copy(child.scale);
+      // Apply parent transforms
+      child.updateWorldMatrix(true, false);
+      line.applyMatrix4(child.matrixWorld);
+      wireframeGroup.add(line);
+    }
+  });
+
+  // Center the group
+  const box = new THREE.Box3().setFromObject(wireframeGroup);
+  const center = box.getCenter(new THREE.Vector3());
+  wireframeGroup.position.sub(center);
+});
+
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+
+  // Slow auto-rotation
+  wireframeGroup.rotation.y = t * 0.08;
+
+  // Gentle breathing scale
+  const breath = 1 + Math.sin(t * 0.5) * 0.02;
+  wireframeGroup.scale.set(breath, breath, breath);
+
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+
+<!-- Frosted glass cursor -->
+<script>
+(() => {
+  const cursor = document.getElementById('glassCursor');
+  if (!cursor || matchMedia('(hover: none)').matches) return;
+  let mx = 0, my = 0, cx = 0, cy = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function tick() {
+    cx += (mx - cx) * 0.12; cy += (my - cy) * 0.12;
+    cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px';
+    requestAnimationFrame(tick);
+  }
+  tick();
+  document.addEventListener('mouseenter', () => cursor.classList.add('visible'));
+  document.addEventListener('mouseleave', () => cursor.classList.remove('visible'));
+  document.addEventListener('mousemove', function s() { cursor.classList.add('visible'); document.removeEventListener('mousemove', s); });
+  document.querySelectorAll('.cfg-card').forEach(c => {
+    c.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+    c.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+  });
+})();
+</script>
+
+</body>
+</html>

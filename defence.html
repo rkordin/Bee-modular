@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Defence — BEE Modular</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+  }
+}
+</script>
+<style>
+@font-face {
+  font-family: 'NHaasGrotesk';
+  src: local('Neue Haas Grotesk Display'), local('NeueHaasGroteskDisp'), local('NHaasGroteskDSPro');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #F8F6F3;
+  --headline: #1A1A1A;
+  --body: #4A4A4A;
+  --secondary: #9A9A9A;
+  --accent: #b5a291;
+  --dark: #1A1A1A;
+  --on-dark: #F5F0EB;
+  --font-h: 'NHaasGrotesk', 'Helvetica Neue', 'Helvetica', 'Arial Black', sans-serif;
+  --font-b: 'Inter', system-ui, sans-serif;
+  --font-m: 'JetBrains Mono', monospace;
+}
+
+html { scroll-behavior: auto; }
+body {
+  font-family: var(--font-b);
+  background: var(--bg);
+  color: var(--body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  line-height: 1.7;
+}
+
+/* ── Nav ── */
+.cfg-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 72px; padding: 0 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(248,246,243,0.85);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+.cfg-nav-logo { height: 20px; }
+.cfg-nav-links { display: flex; gap: 28px; list-style: none; }
+.cfg-nav-links a {
+  font-family: var(--font-m); font-size: 11px; font-weight: 400;
+  color: var(--secondary); text-decoration: none;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  transition: color 0.3s;
+}
+.cfg-nav-links a:hover { color: var(--headline); }
+.cfg-nav-links a.active { color: var(--accent); }
+.cfg-nav-cta {
+  font-family: var(--font-m); font-size: 10px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--headline); background: none;
+  border: 1px solid rgba(26,26,26,0.15);
+  padding: 8px 20px; cursor: pointer; transition: all 0.3s;
+}
+.cfg-nav-cta:hover { background: var(--headline); color: var(--bg); }
+
+/* ── Hero intro ── */
+.cfg-hero {
+  min-height: 100vh; display: flex; align-items: center;
+  padding: 120px 48px 80px;
+  position: relative;
+}
+.cfg-hero-text {
+  max-width: 600px;
+  border-left: 2px solid var(--accent);
+  padding-left: 32px;
+}
+.cfg-hero-text h1 {
+  font-family: var(--font-h); font-weight: 900;
+  font-size: clamp(32px, 4vw, 52px);
+  letter-spacing: -0.04em; line-height: 1.1;
+  color: var(--headline); margin-bottom: 24px;
+}
+.cfg-hero-text h1 span { color: var(--accent); }
+.cfg-hero-body {
+  font-family: var(--font-m); font-size: clamp(12px, 1.1vw, 14px);
+  line-height: 1.8; color: var(--body);
+}
+.cfg-hero-body p { margin-bottom: 16px; }
+
+/* ── Section layout ── */
+.cfg-section {
+  padding: 80px 48px;
+  display: flex; align-items: flex-start; gap: 40px;
+  justify-content: center;
+  min-height: 80vh;
+  border-top: 1px solid rgba(0,0,0,0.04);
+}
+.cfg-section:nth-child(even) { flex-direction: row-reverse; }
+.cfg-img {
+  width: 65vw; max-width: 900px; height: auto;
+  object-fit: cover;
+  border: 1px solid rgba(181,162,145,0.08);
+  filter: saturate(0.3) contrast(1.05);
+  transition: filter 0.6s ease;
+  flex-shrink: 1;
+}
+.cfg-img:hover { filter: saturate(0.8) contrast(1.0); }
+.cfg-card {
+  width: 25vw; min-width: 280px; max-width: 420px;
+  flex-shrink: 0; padding: 32px;
+  border-left: 2px solid var(--accent);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.cfg-card h2 {
+  font-family: var(--font-h); font-weight: 900;
+  font-size: clamp(20px, 2.2vw, 30px);
+  letter-spacing: -0.02em; line-height: 1.15;
+  color: var(--headline); margin-bottom: 4px;
+}
+.cfg-card h3 {
+  font-family: var(--font-m); font-size: 10px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 20px;
+}
+.cfg-card p {
+  font-family: var(--font-m); font-size: clamp(11px, 1.1vw, 14px);
+  line-height: 1.8; color: var(--body); margin-bottom: 12px;
+}
+/* Expandable specs — hidden by default */
+.cfg-expand {
+  max-height: 0; overflow: hidden; opacity: 0;
+  transition: max-height 0.9s cubic-bezier(0.4,0,0.2,1),
+              opacity 0.6s cubic-bezier(0.4,0,0.2,1),
+              margin 0.6s cubic-bezier(0.4,0,0.2,1);
+  margin-top: 0;
+}
+.cfg-card:hover .cfg-expand {
+  max-height: 800px; opacity: 1; margin-top: 16px;
+  transition: max-height 0.9s cubic-bezier(0.4,0,0.2,1) 0.05s,
+              opacity 0.5s ease 0.15s,
+              margin 0.5s ease 0.05s;
+}
+.cfg-expand p {
+  font-size: clamp(10px, 0.9vw, 12px);
+  color: var(--secondary);
+}
+.cfg-spec-row {
+  display: grid; grid-template-columns: 90px 1fr; gap: 8px;
+  font-family: var(--font-m); font-size: 11px;
+  line-height: 1.8; padding: 4px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.cfg-spec-label { color: var(--secondary); text-transform: uppercase; letter-spacing: 0.08em; font-size: 9px; }
+.cfg-spec-val { color: var(--body); }
+
+/* ── Applications grid ── */
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  padding: 0 48px 80px;
+}
+.app-card {
+  padding: 28px 24px;
+  border-left: 2px solid var(--accent);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.app-card h4 {
+  font-family: var(--font-h); font-weight: 700;
+  font-size: 14px; letter-spacing: -0.01em;
+  color: var(--headline); margin-bottom: 8px;
+}
+.app-card p {
+  font-family: var(--font-m); font-size: 12px;
+  line-height: 1.7; color: var(--body);
+}
+
+/* Frosted glass cursor */
+.glass-cursor {
+  position: fixed; width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(181,162,145,0.08);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(181,162,145,0.15);
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%, -50%);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; opacity: 0;
+  transition: width 0.4s cubic-bezier(0.22,1,0.36,1),
+              height 0.4s cubic-bezier(0.22,1,0.36,1),
+              border-radius 0.4s cubic-bezier(0.22,1,0.36,1),
+              opacity 0.3s ease;
+}
+.glass-cursor.visible { opacity: 1; }
+.glass-cursor .cursor-label {
+  font-family: var(--font-m); font-size: 9px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent); opacity: 0; white-space: nowrap;
+  transition: opacity 0.3s ease 0.1s;
+}
+.glass-cursor.hovering { width: 90px; height: 90px; background: rgba(181,162,145,0.1); border-color: rgba(181,162,145,0.25); }
+.glass-cursor.hovering .cursor-label { opacity: 1; }
+@media (hover: none) { .glass-cursor { display: none; } }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .cfg-section { flex-direction: column !important; padding: 40px 24px; }
+  .cfg-img { width: 100%; max-width: none; }
+  .cfg-card { width: 100%; max-width: none; min-width: 0; }
+  .app-grid { padding: 0 24px 60px; }
+}
+@media (max-width: 768px) {
+  .cfg-nav { padding: 0 24px; }
+  .cfg-nav-links { display: none; }
+  .cfg-hero { padding: 100px 24px 60px; }
+}
+
+/* ── 3D wireframe background ── */
+#scene3d-blur { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; background: rgba(248,246,243,0.3); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); pointer-events: none; }
+#scene3d-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; }
+.page-content { position: relative; z-index: 1; }
+</style>
+</head>
+<body>
+
+<div id="bee-nav" data-active="defence"></div>
+<script type="module" src="bee-nav.js"></script>
+
+<canvas id="scene3d-bg"></canvas>
+<div id="scene3d-blur"></div>
+
+<div class="page-content">
+
+<div class="glass-cursor" id="glassCursor"><span class="cursor-label">Read more</span></div>
+<!-- Hero -->
+<section class="cfg-hero">
+  <div class="cfg-hero-text">
+    <h1>We build <span>protection</span> systems.</h1>
+    <div class="cfg-hero-body">
+      <p>Not bunkers. Not symbols of fear. Protection.</p>
+      <p>The world has always carried risk. What changed is the nature of it. Extreme weather events that used to happen once a century now happen every few years. Infrastructure fails in ways we did not plan for. Geopolitical stability is no longer a given.</p>
+      <p>Addressing this thoughtfully is not pessimism. It is the same logic as a smoke detector. A seatbelt. Insurance on a house you hope never burns. Preparation is responsibility.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ The Logic — Risk Context ═══ -->
+<div class="cfg-section">
+  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-2.jpg" alt="Risk context" class="cfg-img">
+  <div class="cfg-card">
+    <h2>The logic is simple</h2>
+    <h3>Risk Context</h3>
+    <p>We think you should not have to choose between beauty and safety. You should not have to hide underground to feel secure.</p>
+    <p>So we made sure you do not have to.</p>
+    <div class="cfg-expand">
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Weather</span><span class="cfg-spec-val">Global disasters causing &gt;$1B damage: 28 events in 2024 (NOAA)</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Energy</span><span class="cfg-spec-val">European grid intermittence events increased 340% since 2018 (ENTSO-E)</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Health</span><span class="cfg-spec-val">WHO declared 7 public health emergencies of international concern in the last decade</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Conclusion</span><span class="cfg-spec-val">These are not arguments for fear. They are arguments for planning.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Not a Bunker ═══ -->
+<div class="cfg-section">
+  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-3.jpg" alt="BEE.safe interior — a room, not a bunker" class="cfg-img">
+  <div class="cfg-card">
+    <h2>Not a bunker</h2>
+    <h3>BEE.safe</h3>
+    <p>BEE.safe is a room. A beautiful, functional, light-filled room that happens to stop bullets. Filter air. Maintain pressure. Hold steady when nothing else does.</p>
+    <p>On ordinary days it is a well-built space with good acoustics and solid walls. You work in it. Read in it. Your children do homework in it.</p>
+    <p>Behind the timber lining: Armox 500T armour steel. Beneath the plaster: Kevlar anti-spall layer. Behind the vent covers: HEPA filtration rated for pharmaceutical clean rooms.</p>
+    <div class="cfg-expand">
+      <p>Every BEE.safe module is finished to the same standard as our living spaces. Same timber options. Same acoustic treatment. Same lighting design.</p>
+      <p>The protective layers are structural &mdash; they do not dictate the interior. Clients select finishes, furniture layouts, and lighting exactly as they would for any room.</p>
+      <p>Because it is a room. It just also happens to be one of the most protected spaces you can own.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Outer Layer — Ballistic Absorption ═══ -->
+<div class="cfg-section">
+  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-4.jpg" alt="Armox 500T outer layer" class="cfg-img">
+  <div class="cfg-card">
+    <h2>Outer layer</h2>
+    <h3>Ballistic Absorption</h3>
+    <p>Armox 500T armour steel. The same material used in military armoured vehicles. It absorbs and dissipates kinetic energy from projectile impact.</p>
+    <div class="cfg-expand">
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Maker</span><span class="cfg-spec-val">SSAB (Sweden)</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Hardness</span><span class="cfg-spec-val">~500 HBW (Brinell)</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Thickness</span><span class="cfg-spec-val">~10.5mm standard configuration</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Class</span><span class="cfg-spec-val">VPAM PM 9 — tested against 7.62&times;51mm AP at point-blank range</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Behavior</span><span class="cfg-spec-val">Controlled deformation — captures energy rather than transferring it</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Core Layer — Structural Integrity ═══ -->
+<div class="cfg-section">
+  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-5.jpg" alt="S355 structural steel core" class="cfg-img">
+  <div class="cfg-card">
+    <h2>Core layer</h2>
+    <h3>Structural Integrity</h3>
+    <p>S355 structural steel frame. This is what keeps the room a room when forces act on it &mdash; blast pressure, earth movement, sustained load.</p>
+    <div class="cfg-expand">
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Grade</span><span class="cfg-spec-val">S355 structural steel, yield strength 355 MPa</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Load</span><span class="cfg-spec-val">Engineered for asymmetric load distribution</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Blast</span><span class="cfg-spec-val">Rated to STANAG 2280</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Seismic</span><span class="cfg-spec-val">Zone-specific deployment tolerance</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Services</span><span class="cfg-spec-val">Frame carries electrical, HVAC ducting, data cabling</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Inner Layer — Fragment Capture ═══ -->
+<div class="cfg-section">
+  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-6.jpg" alt="Kevlar anti-spall inner layer" class="cfg-img">
+  <div class="cfg-card">
+    <h2>Inner layer</h2>
+    <h3>Fragment Capture</h3>
+    <p>Kevlar anti-spall lining. If a projectile penetrates the outer steel &mdash; unlikely at rated threat levels, but we plan for unlikely &mdash; the Kevlar captures fragments before they enter the room.</p>
+    <p>It also provides thermal separation between the steel shell and the living space.</p>
+    <div class="cfg-expand">
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Material</span><span class="cfg-spec-val">Aramid fibre anti-spall liner</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Function</span><span class="cfg-spec-val">Captures secondary fragmentation (spall) from interior face of armour steel</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Thermal</span><span class="cfg-spec-val">Thermal break preventing steel-to-interior temperature conduction</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Acoustic</span><span class="cfg-spec-val">~8&ndash;12 dB reduction in transmitted impact noise</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Moisture</span><span class="cfg-spec-val">Reduces interior condensation risk</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Environmental Systems ═══ -->
+<div class="cfg-section">
+  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-7.jpg" alt="HEPA filtration and environmental control" class="cfg-img">
+  <div class="cfg-card">
+    <h2>Stopping a bullet is not sufficient</h2>
+    <h3>Environmental Control</h3>
+    <p>A sealed room that cannot breathe is not a safe room. It is a different kind of danger. Air matters. Temperature matters. Pressure matters. CO&sup2; concentration matters.</p>
+    <p>HEPA H14 filtration &mdash; pharmaceutical clean room standard. Captures 99.995% of particles at 0.3 microns. Positive pressure ensures air flows out, never in.</p>
+    <div class="cfg-expand">
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Filter</span><span class="cfg-spec-val">HEPA H14 per EN 1822, &ge;99.995% at MPPS (0.3&mu;m)</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">CBRN</span><span class="cfg-spec-val">Optional activated carbon adsorption layer, NATO AEP-54</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Pressure</span><span class="cfg-spec-val">+50 Pa minimum above external ambient, battery backup</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Climate</span><span class="cfg-spec-val">Independent HVAC loop, sized for full occupancy at rated duration</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">CO&sup2;</span><span class="cfg-spec-val">Monitoring with alarm at 1000 ppm (advisory), 2500 ppm (action)</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Autonomy</span><span class="cfg-spec-val">72 hours filtered air at full occupancy, extended configs available</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ The Underground ═══ -->
+<div class="cfg-section">
+  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-8.jpg" alt="Underground integration — house with safety beneath" class="cfg-img">
+  <div class="cfg-card">
+    <h2>The underground</h2>
+    <h3>Integrated Protection</h3>
+    <p>Not a bunker with a house on top. A house with safety underneath.</p>
+    <p>Daily life happens above. Morning coffee. Work calls. Dinner with family. Below, if you ever need it: a protected space with clean air, stable temperature, communication systems, supplies, and room to wait. Comfortably. With dignity.</p>
+    <div class="cfg-expand">
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Install</span><span class="cfg-spec-val">Below-grade during foundation work, tanked membrane BS 8102 Grade 3</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Structure</span><span class="cfg-spec-val">Structurally independent &mdash; building loads transferred around, not through</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Access</span><span class="cfg-spec-val">Concealed staircase or lift, client-specified entry points</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Egress</span><span class="cfg-spec-val">Independent escape route to secondary exit, min 1.0m clear width</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Power</span><span class="cfg-spec-val">Independent electrical supply, battery backup (48h minimum)</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Comms</span><span class="cfg-spec-val">Dedicated fibre + satellite trunk</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Applications ═══ -->
+<section class="cfg-hero" style="min-height:50vh;">
+  <div class="cfg-hero-text">
+    <h1>Applications</h1>
+    <div class="cfg-hero-body">
+      <p>Each application starts from the same hexagonal structural platform. Internal configuration, services, and finishes are adapted to function. All configurations maintain base ballistic and blast ratings.</p>
+    </div>
+  </div>
+</section>
+
+<div class="app-grid">
+  <div class="app-card">
+    <h4>Family Protection</h4>
+    <p>A safe space for the people who matter most.</p>
+  </div>
+  <div class="app-card">
+    <h4>Command &amp; Control</h4>
+    <p>C4I-ready communications infrastructure for coordinated response.</p>
+  </div>
+  <div class="app-card">
+    <h4>Medical</h4>
+    <p>Field hospital capability. ISO-7 clean room environments for surgery and treatment.</p>
+  </div>
+  <div class="app-card">
+    <h4>Crisis Response</h4>
+    <p>Pre-positioned, rapidly deployable shelter for emergency personnel.</p>
+  </div>
+  <div class="app-card">
+    <h4>Environmental Protection</h4>
+    <p>Rated for extreme weather &mdash; storms, flooding, temperature extremes.</p>
+  </div>
+  <div class="app-card">
+    <h4>Communications &amp; Data</h4>
+    <p>Shielded, climate-controlled housing for servers and communications equipment.</p>
+  </div>
+  <div class="app-card">
+    <h4>Drone &amp; UAV Operations</h4>
+    <p>Protected ground control stations with integrated antenna systems.</p>
+  </div>
+  <div class="app-card">
+    <h4>Mobile Laboratory</h4>
+    <p>Contained environments for field research, sampling, and analysis.</p>
+  </div>
+  <div class="app-card">
+    <h4>Border &amp; Observation</h4>
+    <p>Long-duration protected posts with full life support.</p>
+  </div>
+</div>
+
+<!-- ═══ Verification ═══ -->
+<div class="cfg-section">
+  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-9.jpg" alt="Independently verified protection" class="cfg-img">
+  <div class="cfg-card">
+    <h2>Independently verified</h2>
+    <h3>Certification</h3>
+    <p>VPAM PM 9 &mdash; the highest ballistic protection rating for permanent structures. Tested by an accredited laboratory. Documented.</p>
+    <p>STANAG 2280 &mdash; NATO standard for blast resistance. Not a marketing number. An engineering target, met and proven.</p>
+    <div class="cfg-expand">
+      <div class="cfg-spec-row"><span class="cfg-spec-label">VPAM PM 9</span><span class="cfg-spec-val">Tested per VPAM APR 2006, ISO 17025 accredited facility</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Threat</span><span class="cfg-spec-val">7.62&times;51mm AP, 0&deg; obliquity, 10m range, zero penetration</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">STANAG</span><span class="cfg-spec-val">NATO AEP for protective structures &mdash; charge weight &amp; standoff categories</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Glazing</span><span class="cfg-spec-val">EN 1063 (bullet-resistant), EN 13541 (explosion-resistant)</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Elements</span><span class="cfg-spec-val">EN 1522/1523 (bullet-resistant building elements)</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Closing statement -->
+<section class="cfg-hero" style="min-height:60vh;">
+  <div class="cfg-hero-text">
+    <h1>We hope you never <span>need</span> this.</h1>
+    <div class="cfg-hero-body">
+      <p>But if you do, it will be there. And it will be beautiful.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<div id="bee-footer"></div>
+<script type="module" src="bee-footer.js"></script>
+
+<!-- Frosted glass cursor -->
+<script>
+(() => {
+  const cursor = document.getElementById('glassCursor');
+  if (!cursor || matchMedia('(hover: none)').matches) return;
+  let mx = 0, my = 0, cx = 0, cy = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function tick() {
+    cx += (mx - cx) * 0.12; cy += (my - cy) * 0.12;
+    cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px';
+    requestAnimationFrame(tick);
+  }
+  tick();
+  document.addEventListener('mouseenter', () => cursor.classList.add('visible'));
+  document.addEventListener('mouseleave', () => cursor.classList.remove('visible'));
+  document.addEventListener('mousemove', function s() { cursor.classList.add('visible'); document.removeEventListener('mousemove', s); });
+  document.querySelectorAll('.cfg-card, .app-card').forEach(c => {
+    c.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+    c.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+  });
+})();
+</script>
+
+<!-- 3D wireframe background -->
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+
+(function() {
+  const canvas = document.getElementById('scene3d-bg');
+  if (!canvas) return;
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+  renderer.setClearColor(0xF8F6F3, 1);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xF8F6F3);
+
+  const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.set(0, 0.4, 3.0);
+  camera.lookAt(0, 0.1, 0);
+
+  // Load model
+  const dracoLoader = new DRACOLoader();
+  dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/libs/draco/');
+
+  const loader = new GLTFLoader();
+  loader.setDRACOLoader(dracoLoader);
+
+  let edgesGroup = null;
+
+  loader.load(
+    '3d%20files/BEE%20MODUL%20EXPLODE%20VIEW%2010.glb',
+    (gltf) => {
+      const model = gltf.scene;
+      edgesGroup = new THREE.Group();
+
+      model.traverse((child) => {
+        if (child.isMesh && child.geometry) {
+          child.updateWorldMatrix(true, false);
+          const edges = new THREE.EdgesGeometry(child.geometry, 8);
+          const material = new THREE.LineBasicMaterial({
+            color: 0xb5a291,
+            transparent: true,
+            opacity: 0.15,
+            linewidth: 1,
+          });
+          const lines = new THREE.LineSegments(edges, material);
+          lines.applyMatrix4(child.matrixWorld);
+          edgesGroup.add(lines);
+        }
+      });
+
+      // Center the model
+      const box = new THREE.Box3().setFromObject(edgesGroup);
+      const center = box.getCenter(new THREE.Vector3());
+      edgesGroup.position.sub(center);
+
+      scene.add(edgesGroup);
+    },
+    undefined,
+    (err) => console.warn('3D background load error:', err)
+  );
+
+  // Animation
+  function animate() {
+    requestAnimationFrame(animate);
+
+    if (edgesGroup) {
+      // Slow auto-rotation
+      edgesGroup.rotation.y += 0.0008;
+
+      // Gentle breathing scale
+      const t = performance.now() * 0.001;
+      const breathe = 1.0 + Math.sin(t * 0.4) * 0.015;
+      edgesGroup.scale.set(breathe, breathe, breathe);
+    }
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  // Resize
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+</script>
+
+</div><!-- .page-content -->
+</body>
+</html>
