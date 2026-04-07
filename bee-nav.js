@@ -30,6 +30,7 @@
 
   // ── Navigation items ──
   const navItems = [
+    { key: 'home',     labelTop: 'Origin',          labelBottom: 'Origin',         hash: '#hero',       file: 'index.html' },
     { key: 'system',   labelTop: 'The System',     labelBottom: 'System',         hash: '#system',     file: 'system.html' },
     { key: 'configs',  labelTop: 'Configurations',  labelBottom: 'Configurations', hash: '#bp-configs', file: 'configurations.html' },
     { key: 'defence',  labelTop: 'Defence',         labelBottom: 'Defence',        hash: '#bp-defence', file: 'defence.html' },
@@ -393,7 +394,7 @@
 <!-- TOP NAV -->
 <nav class="nav-top" id="navTop">
   <div class="nav-top-left">
-    <img src="LOGO/BEE%20MODULAR%20LOGO%20ON%20WHITE.svg" alt="BEE Modular" class="nav-top-logo-img">
+    <a href="index.html" style="display:flex;align-items:center;text-decoration:none;"><img src="LOGO/BEE%20MODULAR%20LOGO%20ON%20WHITE.svg" alt="BEE Modular" class="nav-top-logo-img"></a>
   </div>
   <ul class="nav-top-links">
     ${topLinks}
@@ -407,7 +408,7 @@
 <!-- BOTTOM NAV -->
 <nav class="nav-bottom" id="navBottom">
   <div class="nav-bottom-left">
-    <img src="LOGO/BEE%20MODULAR%20LOGO%20ON%20BLACK.svg" alt="BEE Modular" class="nav-bottom-logo-img">
+    <a href="index.html" style="display:flex;align-items:center;text-decoration:none;"><img src="LOGO/BEE%20MODULAR%20LOGO%20ON%20BLACK.svg" alt="BEE Modular" class="nav-bottom-logo-img"></a>
   </div>
   <ul class="nav-bottom-links">
     ${bottomLinks}
