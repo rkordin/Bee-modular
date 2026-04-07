@@ -2329,6 +2329,32 @@ html.lenis, html.lenis body { height: auto; }
   padding: 6px 14px;
   border: 1px solid rgba(128,128,128,0.15);
 }
+/* Expandable content on hover — same pattern as subpage cfg-expand */
+.ec-expand {
+  max-height: 0; overflow: hidden; opacity: 0;
+  transition: max-height 1.2s cubic-bezier(0.4,0,0.2,1),
+              opacity 0.6s cubic-bezier(0.4,0,0.2,1),
+              margin 0.6s cubic-bezier(0.4,0,0.2,1);
+  margin-top: 0;
+}
+.ec-card:hover .ec-expand {
+  max-height: 1200px; opacity: 1; margin-top: 20px;
+  transition: max-height 1.2s cubic-bezier(0.4,0,0.2,1) 0.05s,
+              opacity 0.5s ease 0.15s,
+              margin 0.5s ease 0.05s;
+}
+.ec-expand p {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--secondary);
+  margin-bottom: 12px;
+}
+.ec-expand p:last-child { margin-bottom: 0; }
+.ec-expand .ec-expand-accent {
+  color: var(--accent);
+  font-style: italic;
+  font-size: 14px;
+}
 .ec-image {
   width: 65vw; max-width: 1100px; height: auto;
   object-fit: cover;
@@ -2551,6 +2577,12 @@ html.lenis, html.lenis body { height: auto; }
         <div class="ec-tags">
           <span>EST. 1998</span><span>28 years</span><span>Slovenia, EU</span>
         </div>
+        <div class="ec-expand">
+          <p>Every structure begins the same way. A line on paper. A shape taking form. An idea becoming geometry.</p>
+          <p>But this sketch asked a different question. Not "what should this building be?" but "what might this building become?" Not a fixed answer, but an open system. Not a product, but a platform.</p>
+          <p>The world changes. Families grow. Careers shift. Children arrive, then leave. Parents age. Opportunities appear in unexpected places. A conventional building cannot respond. It is frozen in the moment of its completion.</p>
+          <p class="ec-expand-accent">Your life will change. Your world will change. Your building can change with them.</p>
+        </div>
       </div>
     </div>
 
@@ -2564,6 +2596,12 @@ html.lenis, html.lenis body { height: auto; }
         <p>Nature discovered this geometry billions of years ago. In honeycombs. In basalt columns. In the molecular structure of carbon. We are simply applying what already works.</p>
         <div class="ec-tags">
           <span>200 × 200 mm</span><span>12 mm wall</span><span>S355</span><span>±0.5 mm</span><span>ISO 1161</span>
+        </div>
+        <div class="ec-expand">
+          <p>BEE Modular is not a building. It is a decision. The decision to invest in infrastructure that adapts rather than expires. The decision to own a platform rather than a fixed structure.</p>
+          <p>At its core is a patented hexagon-inspired steel frame. This geometry is not arbitrary. Hexagons tessellate perfectly. They distribute stress evenly. They create corners at 120 degrees — the angle that makes expansion simple and structural integrity inevitable.</p>
+          <p>The result is a system that can become almost anything: a ballistic shelter, a lakeside home, a field hospital, a wellness retreat, a command center, a wine cellar.</p>
+          <p class="ec-expand-accent">One structural language. Endless configurations. One investment. Infinite returns.</p>
         </div>
       </div>
     </div>
@@ -2585,6 +2623,11 @@ html.lenis, html.lenis body { height: auto; }
           <div><span class="ec-num">08</span> <strong>BEE.stored</strong> — Secure storage. Secure what you value.</div>
         </div>
         <p>Every configuration begins with the same frame. A customer who purchases BEE.cozy today can reconfigure to BEE.guest tomorrow.</p>
+        <div class="ec-expand">
+          <p>BEE emerges from an industrial ecosystem, not a design studio. The manufacturing facility in Slovenia represents three decades of accumulated metalworking expertise.</p>
+          <p>BEE.safe delivers ballistic protection through a layered defence system. BEE.cozy and BEE.guest address residential and hospitality markets with timber-lined interiors and floor-to-ceiling glazing. BEE.productive creates acoustically isolated workspaces. BEE.mobile optimizes for rapid deployment.</p>
+          <p class="ec-expand-accent">This is not product diversification. This is investment protection through designed adaptability.</p>
+        </div>
       </div>
     </div>
 
@@ -2600,6 +2643,11 @@ html.lenis, html.lenis body { height: auto; }
           <div><span class="ec-num">03</span> <strong>Climate</strong> — Energy efficiency, reduced waste, off-grid capability reward modular approaches.</div>
         </div>
         <p>BEE addresses all three vectors simultaneously. No competitor offers this combination.</p>
+        <div class="ec-expand">
+          <p>Security concerns — geopolitical instability, civil unrest, pandemic preparedness — drive demand for protected spaces. Housing constraints — urban density, affordability, remote work migration — create markets for alternative dwelling. Climate imperatives — energy efficiency, reduced waste, off-grid capability — reward modular approaches.</p>
+          <p>The same platform provides ballistic protection for security-conscious families, turnkey accommodation for hospitality investors, and sustainable micro-homes for environmentally motivated buyers.</p>
+          <p class="ec-expand-accent">Market segmentation does not require product proliferation. The platform adapts.</p>
+        </div>
       </div>
     </div>
 
@@ -2613,6 +2661,11 @@ html.lenis, html.lenis body { height: auto; }
         <div class="ec-tags">
           <span>Armox 500T</span><span>~500 HBW</span><span>Kevlar liner</span><span>HEPA H14</span><span>CBRN ready</span>
         </div>
+        <div class="ec-expand">
+          <p>The outer shell utilizes Armox 500T armour steel — approximately 10.5 mm thickness with hardness around 500 HBW — identical material specification to military vehicle armour, applied to civilian protection.</p>
+          <p>Environmental control systems transform the module into a sealed micro-atmosphere. HVAC with HEPA H14 filtration removes 99.995% of particles. Overpressure capability prevents external contamination. Optional CBRN systems address chemical, biological, radiological, and nuclear threat scenarios.</p>
+          <p>The frame follows ISO logic. ISO 1161 corner nodes enable standardized lifting. Transport-optimized dimensions allow two units per standard truck. Deployment: 24 hours from arrival to operational.</p>
+        </div>
       </div>
     </div>
 
@@ -2625,6 +2678,12 @@ html.lenis, html.lenis body { height: auto; }
         <p>BEE.safe is not a bunker. It is a room. A beautiful, functional, light-filled room that happens to stop bullets. That filters air. That maintains pressure. That keeps your family safe.</p>
         <p>You do not hide in a BEE.safe. You live in it. On ordinary days it is simply a well-built space. Then circumstances change. The room reveals its second nature. Armox behind timber. Kevlar beneath plaster. Protection that was always there. Quiet. Patient.</p>
         <p style="color:var(--accent); font-style:italic;">Live in it every day. Trust it on the day you need it.</p>
+        <div class="ec-expand">
+          <p>BEE.safe is a room. A beautiful, functional, light-filled room that happens to stop bullets. That filters air. That maintains pressure. That keeps your family safe while the world outside does whatever the world does.</p>
+          <p>On ordinary days it is simply a well-built space. A home office with unusually good acoustics. A guest suite with remarkably solid walls. Then circumstances change. The room reveals its second nature. Armox behind timber. Kevlar beneath plaster. Protection that was always there. Quiet. Patient.</p>
+          <p>Preparation is not pessimism. It is responsibility.</p>
+          <p class="ec-expand-accent">Live in it every day. Trust it on the day you need it.</p>
+        </div>
       </div>
     </div>
 
@@ -2642,6 +2701,12 @@ html.lenis, html.lenis body { height: auto; }
           <div><span class="ec-num">H</span> Two bars + connecting link</div>
         </div>
         <p>Start small. Grow over time. Your space expands as your life does.</p>
+        <div class="ec-expand">
+          <p>Three modules form a protected triangle of exterior space. Four create a generous courtyard. Five or six become a compound — a private village with shared heart and separate retreats.</p>
+          <p>This is how families grow. This is how communities form. This is how hospitality creates destination rather than accommodation.</p>
+          <p>The cluster breathes. Open to sky, protected from exposure. Inside and outside merge into a third space that belongs to both.</p>
+          <p class="ec-expand-accent">Your space expands as your life does.</p>
+        </div>
       </div>
     </div>
 
