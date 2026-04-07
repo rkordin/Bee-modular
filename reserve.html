@@ -521,7 +521,21 @@ body {
 }
 
 /* ═══════════ FORM SUCCESS STATE ═══════════ */
-.form-wrapper { position: relative; }
+.form-wrapper {
+  position: relative;
+  background: rgba(248, 246, 243, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(181, 162, 145, 0.12);
+  border-radius: 2px;
+  padding: 64px 56px;
+  max-width: 720px;
+  margin: 0 auto;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.04), 0 2px 12px rgba(0,0,0,0.02);
+}
+@media (max-width: 768px) {
+  .form-wrapper { padding: 40px 24px; }
+}
 
 .form-success {
   display: none;
@@ -656,9 +670,13 @@ body {
   <div class="form-wrapper">
     <h2 class="form-header-text reveal rd1">Tell us where to start.</h2>
 
-    <form id="reserveForm" action="https://formspree.io/f/placeholder" method="POST">
+    <form id="reserveForm" action="https://api.web3forms.com/submit" method="POST">
+      <!-- Web3Forms access key — replace with your real key from https://web3forms.com -->
+      <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
+      <input type="hidden" name="subject" value="New BEE Modular Reservation">
+      <input type="hidden" name="from_name" value="BEE Modular Website">
       <!-- Honeypot -->
-      <input type="text" name="_gotcha" class="bee-honey" tabindex="-1" autocomplete="off">
+      <input type="checkbox" name="botcheck" class="bee-honey" tabindex="-1" autocomplete="off">
 
       <div class="form-grid">
         <div class="form-field reveal rd2">
