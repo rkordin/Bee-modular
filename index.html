@@ -2587,9 +2587,27 @@ html.lenis, html.lenis body { height: auto; }
   .ec-card { max-width: 100%; }
 }
 @media (max-width: 768px) {
-  .exploded-content { padding: 0 20px; }
+  /* Switch from absolute to flow layout on mobile */
+  .exploded-scroll-spacer {
+    height: auto !important;
+    margin-top: 0 !important;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding: 40px 0;
+  }
+  .exploded-content {
+    position: relative !important;
+    top: auto !important;
+    padding: 0 16px;
+    min-height: auto;
+    flex-direction: column;
+    gap: 16px;
+  }
   .ec-card { max-width: 100%; min-width: 0; width: 90vw !important; padding: 28px 20px; }
   .ec-image { width: 92vw; }
+  #explodedScene { display: none; }
+  .exploded-section { margin-top: 0; }
 }
 
 /* Frosted glass cursor */
