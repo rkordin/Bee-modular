@@ -2118,11 +2118,13 @@ html.lenis, html.lenis body { height: auto; }
 
   /* ── Mobile Hero: Image Top / Text Bottom ── */
 
-  /* Product image area — top 45% of viewport */
+  /* ── Mobile Hero: clean vertical stack ── */
+  /* Image → counter → label → headline → READ MORE → PREV/NEXT → SCROLL */
+
   .hero-3d-stage {
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 45vh;
+    height: 42vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2130,21 +2132,21 @@ html.lenis, html.lenis body { height: auto; }
   }
 
   .hero-product-wrapper {
-    width: 75vw;
-    height: 38vh;
+    width: 80vw;
+    height: 36vh;
     animation: none;
   }
 
   .hero-product-wrapper img {
-    height: 38vh;
-    max-width: 75vw;
+    height: 36vh;
+    max-width: 80vw;
     object-fit: contain;
   }
 
-  /* Glass zone — bottom area, transparent, unified with image */
+  /* Glass zone — below image, takes remaining space */
   .hero-glass-zone {
     position: absolute;
-    top: auto;
+    top: 42vh;
     bottom: 0;
     left: 0;
     right: 0;
@@ -2152,19 +2154,19 @@ html.lenis, html.lenis body { height: auto; }
     transform: none;
     width: 100%;
     max-height: none;
-    padding: 0;
+    padding: 16px 24px 0;
     z-index: 11;
   }
 
-  /* Glass panel — transparent, no card feel, unified with image */
+  /* Glass panel — transparent, part of the unified background */
   .hero-glass-panel {
     width: 100% !important;
     max-width: none !important;
     min-width: 0 !important;
     height: auto;
-    max-height: 55vh;
-    padding: 24px 24px 20px;
-    overflow: hidden;
+    max-height: none;
+    padding: 0;
+    overflow: visible;
     border-radius: 0;
     background: none;
     backdrop-filter: none;
@@ -2173,15 +2175,21 @@ html.lenis, html.lenis body { height: auto; }
 
   .hero-stage-inner {
     max-height: none;
-    padding: 16px 0 0 0;
+    padding: 0;
     border-left: none;
     border-top: none;
   }
 
-  /* Hide body text, body2, expand, buttons on mobile — only show headline */
+  /* Hide body text, body2, buttons on mobile — only headline visible */
   .hero-stage-inner .hero-stage-body,
   .hero-stage-inner .hero-stage-body2,
-  .hero-stage-inner .hero-stage-buttons {
+  .hero-stage-inner .hero-stage-buttons,
+  .hero-stage-inner .hero-stage-cta {
+    display: none;
+  }
+
+  /* Hide the floating counter at top-right (we have it in the text) */
+  .hero-counter {
     display: none;
   }
 
@@ -2272,32 +2280,35 @@ html.lenis, html.lenis body { height: auto; }
     z-index: 12;
   }
 
-  /* Stage nav buttons — anchored in the image area, not over text */
+  /* Stage nav buttons — below the text, not on the image */
   .hero-stage-nav {
-    position: absolute;
+    position: relative;
     bottom: auto;
-    top: 38vh;
-    left: 16px;
-    right: 16px;
+    top: auto;
+    left: auto;
+    right: auto;
     z-index: 15;
-    padding: 0;
+    padding: 12px 0;
+    margin-top: 8px;
     background: none;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
+    gap: 16px;
     transform: none;
   }
   .hero-nav-btn {
-    background: rgba(248, 246, 243, 0.85) !important;
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
-    border-radius: 8px !important;
+    background: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-radius: 0 !important;
     padding: 10px 16px !important;
     font-size: 10px !important;
     min-height: 44px !important;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08) !important;
+    box-shadow: none !important;
+    border: 1px solid rgba(26,26,26,0.1) !important;
   }
 
   /* Kill expensive animations on mobile */
