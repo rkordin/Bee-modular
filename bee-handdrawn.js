@@ -86,11 +86,11 @@
       const observer = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
           if (entry.isIntersecting) {
-            // Small delay then draw
+            // 2s delay then draw
             setTimeout(function() {
-              path.style.transition = 'stroke-dashoffset 2s cubic-bezier(0.43, 0.13, 0.23, 0.96)';
+              path.style.transition = 'stroke-dashoffset 2.5s cubic-bezier(0.43, 0.13, 0.23, 0.96)';
               path.style.strokeDashoffset = '0';
-            }, 300);
+            }, 2000);
             observer.unobserve(entry.target);
           }
         });
