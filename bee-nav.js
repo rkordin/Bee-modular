@@ -28,14 +28,14 @@
   const showMusic = mount.dataset.music !== 'false';
   const musicSrc = mount.dataset.musicSrc || 'MUSIC/epic-2026-03-02-14-05-19-utc/AudioCopper_Epic_Main.mp3';
 
-  // ── Navigation items ──
+  // ── Navigation items (unified labels) ──
   const navItems = [
-    { key: 'home',     labelTop: 'Origin',          labelBottom: 'Origin',         hash: '#hero',       file: 'index.html' },
-    { key: 'system',   labelTop: 'The System',     labelBottom: 'System',         hash: '#system',     file: 'system.html' },
-    { key: 'configs',  labelTop: 'Configurations',  labelBottom: 'Configurations', hash: '#bp-configs', file: 'configurations.html' },
-    { key: 'defence',  labelTop: 'Defence',         labelBottom: 'Defence',        hash: '#bp-defence', file: 'defence.html' },
-    { key: 'process',  labelTop: 'Process',         labelBottom: 'Process',        hash: '#bp-process', file: 'process.html' },
-    { key: 'about',    labelTop: 'About',           labelBottom: 'About',          hash: '#bp-about',   file: 'about.html' },
+    { key: 'home',     label: 'Origin',          file: 'index.html' },
+    { key: 'system',   label: 'The System',      file: 'system.html' },
+    { key: 'configs',  label: 'Configurations',  file: 'configurations.html' },
+    { key: 'defence',  label: 'Defence',         file: 'defence.html' },
+    { key: 'process',  label: 'Process',         file: 'process.html' },
+    { key: 'about',    label: 'About',           file: 'about.html' },
   ];
 
   // Always link to subpages
@@ -53,15 +53,15 @@
 
   // ── Build link lists — plain <a> tags, always navigate to file ──
   const topLinks = navItems.map(item =>
-    `<li><a href="${linkHref(item)}"${activeClass(item.key)}>${item.labelTop}</a></li>`
+    `<li><a href="${linkHref(item)}"${activeClass(item.key)}>${item.label}</a></li>`
   ).join('\n    ');
 
   const bottomLinks = navItems.map(item =>
-    `<li><a href="${linkHref(item)}"${activeClass(item.key)}>${item.labelBottom}</a></li>`
+    `<li><a href="${linkHref(item)}"${activeClass(item.key)}>${item.label}</a></li>`
   ).join('\n    ');
 
   const mobileLinks = navItems.map(item =>
-    `<li><a href="${linkHref(item)}" class="bee-mobile-link">${item.labelTop}</a></li>`
+    `<li><a href="${linkHref(item)}" class="bee-mobile-link">${item.label}</a></li>`
   ).join('\n      ');
 
   // ── Hamburger button HTML (reused in top & bottom navs) ──
@@ -241,6 +241,19 @@
   user-select: none;
 }
 .nav-bottom.music-playing .music-label { color: var(--accent); }
+
+/* Music in TOP nav — adapt colors for light bg */
+.nav-top .nav-bottom-music .music-bars span { background: var(--secondary); }
+.nav-top .nav-bottom-music .music-label { color: var(--secondary); }
+.nav-top .nav-bottom-music .music-icon::before { border-left-color: var(--secondary); }
+.nav-top.music-playing .music-icon::before { border-left-color: transparent; }
+.nav-top.music-playing .music-bars span:nth-child(1) { animation: beeNavBar1 0.8s ease-in-out infinite; }
+.nav-top.music-playing .music-bars span:nth-child(2) { animation: beeNavBar2 0.7s ease-in-out infinite 0.1s; }
+.nav-top.music-playing .music-bars span:nth-child(3) { animation: beeNavBar3 0.9s ease-in-out infinite 0.2s; }
+.nav-top.music-playing .music-bars span:nth-child(4) { animation: beeNavBar1 0.75s ease-in-out infinite 0.15s; }
+.nav-top:not(.music-playing) .music-bars span { height: 3px !important; }
+.nav-top.music-playing .music-label { color: var(--accent); }
+.nav-top .music-vol { background: rgba(0,0,0,0.08); }
 .music-vol {
   -webkit-appearance: none; appearance: none;
   width: 60px; height: 2px;
@@ -400,6 +413,7 @@
     ${topLinks}
   </ul>
   <div class="nav-top-right">
+    ${musicHTML ? musicHTML.replace('id="navMusic"', 'id="navMusicTop"').replace('id="musicToggle"', 'id="musicToggleTop"').replace('id="musicVol"', 'id="musicVolTop"') : ''}
     <a href="${reserveHref()}" class="nav-top-cta">Reserve</a>
     ${hamburgerHTML}
   </div>
@@ -430,44 +444,54 @@
 ${audioHTML}
 `;
 
-  // ── Music player logic ──
+  // ── Music player logic (synced across top + bottom navs) ──
   if (showMusic) {
-    const musicToggle = document.getElementById('musicToggle');
-    const musicVolEl = document.getElementById('musicVol');
+    const musicToggleBottom = document.getElementById('musicToggle');
+    const musicToggleTop = document.getElementById('musicToggleTop');
+    const musicVolBottom = document.getElementById('musicVol');
+    const musicVolTop = document.getElementById('musicVolTop');
     const bgMusic = document.getElementById('bgMusic');
     const navBottom = document.getElementById('navBottom');
+    const navTop = document.getElementById('navTop');
 
     if (bgMusic) {
       bgMusic.volume = 0.25;
 
+      function syncPlayState() {
+        const playing = !bgMusic.paused;
+        if (navBottom) navBottom.classList.toggle('music-playing', playing);
+        if (navTop) navTop.classList.toggle('music-playing', playing);
+        // Sync volume sliders
+        const vol = Math.round(bgMusic.volume * 100);
+        if (musicVolBottom) musicVolBottom.value = vol;
+        if (musicVolTop) musicVolTop.value = vol;
+      }
+
       function toggleMusic() {
         if (!bgMusic.paused) {
           bgMusic.pause();
-          navBottom.classList.remove('music-playing');
         } else {
           bgMusic.play().catch(() => {});
-          navBottom.classList.add('music-playing');
         }
+        syncPlayState();
       }
 
-      if (musicToggle) {
-        musicToggle.addEventListener('click', toggleMusic);
-      }
+      if (musicToggleBottom) musicToggleBottom.addEventListener('click', toggleMusic);
+      if (musicToggleTop) musicToggleTop.addEventListener('click', toggleMusic);
 
-      if (musicVolEl) {
-        musicVolEl.addEventListener('input', (e) => {
-          bgMusic.volume = e.target.value / 100;
-        });
+      function onVolumeChange(e) {
+        bgMusic.volume = e.target.value / 100;
+        syncPlayState();
       }
+      if (musicVolBottom) musicVolBottom.addEventListener('input', onVolumeChange);
+      if (musicVolTop) musicVolTop.addEventListener('input', onVolumeChange);
 
       // Auto-play on first user interaction
       let hasAutoPlayed = false;
       function autoPlayOnce() {
         if (hasAutoPlayed) return;
         hasAutoPlayed = true;
-        bgMusic.play().then(() => {
-          navBottom.classList.add('music-playing');
-        }).catch(() => {});
+        bgMusic.play().then(() => { syncPlayState(); }).catch(() => {});
         document.removeEventListener('click', autoPlayOnce);
         document.removeEventListener('scroll', autoPlayOnce);
       }
