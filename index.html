@@ -331,13 +331,8 @@ body {
 .hero-scroll-thumb:active { cursor: grabbing; }
 .hero-scroll-thumb:hover { width: 4px; left: -1px; }
 
-/* Hide the separate stage headlines when glass is showing */
-.hero-glass-zone:has(.hero-glass-panel.active) ~ .hero-stage-text .hero-stage-headline-bare {
-  opacity: 0; transition: opacity 0.4s ease;
-}
-.hero-glass-zone:has(.hero-glass-panel.active) ~ .hero-intro .hero-intro-headline {
-  opacity: 0; transition: opacity 0.4s ease;
-}
+/* Hide bare stage headlines — glass panel shows all text */
+.hero-stage-text { display: none; }
 
 /* ── Word-by-word blur-fade text animation ── */
 .hero-stage-inner .si .word {
