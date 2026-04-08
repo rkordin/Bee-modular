@@ -205,12 +205,23 @@ body {
   .cfg-nav { padding: 0 24px; }
   .cfg-nav-links { display: none; }
   .cfg-hero { padding: 100px 24px 60px; }
+  .cfg-card {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    padding: 24px 20px !important;
+  }
+  .cfg-card h2 { font-size: 20px !important; }
+  .cfg-card h3 { font-size: 9px !important; }
+  .cfg-card p { font-size: 13px !important; line-height: 1.7 !important; }
+  .cfg-spec-row { font-size: 10px !important; }
+  .cfg-img { width: 100% !important; max-width: none !important; }
 }
 
 #particleCanvas {
   position: fixed; top: 0; left: 0;
   width: 100vw; height: 100vh;
-  z-index: -1; pointer-events: none;
+  z-index: -1; pointer-events: auto;
 }
 .page-content { position: relative; z-index: 1; }
 .cfg-statement {
@@ -619,6 +630,19 @@ body {
   window.addEventListener('mousemove', (e) => {
     mouse.x = e.clientX;
     mouse.y = e.clientY;
+  });
+
+  // Touch support for mobile
+  window.addEventListener('touchmove', (e) => {
+    if (e.touches.length > 0) {
+      mouse.x = e.touches[0].clientX;
+      mouse.y = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  window.addEventListener('touchend', () => {
+    mouse.x = null;
+    mouse.y = null;
   });
 
   window.addEventListener('mouseout', () => {
