@@ -16,7 +16,10 @@
     try { return JSON.parse(localStorage.getItem(LS_STORE_KEY)) || {}; }
     catch { return {}; }
   }
-  function setStore(obj) { localStorage.setItem(LS_STORE_KEY, JSON.stringify(obj)); }
+  function setStore(obj) {
+    try { localStorage.setItem(LS_STORE_KEY, JSON.stringify(obj)); }
+    catch(e) { console.warn('CMS: localStorage full, image saved in memory only', e); }
+  }
 
   function isEditAllowed() {
     return new URLSearchParams(location.search).get('edit') === 'true'
@@ -130,10 +133,13 @@
     if (!editMode) return;
 
     document.querySelectorAll('img[data-cms="true"]').forEach(img => {
-      // Visual indicator — dashed outline on hover via CSS
+      // Visual indicator + force clickable
       img.style.cursor = 'pointer';
-      img.style.outline = '2px dashed rgba(245, 166, 35, 0.4)';
+      img.style.outline = '2px dashed rgba(245, 166, 35, 0.5)';
       img.style.outlineOffset = '-2px';
+      img.style.pointerEvents = 'all';
+      img.style.position = 'relative';
+      img.style.zIndex = '9999';
 
       const handler = (e) => {
         e.preventDefault();
@@ -160,17 +166,18 @@
       reader.onload = () => {
         const dataUrl = reader.result;
         const key = img.getAttribute('data-cms-key');
-        if (!key) return;
 
-        // Store
-        const store = getStore();
-        store[key] = dataUrl;
-        setStore(store);
-
-        // Apply
+        // Apply immediately — visible change first
         img.src = dataUrl;
+        console.log('CMS: replaced', key, '(' + (dataUrl.length / 1024).toFixed(0) + 'KB)');
 
-        // Refresh overlay label
+        // Then try to persist
+        if (key) {
+          const store = getStore();
+          store[key] = dataUrl;
+          setStore(store);
+        }
+
         refreshOverlays();
       };
       reader.readAsDataURL(file);
