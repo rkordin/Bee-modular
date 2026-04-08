@@ -55,17 +55,14 @@
       .bee-cms-btn.active { background: #F5A623; color: #191919; }
 
       /* ── Image overlay ── */
-      .bee-cms-wrap {
-        position: relative; display: inline-block;
-      }
       .bee-cms-overlay {
-        position: absolute; inset: 0; z-index: 9999;
+        z-index: 9999;
         display: flex; align-items: center; justify-content: center;
-        background: rgba(25, 25, 25, 0.65); opacity: 0;
-        transition: opacity .25s; cursor: pointer; pointer-events: none;
+        background: rgba(25, 25, 25, 0.65);
+        transition: opacity .25s; cursor: pointer;
         border: 2px dashed #F5A623; border-radius: 4px;
+        pointer-events: none;
       }
-      .bee-cms-wrap:hover .bee-cms-overlay { opacity: 1; pointer-events: auto; }
       .bee-cms-overlay span {
         font-family: 'JetBrains Mono', monospace; font-size: 13px;
         color: #F5A623; text-transform: uppercase; letter-spacing: 0.08em;
@@ -118,31 +115,21 @@
     }
   }
 
-  // ── Overlays ──────────────────────────────────────────
-  const wraps = [];
+  // ── Overlays (no-wrap approach — overlays float on top of images) ──
+  const overlays = [];
 
   function refreshOverlays() {
-    // Remove existing wraps
-    wraps.forEach(w => {
-      const img = w.querySelector('img[data-cms="true"]');
-      if (img) w.parentNode.insertBefore(img, w);
-      w.remove();
-    });
-    wraps.length = 0;
+    // Remove existing overlays
+    overlays.forEach(o => o.remove());
+    overlays.length = 0;
 
     if (!editMode) return;
 
     document.querySelectorAll('img[data-cms="true"]').forEach(img => {
-      const wrap = document.createElement('div');
-      wrap.className = 'bee-cms-wrap';
-      // Match the image's actual rendered size
-      const rect = img.getBoundingClientRect();
-      const computed = getComputedStyle(img);
-      wrap.style.display = computed.display === 'inline' ? 'inline-block' : computed.display;
-      wrap.style.width = rect.width + 'px';
-      wrap.style.height = rect.height + 'px';
-      wrap.style.flexShrink = computed.flexShrink;
-      wrap.style.overflow = 'hidden';
+      // Make parent position:relative if not already
+      const parent = img.parentElement;
+      const parentPos = getComputedStyle(parent).position;
+      if (parentPos === 'static') parent.style.position = 'relative';
 
       const overlay = document.createElement('div');
       overlay.className = 'bee-cms-overlay';
@@ -151,20 +138,25 @@
       const isOverridden = key && store[key];
       overlay.innerHTML = `<span>${isOverridden ? 'Click to replace (modified)' : 'Click to replace'}</span>`;
 
+      // Position overlay to match the image within its parent
+      overlay.style.position = 'absolute';
+      overlay.style.top = img.offsetTop + 'px';
+      overlay.style.left = img.offsetLeft + 'px';
+      overlay.style.width = img.offsetWidth + 'px';
+      overlay.style.height = img.offsetHeight + 'px';
+      overlay.style.opacity = '0';
+
+      overlay.addEventListener('mouseenter', () => { overlay.style.opacity = '1'; overlay.style.pointerEvents = 'auto'; });
+      overlay.addEventListener('mouseleave', () => { overlay.style.opacity = '0'; overlay.style.pointerEvents = 'none'; });
+
       overlay.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
         pickFile(img);
       });
 
-      img.parentNode.insertBefore(wrap, img);
-      wrap.appendChild(img);
-      // Make image fill wrapper
-      img.style.width = '100%';
-      img.style.height = '100%';
-      img.style.objectFit = 'cover';
-      wrap.appendChild(overlay);
-      wraps.push(wrap);
+      parent.appendChild(overlay);
+      overlays.push(overlay);
     });
   }
 
