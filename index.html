@@ -331,8 +331,13 @@ body {
 .hero-scroll-thumb:active { cursor: grabbing; }
 .hero-scroll-thumb:hover { width: 4px; left: -1px; }
 
-/* Hide bare stage headlines — glass panel shows all text */
-.hero-stage-text { display: none; }
+/* Hide the separate stage headlines when glass is showing */
+.hero-glass-zone:has(.hero-glass-panel.active) ~ .hero-stage-text .hero-stage-headline-bare {
+  opacity: 0; transition: opacity 0.4s ease;
+}
+.hero-glass-zone:has(.hero-glass-panel.active) ~ .hero-intro .hero-intro-headline {
+  opacity: 0; transition: opacity 0.4s ease;
+}
 
 /* ── Word-by-word blur-fade text animation ── */
 .hero-stage-inner .si .word {
@@ -2660,7 +2665,7 @@ html.lenis, html.lenis body { height: auto; }
 
 <!-- ═══════════ NAV (bee-nav.js component) ═══════════ -->
 <div id="bee-nav"></div>
-<script defer src="bee-nav.js"></script>
+<script src="bee-nav.js"></script>
 
 <!-- ═══════════ SECTION 1 — HERO (Immersive Scroll-Through) ═══════════ -->
 <section class="hero" id="hero">
@@ -4218,6 +4223,6 @@ import * as THREE from 'three';
 })();
 </script>
 
-<script defer src="bee-cms.js"></script>
+<script src="bee-cms.js"></script>
 </body>
 </html>
