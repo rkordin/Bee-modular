@@ -48,7 +48,7 @@
   }
 
   function activeClass(key) {
-    return key === activePage ? ' style="color:var(--on-dark)"' : '';
+    return key === activePage ? ' class="nav-active"' : '';
   }
 
   // ── Build link lists — plain <a> tags, always navigate to file ──
@@ -116,6 +116,8 @@
   transition: color 0.3s;
 }
 .nav-top-links a:hover { color: var(--headline); }
+.nav-top-links a:active { color: var(--headline); }
+.nav-top-links a.nav-active { color: var(--headline); font-weight: 500; }
 .nav-top-right {
   display: flex; align-items: center; gap: 20px;
 }
@@ -173,10 +175,12 @@
 .nav-bottom-cta:hover { border-color: var(--on-dark); background: rgba(245,240,235,0.1); }
 .nav-bottom-links a { color: rgba(245,240,235,0.5) !important; }
 .nav-bottom-links a:hover { color: var(--on-dark) !important; }
+.nav-bottom-links a.nav-active { color: var(--on-dark) !important; font-weight: 500; }
 
 /* Dark mode for navs */
 .nav-top.nav-dark .nav-top-logo-img { filter: brightness(0) invert(1); }
 .nav-top.nav-dark .nav-top-links a { color: rgba(245,240,235,0.5); }
+.nav-top.nav-dark .nav-top-links a.nav-active { color: var(--on-dark); }
 .nav-top.nav-dark .nav-top-links a:hover { color: var(--on-dark); }
 .nav-top.nav-dark .nav-top-cta { color: var(--on-dark); border-color: rgba(245,240,235,0.2); }
 .nav-bottom.nav-dark-mode .nav-bottom-links a { color: rgba(245,240,235,0.5); }
