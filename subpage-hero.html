@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subpage Hero — BEE Modular</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+@font-face {
+  font-family: 'NHaasGrotesk';
+  src: local('Neue Haas Grotesk Display'), local('NeueHaasGroteskDisp'), local('NHaasGroteskDSPro');
+  font-weight: 100 900;
+  font-display: swap;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #F8F6F3;
+  --headline: #1A1A1A;
+  --body: #4A4A4A;
+  --secondary: #9A9A9A;
+  --accent: #b5a291;
+  --font-h: 'NHaasGrotesk', 'Helvetica Neue', 'Helvetica', 'Arial Black', sans-serif;
+  --font-b: 'Inter', system-ui, sans-serif;
+  --font-m: 'JetBrains Mono', monospace;
+}
+html, body { width: 100%; height: 100%; overflow: hidden; }
+body { background: var(--bg); font-family: var(--font-b); }
+
+canvas {
+  position: fixed; top: 0; left: 0;
+  width: 100vw; height: 100vh; z-index: 0;
+}
+
+.hero-content {
+  position: relative; z-index: 1;
+  height: 100vh; display: flex;
+  flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 24px;
+}
+
+.hero-label {
+  font-family: var(--font-m);
+  font-size: 10px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 24px;
+  opacity: 0; animation: fadeUp 0.8s ease 0.3s forwards;
+}
+
+.hero-title {
+  font-family: var(--font-h);
+  font-weight: 900;
+  font-size: clamp(36px, 6vw, 72px);
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  color: var(--headline);
+  margin-bottom: 20px;
+  opacity: 0; animation: fadeUp 0.8s ease 0.5s forwards;
+}
+.hero-title span { color: var(--accent); }
+
+.hero-body {
+  font-family: var(--font-m);
+  font-size: clamp(13px, 1.2vw, 16px);
+  line-height: 1.8;
+  color: var(--body);
+  max-width: 520px;
+  opacity: 0; animation: fadeUp 0.8s ease 0.7s forwards;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<canvas id="particleCanvas"></canvas>
+
+<div class="hero-content">
+  <div class="hero-label">The System</div>
+  <h1 class="hero-title">One frame. Everything<br>else <span>follows.</span></h1>
+  <p class="hero-body">200 mm x 200 mm profile. 12 mm wall. S355 structural steel. Held to +/-0.5 mm. This is where it all starts.</p>
+</div>
+
+<script>
+(function() {
+  const canvas = document.getElementById('particleCanvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let animId;
+  const mouse = { x: null, y: null, radius: 180 };
+
+  // ── BEE hexagonal house shape — points define the outline ──
+  // A simplified hex-house silhouette (top roof peak, angled sides, flat bottom)
+  const houseShape = [
+    { x: 0.5,  y: 0.08 },  // roof peak
+    { x: 0.82, y: 0.25 },  // right roof
+    { x: 0.88, y: 0.30 },  // right upper wall
+    { x: 0.88, y: 0.85 },  // right lower wall
+    { x: 0.78, y: 0.92 },  // right bottom corner (hex angle)
+    { x: 0.22, y: 0.92 },  // left bottom corner (hex angle)
+    { x: 0.12, y: 0.85 },  // left lower wall
+    { x: 0.12, y: 0.30 },  // left upper wall
+    { x: 0.18, y: 0.25 },  // left roof
+  ];
+
+  function isInsideShape(px, py, w, h) {
+    // Scale shape to center of canvas
+    const scale = Math.min(w, h) * 0.55;
+    const ox = (w - scale) / 2;
+    const oy = (h - scale) / 2;
+
+    const points = houseShape.map(p => ({
+      x: p.x * scale + ox,
+      y: p.y * scale + oy
+    }));
+
+    // Point-in-polygon (ray casting)
+    let inside = false;
+    for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
+      const xi = points[i].x, yi = points[i].y;
+      const xj = points[j].x, yj = points[j].y;
+      const intersect = ((yi > py) !== (yj > py)) && (px < (xj - xi) * (py - yi) / (yj - yi) + xi);
+      if (intersect) inside = !inside;
+    }
+    return inside;
+  }
+
+  class Particle {
+    constructor(x, y) {
+      this.x = x;
+      this.y = y;
+      this.baseX = x;
+      this.baseY = y;
+      this.vx = (Math.random() - 0.5) * 0.3;
+      this.vy = (Math.random() - 0.5) * 0.3;
+      this.size = Math.random() * 1.5 + 0.5;
+    }
+
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(181, 162, 145, 0.6)';
+      ctx.fill();
+    }
+
+    update() {
+      // Gentle drift
+      this.x += this.vx;
+      this.y += this.vy;
+
+      // Soft boundary — keep near base position
+      const dx = this.baseX - this.x;
+      const dy = this.baseY - this.y;
+      this.vx += dx * 0.0003;
+      this.vy += dy * 0.0003;
+
+      // Mouse repulsion
+      if (mouse.x !== null) {
+        const mdx = mouse.x - this.x;
+        const mdy = mouse.y - this.y;
+        const dist = Math.sqrt(mdx * mdx + mdy * mdy);
+        if (dist < mouse.radius) {
+          const force = (mouse.radius - dist) / mouse.radius;
+          this.vx -= (mdx / dist) * force * 2;
+          this.vy -= (mdy / dist) * force * 2;
+        }
+      }
+
+      // Damping
+      this.vx *= 0.99;
+      this.vy *= 0.99;
+
+      this.draw();
+    }
+  }
+
+  function init() {
+    particles = [];
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const density = Math.max(600, Math.floor((canvas.width * canvas.height) / 5000));
+
+    for (let i = 0; i < density; i++) {
+      let x, y;
+      let tries = 0;
+
+      // 60% of particles inside the house shape, 40% scattered
+      if (Math.random() < 0.6) {
+        do {
+          x = Math.random() * canvas.width;
+          y = Math.random() * canvas.height;
+          tries++;
+        } while (!isInsideShape(x, y, canvas.width, canvas.height) && tries < 50);
+      } else {
+        x = Math.random() * canvas.width;
+        y = Math.random() * canvas.height;
+      }
+
+      particles.push(new Particle(x, y));
+    }
+  }
+
+  function connect() {
+    const maxDist = 100;
+    const maxDistSq = maxDist * maxDist;
+
+    for (let a = 0; a < particles.length; a++) {
+      for (let b = a + 1; b < particles.length; b++) {
+        const dx = particles[a].x - particles[b].x;
+        const dy = particles[a].y - particles[b].y;
+        const distSq = dx * dx + dy * dy;
+
+        if (distSq < maxDistSq) {
+          const opacity = 1 - Math.sqrt(distSq) / maxDist;
+
+          // Brighter lines near mouse
+          let nearMouse = false;
+          if (mouse.x !== null) {
+            const mx = (particles[a].x + particles[b].x) / 2 - mouse.x;
+            const my = (particles[a].y + particles[b].y) / 2 - mouse.y;
+            nearMouse = Math.sqrt(mx * mx + my * my) < mouse.radius;
+          }
+
+          if (nearMouse) {
+            ctx.strokeStyle = `rgba(181, 162, 145, ${opacity * 0.7})`;
+            ctx.lineWidth = 0.8;
+          } else {
+            ctx.strokeStyle = `rgba(181, 162, 145, ${opacity * 0.15})`;
+            ctx.lineWidth = 0.5;
+          }
+
+          ctx.beginPath();
+          ctx.moveTo(particles[a].x, particles[a].y);
+          ctx.lineTo(particles[b].x, particles[b].y);
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  // Draw faint house outline
+  function drawHouseOutline() {
+    const scale = Math.min(canvas.width, canvas.height) * 0.55;
+    const ox = (canvas.width - scale) / 2;
+    const oy = (canvas.height - scale) / 2;
+
+    ctx.beginPath();
+    houseShape.forEach((p, i) => {
+      const x = p.x * scale + ox;
+      const y = p.y * scale + oy;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.closePath();
+    ctx.strokeStyle = 'rgba(181, 162, 145, 0.06)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  function animate() {
+    animId = requestAnimationFrame(animate);
+    ctx.fillStyle = 'rgba(248, 246, 243, 0.92)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    drawHouseOutline();
+
+    for (let i = 0; i < particles.length; i++) {
+      particles[i].update();
+    }
+    connect();
+  }
+
+  window.addEventListener('mousemove', (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+
+  window.addEventListener('mouseout', () => {
+    mouse.x = null;
+    mouse.y = null;
+  });
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(init, 200);
+  });
+
+  init();
+  animate();
+})();
+</script>
+
+</body>
+</html>
