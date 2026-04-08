@@ -418,7 +418,7 @@
   </ul>
   <div class="nav-top-right">
     ${musicHTML ? musicHTML.replace('id="navMusic"', 'id="navMusicTop"').replace('id="musicToggle"', 'id="musicToggleTop"').replace('id="musicVol"', 'id="musicVolTop"') : ''}
-    <a href="${reserveHref()}" class="nav-top-cta">Reserve</a>
+    <a href="${reserveHref()}" class="nav-top-cta">Contact Us</a>
     ${hamburgerHTML}
   </div>
 </nav>
@@ -433,7 +433,7 @@
   </ul>
   <div class="nav-bottom-right" style="display:flex;align-items:center;gap:12px;">
     ${musicHTML}
-    <a href="${reserveHref()}" class="nav-bottom-cta">Reserve</a>
+    <a href="${reserveHref()}" class="nav-bottom-cta">Contact Us</a>
     ${hamburgerHTML}
   </div>
 </nav>
@@ -443,7 +443,7 @@
   <ul>
     ${mobileLinks}
   </ul>
-  <a href="${reserveHref()}" class="bee-mobile-cta bee-mobile-link">Reserve</a>
+  <a href="${reserveHref()}" class="bee-mobile-cta bee-mobile-link">Contact Us</a>
 </div>
 ${audioHTML}
 `;
