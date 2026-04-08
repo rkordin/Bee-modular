@@ -75,18 +75,18 @@ body {
 
 /* ── Hero intro ── */
 .cfg-hero {
-  min-height: 100vh; display: flex; align-items: center;
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
   padding: 120px 48px 80px;
-  position: relative;
+  position: relative; z-index: 1; text-align: center;
 }
 .cfg-hero-text {
-  max-width: 600px;
-  border-left: 2px solid var(--accent);
-  padding-left: 32px;
+  max-width: 640px;
+  border-left: none;
+  padding-left: 0;
 }
 .cfg-hero-text h1 {
   font-family: var(--font-h); font-weight: 900;
-  font-size: clamp(32px, 4vw, 52px);
+  font-size: clamp(36px, 6vw, 72px);
   letter-spacing: -0.04em; line-height: 1.1;
   color: var(--headline); margin-bottom: 24px;
 }
@@ -96,6 +96,12 @@ body {
   line-height: 1.8; color: var(--body);
 }
 .cfg-hero-body p { margin-bottom: 16px; }
+.cfg-hero-label {
+  font-family: var(--font-m); font-size: 10px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 16px;
+  display: block;
+}
 
 /* ── Section layout (same as index exploded) ── */
 .cfg-section {
@@ -222,6 +228,7 @@ body {
 <!-- Hero -->
 <section class="cfg-hero">
   <div class="cfg-hero-text">
+    <div class="cfg-hero-label">CONFIGURATIONS</div>
     <h1>What a shape can <span>become</span></h1>
     <div class="cfg-hero-body">
       <p>What follows is not a catalogue. It is a set of possibilities. Eight, for now.</p>
