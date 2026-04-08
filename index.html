@@ -2335,6 +2335,21 @@ html.lenis, html.lenis body { height: auto; }
 
   /* Contact shadow hidden on mobile — image is cropped at 45vh */
   .hero-contact-shadow { display: none; }
+
+  /* ── Mobile video/finale section ── */
+  .hero-sticky.finale {
+    background: var(--bg) !important;
+  }
+  .hero-sticky.finale .hero-product-wrapper video {
+    object-fit: contain !important;
+    height: 80vh !important;
+    width: 100% !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+  }
+  .hero-sticky.finale .hero-finale-vignette { opacity: 0 !important; }
+  .hero-sticky.finale .hero-glass-zone,
+  .hero-sticky.finale .hero-stage-nav { display: none !important; }
 }
 .exploded-section { position: relative; margin-top: -50vh; }
 #explodedScene {
