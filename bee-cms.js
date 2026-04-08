@@ -135,12 +135,14 @@
     document.querySelectorAll('img[data-cms="true"]').forEach(img => {
       const wrap = document.createElement('div');
       wrap.className = 'bee-cms-wrap';
-      // Inherit the img's display positioning
+      // Match the image's actual rendered size
+      const rect = img.getBoundingClientRect();
       const computed = getComputedStyle(img);
       wrap.style.display = computed.display === 'inline' ? 'inline-block' : computed.display;
-      // Copy width/height if set
-      if (img.style.width) wrap.style.width = img.style.width;
-      if (img.style.height) wrap.style.height = img.style.height;
+      wrap.style.width = rect.width + 'px';
+      wrap.style.height = rect.height + 'px';
+      wrap.style.flexShrink = computed.flexShrink;
+      wrap.style.overflow = 'hidden';
 
       const overlay = document.createElement('div');
       overlay.className = 'bee-cms-overlay';
@@ -157,6 +159,10 @@
 
       img.parentNode.insertBefore(wrap, img);
       wrap.appendChild(img);
+      // Make image fill wrapper
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.objectFit = 'cover';
       wrap.appendChild(overlay);
       wraps.push(wrap);
     });
