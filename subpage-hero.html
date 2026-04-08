@@ -92,26 +92,21 @@ canvas {
   let animId;
   const mouse = { x: null, y: null, radius: 180 };
 
-  // ── BEE hexagonal module shape — from hexagonal.svg ──
-  // Normalized coordinates from SVG: left chevron, top bar, right chevron, bottom bar
+  // ── BEE hexagonal module shape — from hexagonal.svg, centered at (0.5, 0.5) ──
   const houseShape = [
-    { x: 0.323, y: 0.567 },  // left bottom (342, 407)
-    { x: 0.240, y: 0.450 },  // left middle (272, 338) — the chevron point
-    { x: 0.323, y: 0.333 },  // left top (342, 268)
-    { x: 0.764, y: 0.333 },  // right top (643, 268)
-    { x: 0.847, y: 0.450 },  // right middle (713, 338) — the chevron point
-    { x: 0.764, y: 0.567 },  // right bottom (643, 407)
+    { x: 0.321, y: 0.617 },  // left bottom
+    { x: 0.238, y: 0.500 },  // left chevron tip
+    { x: 0.321, y: 0.383 },  // left top
+    { x: 0.679, y: 0.383 },  // right top
+    { x: 0.762, y: 0.500 },  // right chevron tip
+    { x: 0.679, y: 0.617 },  // right bottom
   ];
 
   function isInsideShape(px, py, w, h) {
-    // Scale shape to center of canvas
-    const scale = Math.min(w, h) * 0.95;
-    const ox = (w - scale) / 2;
-    const oy = (h - scale) / 2;
-
+    // Scale to fill the canvas — use width for wide hex shape
     const points = houseShape.map(p => ({
-      x: p.x * scale + ox,
-      y: p.y * scale + oy
+      x: p.x * w,
+      y: p.y * h
     }));
 
     // Point-in-polygon (ray casting)
@@ -241,14 +236,10 @@ canvas {
 
   // Draw faint house outline
   function drawHouseOutline() {
-    const scale = Math.min(canvas.width, canvas.height) * 0.95;
-    const ox = (canvas.width - scale) / 2;
-    const oy = (canvas.height - scale) / 2;
-
     ctx.beginPath();
     houseShape.forEach((p, i) => {
-      const x = p.x * scale + ox;
-      const y = p.y * scale + oy;
+      const x = p.x * canvas.width;
+      const y = p.y * canvas.height;
       if (i === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
     });

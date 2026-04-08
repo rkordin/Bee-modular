@@ -416,14 +416,9 @@ body {
   ];
 
   function isInsideShape(px, py, w, h) {
-    // Scale shape to center of canvas
-    const scale = Math.min(w, h) * 0.95;
-    const ox = (w - scale) / 2;
-    const oy = (h - scale) / 2;
-
     const points = houseShape.map(p => ({
-      x: p.x * scale + ox,
-      y: p.y * scale + oy
+      x: p.x * w,
+      y: p.y * h
     }));
 
     // Point-in-polygon (ray casting)
@@ -553,14 +548,10 @@ body {
 
   // Draw faint house outline
   function drawHouseOutline() {
-    const scale = Math.min(canvas.width, canvas.height) * 0.95;
-    const ox = (canvas.width - scale) / 2;
-    const oy = (canvas.height - scale) / 2;
-
     ctx.beginPath();
     houseShape.forEach((p, i) => {
-      const x = p.x * scale + ox;
-      const y = p.y * scale + oy;
+      const x = p.x * canvas.width;
+      const y = p.y * canvas.height;
       if (i === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
     });
