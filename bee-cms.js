@@ -115,48 +115,33 @@
     }
   }
 
-  // ── Overlays (no-wrap approach — overlays float on top of images) ──
-  const overlays = [];
+  // ── Edit mode: images become directly clickable ──
+  const editListeners = [];
 
   function refreshOverlays() {
-    // Remove existing overlays
-    overlays.forEach(o => o.remove());
-    overlays.length = 0;
+    // Remove old listeners and styles
+    editListeners.forEach(({ img, handler }) => {
+      img.removeEventListener('click', handler);
+      img.style.outline = '';
+      img.style.cursor = '';
+    });
+    editListeners.length = 0;
 
     if (!editMode) return;
 
     document.querySelectorAll('img[data-cms="true"]').forEach(img => {
-      // Make parent position:relative if not already
-      const parent = img.parentElement;
-      const parentPos = getComputedStyle(parent).position;
-      if (parentPos === 'static') parent.style.position = 'relative';
+      // Visual indicator — dashed outline on hover via CSS
+      img.style.cursor = 'pointer';
+      img.style.outline = '2px dashed rgba(245, 166, 35, 0.4)';
+      img.style.outlineOffset = '-2px';
 
-      const overlay = document.createElement('div');
-      overlay.className = 'bee-cms-overlay';
-      const store = getStore();
-      const key = img.getAttribute('data-cms-key');
-      const isOverridden = key && store[key];
-      overlay.innerHTML = `<span>${isOverridden ? 'Click to replace (modified)' : 'Click to replace'}</span>`;
-
-      // Position overlay to match the image within its parent
-      overlay.style.position = 'absolute';
-      overlay.style.top = img.offsetTop + 'px';
-      overlay.style.left = img.offsetLeft + 'px';
-      overlay.style.width = img.offsetWidth + 'px';
-      overlay.style.height = img.offsetHeight + 'px';
-      overlay.style.opacity = '0';
-
-      overlay.addEventListener('mouseenter', () => { overlay.style.opacity = '1'; overlay.style.pointerEvents = 'auto'; });
-      overlay.addEventListener('mouseleave', () => { overlay.style.opacity = '0'; overlay.style.pointerEvents = 'none'; });
-
-      overlay.addEventListener('click', (e) => {
+      const handler = (e) => {
         e.preventDefault();
         e.stopPropagation();
         pickFile(img);
-      });
-
-      parent.appendChild(overlay);
-      overlays.push(overlay);
+      };
+      img.addEventListener('click', handler);
+      editListeners.push({ img, handler });
     });
   }
 
