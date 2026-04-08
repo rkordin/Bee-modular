@@ -40,8 +40,8 @@
       const brightness = m ? (parseInt(m[0]) * 0.299 + parseInt(m[1]) * 0.587 + parseInt(m[2]) * 0.114) : 200;
       const isDark = brightness < 100;
 
-      const color = el.getAttribute('data-color') || (isDark ? '#b5a291' : 'rgba(181,162,145,0.5)');
-      const strokeWidth = el.getAttribute('data-width') || (isDark ? '6' : '4');
+      const color = el.getAttribute('data-color') || (isDark ? 'rgba(181,162,145,0.5)' : 'rgba(181,162,145,0.3)');
+      const strokeWidth = el.getAttribute('data-width') || '3';
 
       // Wrap element for relative positioning
       el.style.position = 'relative';
@@ -52,20 +52,21 @@
       const w = el.offsetWidth;
       const h = el.offsetHeight;
 
+      const padX = 50, padY = 35;
       const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      svg.setAttribute('width', w + 40);
-      svg.setAttribute('height', h + 30);
-      svg.setAttribute('viewBox', `0 0 ${w + 40} ${h + 30}`);
+      svg.setAttribute('width', w + padX * 2);
+      svg.setAttribute('height', h + padY * 2);
+      svg.setAttribute('viewBox', `0 0 ${w + padX * 2} ${h + padY * 2}`);
       svg.style.cssText = `
         position: absolute;
-        top: -15px; left: -20px;
+        top: -${padY}px; left: -${padX}px;
         pointer-events: none;
-        z-index: 1;
+        z-index: -1;
         overflow: visible;
       `;
 
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      path.setAttribute('d', getCirclePath(w + 40, h + 30));
+      path.setAttribute('d', getCirclePath(w + padX * 2, h + padY * 2));
       path.setAttribute('fill', 'none');
       path.setAttribute('stroke', color);
       path.setAttribute('stroke-width', strokeWidth);

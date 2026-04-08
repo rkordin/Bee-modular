@@ -213,6 +213,21 @@ body {
   z-index: -1; pointer-events: none;
 }
 .page-content { position: relative; z-index: 1; }
+.cfg-statement {
+  min-height: 35vh;
+  padding: 100px 48px;
+  text-align: center;
+  position: relative; z-index: 1;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(248, 246, 243, 0.6);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid rgba(181, 162, 145, 0.1);
+  border-bottom: 1px solid rgba(181, 162, 145, 0.1);
+}
+ (max-width: 768px) {
+  .cfg-statement { padding: 80px 24px; min-height: 30vh; }
+}
 </style>
 </head>
 <body>
@@ -377,7 +392,7 @@ body {
 </div>
 
 <!-- Closing statement -->
-<section class="cfg-hero" style="min-height:60vh;">
+<section class="cfg-hero cfg-statement" style="min-height:35vh;">
   <div class="cfg-hero-text">
     <h1 class="handdrawn-circle">Eight configurations. One <span>frame</span>.</h1>
     <div class="cfg-hero-body">
