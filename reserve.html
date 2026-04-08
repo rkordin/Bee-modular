@@ -888,23 +888,19 @@ body {
   let animId;
   const mouse = { x: null, y: null, radius: 180 };
 
-  // ── BEE hexagonal house shape — points define the outline ──
-  // A simplified hex-house silhouette (top roof peak, angled sides, flat bottom)
+  // ── BEE hexagonal module shape — from hexagonal.svg ──
   const houseShape = [
-    { x: 0.5,  y: 0.08 },  // roof peak
-    { x: 0.82, y: 0.25 },  // right roof
-    { x: 0.88, y: 0.30 },  // right upper wall
-    { x: 0.88, y: 0.85 },  // right lower wall
-    { x: 0.78, y: 0.92 },  // right bottom corner (hex angle)
-    { x: 0.22, y: 0.92 },  // left bottom corner (hex angle)
-    { x: 0.12, y: 0.85 },  // left lower wall
-    { x: 0.12, y: 0.30 },  // left upper wall
-    { x: 0.18, y: 0.25 },  // left roof
+    { x: 0.323, y: 0.567 },
+    { x: 0.240, y: 0.450 },
+    { x: 0.323, y: 0.333 },
+    { x: 0.764, y: 0.333 },
+    { x: 0.847, y: 0.450 },
+    { x: 0.764, y: 0.567 },
   ];
 
   function isInsideShape(px, py, w, h) {
     // Scale shape to center of canvas
-    const scale = Math.min(w, h) * 0.55;
+    const scale = Math.min(w, h) * 0.95;
     const ox = (w - scale) / 2;
     const oy = (h - scale) / 2;
 
@@ -1040,7 +1036,7 @@ body {
 
   // Draw faint house outline
   function drawHouseOutline() {
-    const scale = Math.min(canvas.width, canvas.height) * 0.55;
+    const scale = Math.min(canvas.width, canvas.height) * 0.95;
     const ox = (canvas.width - scale) / 2;
     const oy = (canvas.height - scale) / 2;
 
