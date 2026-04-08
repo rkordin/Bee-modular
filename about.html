@@ -46,186 +46,213 @@ body {
   line-height: 1.7;
 }
 
-/* ── Nav ── */
-.cfg-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  height: 72px; padding: 0 48px;
-  display: flex; align-items: center; justify-content: space-between;
-  background: rgba(248,246,243,0.85);
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-}
-.cfg-nav-logo { height: 20px; }
-.cfg-nav-links { display: flex; gap: 28px; list-style: none; }
-.cfg-nav-links a {
-  font-family: var(--font-m); font-size: 11px; font-weight: 400;
-  color: var(--secondary); text-decoration: none;
-  letter-spacing: 0.08em; text-transform: uppercase;
-  transition: color 0.3s;
-}
-.cfg-nav-links a:hover { color: var(--headline); }
-.cfg-nav-links a.active { color: var(--accent); }
-.cfg-nav-cta {
-  font-family: var(--font-m); font-size: 10px; font-weight: 500;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--headline); background: none;
-  border: 1px solid rgba(26,26,26,0.15);
-  padding: 8px 20px; cursor: pointer; transition: all 0.3s;
-}
-.cfg-nav-cta:hover { background: var(--headline); color: var(--bg); }
-
-/* ── Hero intro ── */
-.cfg-hero {
-  min-height: 100vh; display: flex; align-items: center; justify-content: center;
-  padding: 120px 48px 80px;
-  position: relative; z-index: 1; text-align: center;
-}
-.cfg-hero-text {
-  max-width: 640px;
-  border-left: none;
-  padding-left: 0;
-}
-.cfg-hero-text h1 {
-  font-family: var(--font-h); font-weight: 900;
-  font-size: clamp(36px, 6vw, 72px);
-  letter-spacing: -0.04em; line-height: 1.1;
-  color: var(--headline); margin-bottom: 24px;
-}
-.cfg-hero-text h1 span { color: var(--accent); }
-.cfg-hero-body {
-  font-family: var(--font-m); font-size: clamp(12px, 1.1vw, 14px);
-  line-height: 1.8; color: var(--body);
-}
-.cfg-hero-body p { margin-bottom: 16px; }
-.cfg-hero-label {
-  font-family: var(--font-m); font-size: 10px;
-  letter-spacing: 0.2em; text-transform: uppercase;
-  color: var(--accent); margin-bottom: 16px;
-  display: block;
-}
-
-/* ── Section layout ── */
-.cfg-section {
-  padding: 80px 48px;
-  display: flex; align-items: flex-start; gap: 40px;
-  justify-content: center;
-  min-height: 80vh;
-  border-top: 1px solid rgba(0,0,0,0.04);
-}
-.cfg-section:nth-child(even) { flex-direction: row-reverse; }
-.cfg-img {
-  width: 65vw; max-width: 900px; height: auto;
-  object-fit: cover;
-  border: 1px solid rgba(181,162,145,0.08);
-  filter: saturate(0.3) contrast(1.05);
-  transition: filter 0.6s ease;
-  flex-shrink: 1;
-}
-.cfg-img:hover { filter: saturate(0.8) contrast(1.0); }
-.cfg-card {
-  width: 25vw; min-width: 280px; max-width: 420px;
-  flex-shrink: 0; padding: 32px;
-  border-left: 2px solid var(--accent);
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-}
-.cfg-card h2 {
-  font-family: var(--font-h); font-weight: 900;
-  font-size: clamp(20px, 2.2vw, 30px);
-  letter-spacing: -0.02em; line-height: 1.15;
-  color: var(--headline); margin-bottom: 4px;
-}
-.cfg-card h3 {
-  font-family: var(--font-m); font-size: 10px;
-  letter-spacing: 0.15em; text-transform: uppercase;
-  color: var(--accent); margin-bottom: 20px;
-}
-.cfg-card p {
-  font-family: var(--font-m); font-size: clamp(11px, 1.1vw, 14px);
-  line-height: 1.8; color: var(--body); margin-bottom: 12px;
-}
-/* Expandable specs — hidden by default */
-.cfg-expand {
-  max-height: 0; overflow: hidden; opacity: 0;
-  transition: max-height 0.9s cubic-bezier(0.4,0,0.2,1),
-              opacity 0.6s cubic-bezier(0.4,0,0.2,1),
-              margin 0.6s cubic-bezier(0.4,0,0.2,1);
-  margin-top: 0;
-}
-.cfg-card:hover .cfg-expand {
-  max-height: 800px; opacity: 1; margin-top: 16px;
-  transition: max-height 0.9s cubic-bezier(0.4,0,0.2,1) 0.05s,
-              opacity 0.5s ease 0.15s,
-              margin 0.5s ease 0.05s;
-}
-.cfg-expand p {
-  font-size: clamp(10px, 0.9vw, 12px);
-  color: var(--secondary);
-}
-.cfg-spec-row {
-  display: grid; grid-template-columns: 90px 1fr; gap: 8px;
-  font-family: var(--font-m); font-size: 11px;
-  line-height: 1.8; padding: 4px 0;
-  border-bottom: 1px solid rgba(0,0,0,0.04);
-}
-.cfg-spec-label { color: var(--secondary); text-transform: uppercase; letter-spacing: 0.08em; font-size: 9px; }
-.cfg-spec-val { color: var(--body); }
-
-/* Frosted glass cursor */
-.glass-cursor {
-  position: fixed; width: 32px; height: 32px; border-radius: 50%;
-  background: rgba(181,162,145,0.08);
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(181,162,145,0.15);
-  pointer-events: none; z-index: 9998;
-  transform: translate(-50%, -50%);
-  display: flex; align-items: center; justify-content: center;
-  overflow: hidden; opacity: 0;
-  transition: width 0.4s cubic-bezier(0.22,1,0.36,1),
-              height 0.4s cubic-bezier(0.22,1,0.36,1),
-              border-radius 0.4s cubic-bezier(0.22,1,0.36,1),
-              opacity 0.3s ease;
-}
-.glass-cursor.visible { opacity: 1; }
-.glass-cursor .cursor-label {
-  font-family: var(--font-m); font-size: 9px; font-weight: 500;
-  letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--accent); opacity: 0; white-space: nowrap;
-  transition: opacity 0.3s ease 0.1s;
-}
-.glass-cursor.hovering { width: 90px; height: 90px; background: rgba(181,162,145,0.1); border-color: rgba(181,162,145,0.25); }
-.glass-cursor.hovering .cursor-label { opacity: 1; }
-@media (hover: none) { .glass-cursor { display: none; } }
-
-/* ── Responsive ── */
-@media (max-width: 1024px) {
-  .cfg-section { flex-direction: column !important; padding: 40px 24px; }
-  .cfg-img { width: 100%; max-width: none; }
-  .cfg-card { width: 100%; max-width: none; min-width: 0; }
-}
-@media (max-width: 768px) {
-  .cfg-nav { padding: 0 24px; }
-  .cfg-nav-links { display: none; }
-  .cfg-hero { padding: 100px 24px 60px; }
-}
-
 #particleCanvas {
   position: fixed; top: 0; left: 0;
   width: 100vw; height: 100vh;
   z-index: -1; pointer-events: none;
 }
 .page-content { position: relative; z-index: 1; }
+
+/* ── Hero ── */
+.cfg-hero {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  padding: 120px 48px 80px;
+  position: relative; z-index: 1; text-align: center;
+}
+.cfg-hero-label {
+  font-family: var(--font-m); font-size: 10px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 24px;
+  display: block;
+}
+.cfg-hero h1 {
+  font-family: var(--font-h); font-weight: 900;
+  font-size: clamp(36px, 5vw, 64px);
+  letter-spacing: -0.04em; line-height: 1.1;
+  color: var(--headline); max-width: 680px;
+}
+.cfg-hero h1 span { color: var(--accent); }
+
+/* ── Editorial sections ── */
+.ed-section {
+  padding: 0 48px;
+  margin-bottom: 120px;
+}
+.ed-column {
+  max-width: 680px;
+  margin: 0 auto;
+}
+.ed-column.centered { text-align: center; }
+.ed-column.left { text-align: left; }
+
+.ed-column h2 {
+  font-family: var(--font-h); font-weight: 900;
+  font-size: clamp(28px, 3.5vw, 44px);
+  letter-spacing: -0.03em; line-height: 1.15;
+  color: var(--headline); margin-bottom: 40px;
+}
+.ed-column h2 span { color: var(--accent); }
+
+.ed-column p {
+  font-family: var(--font-b);
+  font-size: 17px; line-height: 1.8;
+  color: var(--body); margin-bottom: 20px;
+}
+.ed-column p:last-child { margin-bottom: 0; }
+
+.ed-column p.lead {
+  font-size: 19px; line-height: 1.75;
+  color: var(--headline);
+}
+
+/* ── Expandable spec block ── */
+.ed-specs {
+  margin-top: 40px;
+  border-top: 1px solid rgba(181,162,145,0.15);
+  padding-top: 20px;
+}
+.ed-specs-toggle {
+  font-family: var(--font-m); font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent); cursor: pointer;
+  background: none; border: none; padding: 0;
+  display: flex; align-items: center; gap: 8px;
+  transition: color 0.3s;
+}
+.ed-specs-toggle:hover { color: var(--headline); }
+.ed-specs-toggle::after {
+  content: '+'; font-size: 14px; transition: transform 0.3s;
+}
+.ed-specs-toggle.open::after { content: '\2212'; }
+.ed-specs-content {
+  max-height: 0; overflow: hidden; opacity: 0;
+  transition: max-height 0.6s cubic-bezier(0.4,0,0.2,1),
+              opacity 0.4s ease,
+              margin 0.4s ease;
+  margin-top: 0;
+}
+.ed-specs-content.open {
+  max-height: 400px; opacity: 1; margin-top: 20px;
+}
+.ed-specs-content p {
+  font-family: var(--font-m); font-size: 12px;
+  line-height: 1.9; color: var(--secondary);
+}
+
+/* ── The Question — centered pull quote ── */
+.ed-pullquote {
+  max-width: 680px; margin: 0 auto 48px;
+  text-align: center;
+}
+.ed-pullquote h2 {
+  font-family: var(--font-h); font-weight: 900;
+  font-size: clamp(32px, 4vw, 56px);
+  letter-spacing: -0.04em; line-height: 1.1;
+  color: var(--headline);
+}
+
+/* ── Factory image ── */
+.ed-factory {
+  padding: 0 48px;
+  margin-bottom: 120px;
+}
+.ed-factory-img {
+  width: 100%; height: auto;
+  display: block;
+  border: 1px solid rgba(181,162,145,0.15);
+  filter: saturate(0.3) contrast(1.05);
+  transition: filter 0.8s ease;
+}
+.ed-factory-img:hover { filter: saturate(0.7) contrast(1.0); }
+.ed-factory-caption {
+  font-family: var(--font-m); font-size: 11px;
+  letter-spacing: 0.08em; color: var(--secondary);
+  margin-top: 16px; text-align: center;
+}
+
+/* ── Belief blocks ── */
+.ed-beliefs {
+  max-width: 680px; margin: 0 auto;
+  display: flex; flex-direction: column; gap: 0;
+}
+.ed-belief {
+  padding: 36px 0;
+  border-bottom: 1px solid rgba(181,162,145,0.1);
+}
+.ed-belief:first-child { border-top: 1px solid rgba(181,162,145,0.1); }
+.ed-belief-title {
+  font-family: var(--font-m); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 12px;
+}
+.ed-belief p {
+  font-family: var(--font-b);
+  font-size: 17px; line-height: 1.8;
+  color: var(--body);
+}
+
+/* ── Why BEE — two column ── */
+.ed-why-bee {
+  max-width: 680px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 64px;
+}
+.ed-why-col h3 {
+  font-family: var(--font-h); font-weight: 900;
+  font-size: clamp(18px, 2vw, 24px);
+  letter-spacing: -0.02em; line-height: 1.2;
+  color: var(--headline); margin-bottom: 20px;
+}
+.ed-why-col p {
+  font-family: var(--font-b);
+  font-size: 16px; line-height: 1.8;
+  color: var(--body);
+}
+
+/* ── Closing statement ── */
 .cfg-statement {
   min-height: 55vh;
   padding: 100px 48px;
   text-align: center;
   position: relative; z-index: 1;
   display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
   background: rgba(248, 246, 243, 0.05);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   border-top: 1px solid rgba(181, 162, 145, 0.06);
   border-bottom: 1px solid rgba(181, 162, 145, 0.06);
 }
- (max-width: 768px) {
+.cfg-statement h2 {
+  font-family: var(--font-h); font-weight: 900;
+  font-size: clamp(28px, 4vw, 52px);
+  letter-spacing: -0.04em; line-height: 1.15;
+  color: var(--headline); max-width: 680px;
+  margin-bottom: 24px;
+}
+.cfg-statement h2 span { color: var(--accent); }
+.cfg-statement p {
+  font-family: var(--font-b);
+  font-size: 19px; line-height: 1.8;
+  color: var(--body); max-width: 680px;
+}
+
+/* ── Reveal animations ── */
+.reveal {
+  opacity: 0; transform: translateY(32px);
+  transition: opacity 0.8s cubic-bezier(0.4,0,0.2,1),
+              transform 0.8s cubic-bezier(0.4,0,0.2,1);
+}
+.reveal.visible {
+  opacity: 1; transform: translateY(0);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .cfg-hero { padding: 100px 24px 60px; }
+  .ed-section { padding: 0 24px; margin-bottom: 80px; }
+  .ed-factory { padding: 0 24px; margin-bottom: 80px; }
+  .ed-why-bee { grid-template-columns: 1fr; gap: 48px; }
   .cfg-statement { padding: 80px 24px; min-height: 30vh; }
 }
 </style>
@@ -239,164 +266,144 @@ body {
 
 <div class="page-content">
 
-<div class="glass-cursor" id="glassCursor"><span class="cursor-label">Read more</span></div>
-<!-- Hero -->
+<!-- ═══ Hero ═══ -->
 <section class="cfg-hero">
-  <div class="cfg-hero-text">
-    <div class="cfg-hero-label">ABOUT</div>
-    <h1>We have been working with <span>steel</span> for a long time.</h1>
-    <div class="cfg-hero-body">
-      <p>Not modular buildings. Steel. Industrial structures. Infrastructure. Load-bearing systems for anyone who needed precision and refused to compromise on it.</p>
-      <p>We learned how steel behaves under stress. How a joint transfers load. How a weld done properly becomes stronger than the metal around it. How tolerances measured in fractions of a millimeter make the difference between something that holds and something that fails.</p>
-      <p>Every project taught us something. Every failure revealed a truth.</p>
+  <span class="cfg-hero-label reveal">ABOUT</span>
+  <h1 class="reveal">We have been working with <span>steel</span> for a long time.</h1>
+</section>
+
+<!-- ═══ Section 1 — The Origin ═══ -->
+<section class="ed-section">
+  <div class="ed-column left reveal">
+    <p class="lead">Not modular buildings. Steel.</p>
+    <p>Industrial structures. Infrastructure. Load-bearing systems for anyone who needed precision and refused to compromise on it.</p>
+    <p>We learned how steel behaves under stress. How a joint transfers load. How a weld done properly becomes stronger than the metal around it. How tolerances measured in fractions of a millimeter make the difference between something that holds and something that fails.</p>
+    <p>Every project taught us something. Every failure revealed a truth.</p>
+
+    <div class="ed-specs">
+      <button class="ed-specs-toggle" id="specsToggle">Technical credentials</button>
+      <div class="ed-specs-content" id="specsContent">
+        <p>Continuous metalwork production under ISO 9001 quality management. AQAP 2110 NATO-grade quality assurance. EN 729-3 certified welding procedures. Full weld traceability on every joint. &pm;0.5mm dimensional tolerance.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ═══ Manufacturing Background ═══ -->
-<div class="cfg-section">
-  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-2.jpg" alt="Factory interior — steel manufacturing" class="cfg-img" data-cms="true" data-cms-key="about-img-1">
-  <div class="cfg-card">
-    <h2>Manufacturing Background</h2>
-    <h3>Precision heritage</h3>
-    <p>Continuous metalwork production under ISO 9001 quality management. AQAP 2110 NATO-grade quality assurance. EN 729-3 certified welding procedures.</p>
-    <div class="cfg-expand">
-      <div class="cfg-spec-row"><span class="cfg-spec-label">Quality</span><span class="cfg-spec-val">ISO 9001 quality management, AQAP 2110 NATO-grade assurance</span></div>
-      <div class="cfg-spec-row"><span class="cfg-spec-label">Welding</span><span class="cfg-spec-val">EN 729-3 certified procedures, full weld traceability on every joint</span></div>
-      <div class="cfg-spec-row"><span class="cfg-spec-label">Tolerance</span><span class="cfg-spec-val">&pm;0.5mm dimensional tolerance across all production</span></div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ Then the Question Changed ═══ -->
-<div class="cfg-section">
-  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-5.jpg" alt="Sketch to prototype — the idea takes shape" class="cfg-img" data-cms="true" data-cms-key="about-img-2">
-  <div class="cfg-card">
+<!-- ═══ Section 2 — The Question ═══ -->
+<section class="ed-section">
+  <div class="ed-pullquote reveal">
     <h2>Then the question changed.</h2>
-    <h3>From infrastructure to living</h3>
+  </div>
+  <div class="ed-column centered reveal">
     <p>What if this precision &mdash; these tolerances, these quality systems, this understanding of how steel carries weight &mdash; what if we pointed it at a different problem?</p>
     <p>Not industrial infrastructure. The places where people live. Work. Shelter. Heal.</p>
     <p>The question became a sketch. The sketch became a prototype. The prototype became a system. The system became BEE.</p>
-    <div class="cfg-expand">
-      <p>Still the same people. Still in the same place. Still obsessed with the same half-millimeter. We simply found a more interesting question.</p>
-    </div>
+    <p>Still the same people. Still in the same place. Still obsessed with the same half-millimeter.</p>
+    <p>We simply found a more interesting question.</p>
   </div>
-</div>
+</section>
 
-<!-- ═══ Made in Slovenia ═══ -->
-<div class="cfg-section">
-  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-7.jpg" alt="Production facility — Slovenia" class="cfg-img" data-cms="true" data-cms-key="about-img-3">
-  <div class="cfg-card">
+<!-- ═══ Section 3 — Factory Image ═══ -->
+<section class="ed-factory reveal">
+  <img src="EUROKOVINAR.webp" alt="Beyond Engineering factory — Krsko, Slovenia" class="ed-factory-img">
+  <div class="ed-factory-caption">Beyond Engineering &mdash; Kr&scaron;ko, Slovenia, EU</div>
+</section>
+
+<!-- ═══ Section 4 — Made in Slovenia ═══ -->
+<section class="ed-section">
+  <div class="ed-column left reveal">
     <h2>Made in Slovenia. Under one roof.</h2>
-    <h3>Full accountability</h3>
     <p>Not contracted out. Not assembled from parts shipped across three countries. One facility. Full accountability.</p>
-    <p>Slovenia sits at the crossroads of Central Europe. Two hours to Vienna, Munich, Milan, Venice. What arrives at our door leaves as a finished module and reaches most of Europe within a day.</p>
-    <div class="cfg-expand">
-      <div class="cfg-spec-row"><span class="cfg-spec-label">Process</span><span class="cfg-spec-val">In-house steel cutting, welding, assembly, finishing, and quality control</span></div>
-      <div class="cfg-spec-row"><span class="cfg-spec-label">Method</span><span class="cfg-spec-val">Serial production line &mdash; not project-based fabrication</span></div>
-      <div class="cfg-spec-row"><span class="cfg-spec-label">QA</span><span class="cfg-spec-val">Each unit follows identical manufacturing sequence with documented inspection at every stage</span></div>
-      <div class="cfg-spec-row"><span class="cfg-spec-label">Location</span><span class="cfg-spec-val">Slovenia, EU &mdash; road freight reaches AT, DE, IT overnight</span></div>
-      <div class="cfg-spec-row"><span class="cfg-spec-label">Compliance</span><span class="cfg-spec-val">Full CE compliance, complete production dossier with every module</span></div>
-    </div>
+    <p>Slovenia sits at the crossroads of Central Europe. Two hours to Vienna. Two hours to Munich. Two hours to Milan. Two hours to Venice.</p>
+    <p>Small country, strategic position. What arrives at our door leaves as a finished module and reaches most of Europe within a day.</p>
   </div>
-</div>
+</section>
 
-<!-- ═══ What We Believe — Precision ═══ -->
-<div class="cfg-section">
-  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-9.jpg" alt="Precision manufacturing detail" class="cfg-img" data-cms="true" data-cms-key="about-img-4">
-  <div class="cfg-card">
+<!-- ═══ Section 5 — What We Believe ═══ -->
+<section class="ed-section">
+  <div class="ed-column centered reveal">
     <h2>What we believe</h2>
-    <h3>Precision over speed</h3>
-    <p>We will not rush what needs care. There is beauty in efficiency. But efficiency is not haste.</p>
-    <div class="cfg-expand">
-      <p>Function over decoration. Beauty comes from purpose. If something does not work, it is ugly. Regardless of what it looks like.</p>
-      <p>Care over cleverness. We are not trying to be clever. We are not trying to disrupt anything. We are making something with care for people we will never meet. When someone uses something made with care, they sense it. That, for us, is a way of expressing gratitude.</p>
+  </div>
+  <div class="ed-beliefs">
+    <div class="ed-belief reveal">
+      <div class="ed-belief-title">Precision over speed</div>
+      <p>We will not rush what needs care. There is beauty in efficiency. But efficiency is not haste.</p>
+    </div>
+    <div class="ed-belief reveal">
+      <div class="ed-belief-title">Function over decoration</div>
+      <p>Beauty comes from purpose. If something does not work, it is ugly. Regardless of what it looks like.</p>
+    </div>
+    <div class="ed-belief reveal">
+      <div class="ed-belief-title">Care over cleverness</div>
+      <p>We are not trying to be clever. We are making something with care for people we will never meet. When someone uses something made with care, they sense it.</p>
+    </div>
+    <div class="ed-belief reveal">
+      <div class="ed-belief-title">Preparation over reaction</div>
+      <p>We think ahead. We build for scenarios we hope never occur. Readiness is not fear. It is care expressed forward in time.</p>
+    </div>
+    <div class="ed-belief reveal">
+      <div class="ed-belief-title">Clarity over complexity</div>
+      <p>If we cannot explain it simply, we have not understood it well enough. Simplicity is not the absence of complexity. It is the resolution of it.</p>
     </div>
   </div>
-</div>
+</section>
 
-<!-- ═══ What We Believe — Preparation ═══ -->
-<div class="cfg-section">
-  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-11.jpg" alt="Engineering preparation" class="cfg-img" data-cms="true" data-cms-key="about-img-5">
-  <div class="cfg-card">
-    <h2>Preparation over reaction</h2>
-    <h3>Clarity over complexity</h3>
-    <p>We think ahead. We build for scenarios we hope never occur. Readiness is not fear. It is care expressed forward in time.</p>
-    <p>If we cannot explain it simply, we have not understood it well enough. Simplicity is not the absence of complexity. It is the resolution of it.</p>
+<!-- ═══ Section 6 — Why BEE ═══ -->
+<section class="ed-section">
+  <div class="ed-column centered reveal">
+    <h2>Why <span>&ldquo;</span>BEE<span>&rdquo;</span></h2>
   </div>
-</div>
-
-<!-- ═══ Why BEE — The Insect ═══ -->
-<div class="cfg-section">
-  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-13.jpg" alt="Hexagonal module cluster" class="cfg-img" data-cms="true" data-cms-key="about-img-6">
-  <div class="cfg-card">
-    <h2>Why &ldquo;BEE&rdquo;</h2>
-    <h3>The insect</h3>
-    <p>The honeybee has been building hexagonal structures for over a hundred million years. Maximum volume. Minimum material. Shared walls. No waste.</p>
-    <p>Our steel frame borrows this deliberately. Units cluster like cells. They expand organically. They support each other.</p>
-    <div class="cfg-expand">
-      <div class="cfg-spec-row"><span class="cfg-spec-label">Frame</span><span class="cfg-spec-val">Rigid steel frame engineered for stacking and lateral connection</span></div>
-      <div class="cfg-spec-row"><span class="cfg-spec-label">Structure</span><span class="cfg-spec-val">Each unit structurally independent but designed to share loads when clustered</span></div>
-      <div class="cfg-spec-row"><span class="cfg-spec-label">Efficiency</span><span class="cfg-spec-val">Reduces material per unit as configurations grow</span></div>
-      <div class="cfg-spec-row"><span class="cfg-spec-label">Principle</span><span class="cfg-spec-val">Hexagonal logic is not decorative &mdash; it is the organizing principle of the engineering</span></div>
+  <div class="ed-why-bee">
+    <div class="ed-why-col reveal">
+      <h3>The insect.</h3>
+      <p>The honeybee has been building hexagonal structures for over a hundred million years. Maximum volume. Minimum material. Shared walls. No waste. Our steel frame borrows this deliberately. Units cluster like cells. They expand organically. They support each other.</p>
+    </div>
+    <div class="ed-why-col reveal">
+      <h3>The letters.</h3>
+      <p>B.E.E. Beyond Engineering. Engineering solves problems within given parameters. Beyond Engineering questions the parameters themselves. Engineering asks how to build a shelter. Beyond Engineering asks why shelter, home, and workspace must be separate things at all.</p>
     </div>
   </div>
-</div>
+</section>
 
-<!-- ═══ Why BEE — The Letters ═══ -->
-<div class="cfg-section">
-  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-15.jpg" alt="Beyond Engineering concept" class="cfg-img" data-cms="true" data-cms-key="about-img-7">
-  <div class="cfg-card">
-    <h2>B.E.E.</h2>
-    <h3>Beyond Engineering</h3>
-    <p>Engineering solves problems within given parameters. Beyond Engineering questions the parameters themselves.</p>
-    <p>Engineering asks how to build a shelter. Beyond Engineering asks why shelter, home, and workspace must be separate things at all.</p>
-    <div class="cfg-expand">
-      <p>Beyond Engineering is not better engineering. It is the recognition that technical excellence alone is insufficient. That precision without purpose is merely accuracy. That the goal is not a well-made building, but a well-lived life.</p>
-    </div>
-  </div>
-</div>
-
-<!-- Closing statement -->
-<section class="cfg-hero cfg-statement" style="min-height:35vh;">
-  <div class="cfg-hero-text">
-    <h1 class="handdrawn-circle">Twenty-eight years of metalwork taught us how to make things that <span>hold</span>.</h1>
-    <div class="cfg-hero-body">
-      <p>One question taught us what to make.</p>
-      <p>We are still answering it.</p>
-    </div>
-  </div>
+<!-- ═══ Closing Statement ═══ -->
+<section class="cfg-statement">
+  <h2 class="handdrawn-circle reveal">Twenty-eight years of metalwork taught us how to make things that <span>hold</span>.</h2>
+  <p class="reveal">One question taught us what to make.<br>We are still answering it.</p>
 </section>
 
 <!-- Footer -->
 <div id="bee-footer"></div>
 <script type="module" src="bee-footer.js"></script>
 
-<!-- Frosted glass cursor -->
+</div><!-- end .page-content -->
+
+<!-- Reveal animations -->
 <script>
-(() => {
-  const cursor = document.getElementById('glassCursor');
-  if (!cursor || matchMedia('(hover: none)').matches) return;
-  let mx = 0, my = 0, cx = 0, cy = 0;
-  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-  function tick() {
-    cx += (mx - cx) * 0.12; cy += (my - cy) * 0.12;
-    cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px';
-    requestAnimationFrame(tick);
-  }
-  tick();
-  document.addEventListener('mouseenter', () => cursor.classList.add('visible'));
-  document.addEventListener('mouseleave', () => cursor.classList.remove('visible'));
-  document.addEventListener('mousemove', function s() { cursor.classList.add('visible'); document.removeEventListener('mousemove', s); });
-  document.querySelectorAll('.cfg-card').forEach(c => {
-    c.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
-    c.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
-  });
+(function() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 })();
 </script>
 
-</div><!-- end .page-content -->
-
+<!-- Expandable specs toggle -->
+<script>
+(function() {
+  const toggle = document.getElementById('specsToggle');
+  const content = document.getElementById('specsContent');
+  if (!toggle || !content) return;
+  toggle.addEventListener('click', () => {
+    toggle.classList.toggle('open');
+    content.classList.toggle('open');
+  });
+})();
+</script>
 
 <script src="bee-cms.js"></script>
 <!-- Particle network background -->
@@ -429,7 +436,6 @@ body {
       y: p.y * h
     }));
 
-    // Point-in-polygon (ray casting)
     let inside = false;
     for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
       const xi = points[i].x, yi = points[i].y;
@@ -459,17 +465,14 @@ body {
     }
 
     update() {
-      // Gentle drift
       this.x += this.vx;
       this.y += this.vy;
 
-      // Soft boundary — keep near base position
       const dx = this.baseX - this.x;
       const dy = this.baseY - this.y;
       this.vx += dx * 0.0003;
       this.vy += dy * 0.0003;
 
-      // Mouse repulsion
       if (mouse.x !== null) {
         const mdx = mouse.x - this.x;
         const mdy = mouse.y - this.y;
@@ -481,7 +484,6 @@ body {
         }
       }
 
-      // Damping
       this.vx *= 0.99;
       this.vy *= 0.99;
 
@@ -500,7 +502,6 @@ body {
       let x, y;
       let tries = 0;
 
-      // 60% of particles inside the house shape, 40% scattered
       if (Math.random() < 0.6) {
         do {
           x = Math.random() * canvas.width;
@@ -529,7 +530,6 @@ body {
         if (distSq < maxDistSq) {
           const opacity = 1 - Math.sqrt(distSq) / maxDist;
 
-          // Brighter lines near mouse
           let nearMouse = false;
           if (mouse.x !== null) {
             const mx = (particles[a].x + particles[b].x) / 2 - mouse.x;
@@ -554,7 +554,6 @@ body {
     }
   }
 
-  // Draw faint house outline
   function drawHouseOutline() {
     ctx.beginPath();
     houseShape.forEach((p, i) => {
