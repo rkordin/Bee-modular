@@ -92,18 +92,24 @@ canvas {
   let animId;
   const mouse = { x: null, y: null, radius: 180 };
 
-  // ── BEE hexagonal module shape — from hexagonal.svg, centered at (0.5, 0.5) ──
-  const houseShape = [
-    { x: 0.321, y: 0.617 },  // left bottom
-    { x: 0.238, y: 0.500 },  // left chevron tip
-    { x: 0.321, y: 0.383 },  // left top
-    { x: 0.679, y: 0.383 },  // right top
-    { x: 0.762, y: 0.500 },  // right chevron tip
-    { x: 0.679, y: 0.617 },  // right bottom
+  // ── BEE hexagonal module shape — from hexagonal.svg ──
+  // Base shape centered at (0.5, 0.5), then scaled up 2.2x from center to fill viewport
+  const baseShape = [
+    { x: 0.321, y: 0.617 },
+    { x: 0.238, y: 0.500 },
+    { x: 0.321, y: 0.383 },
+    { x: 0.679, y: 0.383 },
+    { x: 0.762, y: 0.500 },
+    { x: 0.679, y: 0.617 },
   ];
+  // Scale outward from center (0.5, 0.5) by 2.2x
+  const hexScale = 2.2;
+  const houseShape = baseShape.map(p => ({
+    x: 0.5 + (p.x - 0.5) * hexScale,
+    y: 0.5 + (p.y - 0.5) * hexScale,
+  }));
 
   function isInsideShape(px, py, w, h) {
-    // Scale to fill the canvas — use width for wide hex shape
     const points = houseShape.map(p => ({
       x: p.x * w,
       y: p.y * h

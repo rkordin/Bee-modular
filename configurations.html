@@ -428,7 +428,7 @@ body {
   const mouse = { x: null, y: null, radius: 180 };
 
   // ── BEE hexagonal module shape — from hexagonal.svg ──
-  const houseShape = [
+  const baseShape = [
     { x: 0.323, y: 0.567 },
     { x: 0.240, y: 0.450 },
     { x: 0.323, y: 0.333 },
@@ -436,6 +436,11 @@ body {
     { x: 0.847, y: 0.450 },
     { x: 0.764, y: 0.567 },
   ];
+  const hexScale = 2.2;
+  const houseShape = baseShape.map(p => ({
+    x: 0.5 + (p.x - 0.5) * hexScale,
+    y: 0.5 + (p.y - 0.5) * hexScale,
+  }));
 
   function isInsideShape(px, py, w, h) {
     const points = houseShape.map(p => ({
