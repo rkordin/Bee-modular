@@ -2123,7 +2123,7 @@ html.lenis, html.lenis body { height: auto; }
 
   .hero-3d-stage {
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 10vh; left: 0; right: 0;
     height: 42vh;
     display: flex;
     align-items: center;
@@ -2146,7 +2146,7 @@ html.lenis, html.lenis body { height: auto; }
   /* Glass zone — below image, takes remaining space */
   .hero-glass-zone {
     position: absolute;
-    top: 42vh;
+    top: 52vh;
     bottom: 0;
     left: 0;
     right: 0;
@@ -2218,13 +2218,13 @@ html.lenis, html.lenis body { height: auto; }
   .hero-readmore-overlay.open { display: block; }
 
   .hero-readmore-close {
-    position: absolute; top: 24px; right: 24px; z-index: 10001;
-    font-family: var(--font-m); font-size: 11px;
-    font-weight: 500; letter-spacing: 0.1em;
-    color: var(--headline); background: rgba(248,246,243,0.8);
-    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(26,26,26,0.08); border-radius: 6px;
-    cursor: pointer; padding: 10px 20px;
+    position: sticky; top: 0; z-index: 10001;
+    display: block; width: fit-content; margin-left: auto;
+    font-family: var(--font-h); font-size: 16px;
+    font-weight: 700; letter-spacing: 0.05em;
+    color: #000; background: none;
+    border: none; border-radius: 0;
+    cursor: pointer; padding: 16px 0;
     text-transform: uppercase;
   }
 
@@ -2274,12 +2274,8 @@ html.lenis, html.lenis body { height: auto; }
     to { opacity: 1; }
   }
 
-  /* Stage counter repositioned between image and panel */
   .hero-counter {
-    position: absolute;
-    top: 42vh;
-    right: 24px;
-    z-index: 12;
+    display: none;
   }
 
   /* Stage nav buttons — fixed at bottom, above the scroll indicator */
@@ -2577,7 +2573,7 @@ html.lenis, html.lenis body { height: auto; }
 }
 @media (max-width: 768px) {
   .exploded-content { padding: 0 20px; }
-  .ec-card { max-width: 100%; padding: 32px 24px; }
+  .ec-card { max-width: 100%; min-width: 0; width: 90vw !important; padding: 28px 20px; }
   .ec-image { width: 92vw; }
 }
 
