@@ -701,6 +701,8 @@ body {
 }
 .hero-nav-btn:hover { color: var(--headline); border-color: var(--accent); }
 .hero-nav-btn .arrow { font-size: 14px; line-height: 1; }
+.hero-skip-btn { margin-left: auto; border-style: dashed; opacity: 0.6; }
+.hero-skip-btn:hover { opacity: 1; }
 .hero-nav-divider {
   font-family: var(--font-m); font-size: 11px;
   color: var(--accent); letter-spacing: 0.08em;
@@ -2756,6 +2758,7 @@ html.lenis, html.lenis body { height: auto; }
       <button class="hero-nav-btn" id="heroPrevBtn"><span class="arrow">&larr;</span> Prev</button>
       <div class="hero-nav-divider" id="heroNavCounter">1 / 6</div>
       <button class="hero-nav-btn" id="heroNextBtn">Next <span class="arrow">&rarr;</span></button>
+      <button class="hero-nav-btn hero-skip-btn" onclick="document.getElementById('explodedSection').scrollIntoView({behavior:'smooth'})">Skip <span class="arrow">&darr;</span></button>
     </div>
 
     <div class="eng-corner eng-corner--tl show"></div>
