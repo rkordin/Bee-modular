@@ -320,6 +320,81 @@ body {
   .cfg-spec-row { font-size: 10px !important; }
   .cfg-img { width: 100% !important; max-width: none !important; }
 }
+
+/* ═══ Dimension Overlay Animation ═══ */
+.dim-overlay-wrap {
+  position: relative;
+  flex-shrink: 1;
+  width: 65vw; max-width: 900px;
+}
+.dim-overlay-wrap .cfg-img {
+  width: 100%;
+  display: block;
+}
+.dim-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+.dim-line {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  opacity: 0;
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.25,0.1,0.25,1),
+              opacity 0.4s ease;
+}
+.dim-tick {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  opacity: 0;
+  transition: opacity 0.4s ease 0.8s;
+}
+.dim-label {
+  font-family: var(--font-m);
+  font-size: 13px;
+  fill: var(--accent);
+  letter-spacing: 0.08em;
+  opacity: 0;
+  transition: opacity 0.6s ease 1s;
+}
+/* Activated state */
+.dim-overlay-wrap.dim-active .dim-line {
+  stroke-dashoffset: 0;
+  opacity: 1;
+}
+.dim-overlay-wrap.dim-active .dim-tick {
+  opacity: 1;
+}
+.dim-overlay-wrap.dim-active .dim-label {
+  opacity: 1;
+}
+/* Stagger each axis */
+.dim-overlay-wrap.dim-active .dim-length { transition-delay: 0s; }
+.dim-overlay-wrap.dim-active .dim-width { transition-delay: 0.4s; }
+.dim-overlay-wrap.dim-active .dim-height { transition-delay: 0.8s; }
+.dim-overlay-wrap.dim-active .dim-label-length { transition-delay: 0.9s; }
+.dim-overlay-wrap.dim-active .dim-label-width { transition-delay: 1.3s; }
+.dim-overlay-wrap.dim-active .dim-label-height { transition-delay: 1.7s; }
+
+/* Label background for legibility */
+.dim-label {
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+
+@media (max-width: 1024px) {
+  .dim-overlay-wrap { width: 100%; max-width: none; }
+}
+@media (max-width: 768px) {
+  .dim-overlay-wrap { width: 100% !important; max-width: none !important; }
+  .dim-label { font-size: 10px; }
+}
 </style>
 </head>
 <body>
@@ -345,17 +420,42 @@ body {
 
 <!-- ═══ 01 — The Geometry ═══ -->
 <div class="cfg-section">
-  <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-2.jpg" alt="Hexagonal geometry" class="cfg-img" data-cms="true" data-cms-key="system-img-1">
+  <div class="dim-overlay-wrap" id="dimOverlayWrap">
+    <img src="BASE%20IMAGES/BEE%20MODULAR_BASE-2.jpg" alt="Hexagonal geometry" class="cfg-img" data-cms="true" data-cms-key="system-img-1">
+    <!-- Animated dimension lines -->
+    <svg class="dim-svg" viewBox="0 0 1000 700" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Length (bottom) — 6 m -->
+      <line class="dim-line dim-length" x1="60" y1="650" x2="940" y2="650"/>
+      <line class="dim-tick" x1="60" y1="635" x2="60" y2="665"/>
+      <line class="dim-tick" x1="940" y1="635" x2="940" y2="665"/>
+      <text class="dim-label dim-label-length" x="500" y="688" text-anchor="middle">6 000 mm &mdash; 6 m</text>
+      <!-- Width (top) — 2.5 m -->
+      <line class="dim-line dim-width" x1="200" y1="40" x2="700" y2="40"/>
+      <line class="dim-tick" x1="200" y1="25" x2="200" y2="55"/>
+      <line class="dim-tick" x1="700" y1="25" x2="700" y2="55"/>
+      <text class="dim-label dim-label-width" x="450" y="28" text-anchor="middle">2 500 mm &mdash; 2.5 m</text>
+      <!-- Height (right) — 2.6 m -->
+      <line class="dim-line dim-height" x1="970" y1="120" x2="970" y2="580"/>
+      <line class="dim-tick" x1="955" y1="120" x2="985" y2="120"/>
+      <line class="dim-tick" x1="955" y1="580" x2="985" y2="580"/>
+      <text class="dim-label dim-label-height" x="970" y="360" text-anchor="middle" transform="rotate(-90 970 360)">2 600 mm &mdash; 2.6 m</text>
+    </svg>
+  </div>
   <div class="cfg-card">
     <h2>The Geometry</h2>
     <h3>01 &mdash; Start with a hexagon</h3>
     <p>Not because it is interesting. Because it is correct.</p>
     <p>Six sides. 120-degree corners. Every edge meets its neighbour with zero material wasted. No gaps. No fillers. No tolerance stacked on tolerance hoping things line up.</p>
     <p>Hexagons tessellate. They have done this for a very long time.</p>
+    <p style="font-family:var(--font-m); font-size:13px; color:var(--accent); margin-top:12px;">6 m long &times; 2.5 m wide &times; 2.6 m tall<br><span style="color:var(--secondary)">Two modules fit on a standard truck trailer.</span></p>
     <div class="cfg-expand">
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Length</span><span class="cfg-spec-val">6 000 mm (6 m)</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Width</span><span class="cfg-spec-val">2 500 mm (2.5 m)</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Height</span><span class="cfg-spec-val">2 600 mm (2.6 m)</span></div>
       <div class="cfg-spec-row"><span class="cfg-spec-label">Profile</span><span class="cfg-spec-val">200 &times; 200 mm, 12 mm wall thickness, S355 structural steel</span></div>
       <div class="cfg-spec-row"><span class="cfg-spec-label">Tolerance</span><span class="cfg-spec-val">&pm;0.5 mm across every frame, ISO 9001 &amp; AQAP 2110 verified</span></div>
       <div class="cfg-spec-row"><span class="cfg-spec-label">Nodes</span><span class="cfg-spec-val">ISO 1161 compatible &mdash; any standard crane, truck, or port</span></div>
+      <div class="cfg-spec-row"><span class="cfg-spec-label">Transport</span><span class="cfg-spec-val">2 modules per standard truck trailer</span></div>
       <div class="cfg-spec-row"><span class="cfg-spec-label">Floor area</span><span class="cfg-spec-val">~28 m&sup2; usable per module</span></div>
     </div>
   </div>
@@ -754,5 +854,22 @@ body {
 </script>
 
 <script src="bee-handdrawn.js"></script>
+
+<!-- Dimension overlay animation trigger -->
+<script>
+(function() {
+  const wrap = document.getElementById('dimOverlayWrap');
+  if (!wrap) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        wrap.classList.add('dim-active');
+        observer.unobserve(wrap);
+      }
+    });
+  }, { threshold: 0.3 });
+  observer.observe(wrap);
+})();
+</script>
 </body>
 </html>

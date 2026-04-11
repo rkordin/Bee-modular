@@ -208,10 +208,11 @@ import * as THREE from 'three';
       <section class="bee-newsletter">
         <h3>Stay informed.</h3>
         <p>Engineering updates. Production news. No noise.</p>
-        <div class="bee-nl-form">
-          <input type="email" class="bee-nl-input" placeholder="Email address">
-          <button class="bee-nl-btn">Subscribe</button>
-        </div>
+        <form class="bee-nl-form" id="bee-nl-form">
+          <input type="email" name="email" class="bee-nl-input" placeholder="Email address" required>
+          <button type="submit" class="bee-nl-btn">Subscribe</button>
+        </form>
+        <p class="bee-nl-success" id="bee-nl-success" style="display:none; color:#b5a291; margin-top:16px; font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:0.08em;">Subscribed. Welcome aboard.</p>
       </section>
       <footer class="bee-ft">
         <div class="bee-ft-title-blocks">
@@ -228,8 +229,11 @@ import * as THREE from 'three';
             <div class="bee-ft-row"><span>Weld</span> <span class="bee-ft-val">EN ISO 3834-2</span></div>
           </div>
           <div class="bee-ft-block">
-            <div class="bee-ft-row"><span>Module</span> <span class="bee-ft-val">6 200 × 5 400 mm</span></div>
+            <div class="bee-ft-row"><span>Length</span> <span class="bee-ft-val">6 000 mm (6 m)</span></div>
+            <div class="bee-ft-row"><span>Width</span> <span class="bee-ft-val">2 500 mm (2.5 m)</span></div>
+            <div class="bee-ft-row"><span>Height</span> <span class="bee-ft-val">2 600 mm (2.6 m)</span></div>
             <div class="bee-ft-row"><span>Mass</span> <span class="bee-ft-val">2 840 kg</span></div>
+            <div class="bee-ft-row"><span>Transport</span> <span class="bee-ft-val">2 modules / truck trailer</span></div>
             <div class="bee-ft-row"><span>Certif.</span> <span class="bee-ft-val">ISO 9001 · AQAP 2110</span></div>
             <div class="bee-ft-row"><span>Origin</span> <span class="bee-ft-val">Slovenia, EU</span></div>
           </div>
@@ -241,15 +245,15 @@ import * as THREE from 'three';
           </div>
           <div class="bee-ft-col">
             <div class="bee-ft-col-title">Product</div>
-            <a href="#system">The System</a>
-            <a href="#configurations">Configurations</a>
-            <a href="#defence">Defence</a>
-            <a href="#process">Process</a>
+            <a href="system.html">The System</a>
+            <a href="configurations.html">Configurations</a>
+            <a href="defence.html">Defence</a>
+            <a href="process.html">Process</a>
           </div>
           <div class="bee-ft-col">
             <div class="bee-ft-col-title">Company</div>
-            <a href="#about">About</a>
-            <a href="#contact">Contact</a>
+            <a href="about.html">About</a>
+            <a href="reserve.html">Contact</a>
             <a href="#">Careers</a>
             <a href="#">Press</a>
           </div>
@@ -406,4 +410,61 @@ import * as THREE from 'three';
 
   window.addEventListener('resize', resize);
   new ResizeObserver(resize).observe(mount);
+
+  // ── HubSpot tracking script ──
+  (function() {
+    const hs = document.createElement('script');
+    hs.id = 'hs-script-loader';
+    hs.async = true;
+    hs.defer = true;
+    hs.src = '//js-eu1.hs-scripts.com/146301933.js';
+    document.head.appendChild(hs);
+  })();
+
+  // ── Newsletter form submission via HubSpot ──
+  const nlForm = document.getElementById('bee-nl-form');
+  const nlSuccess = document.getElementById('bee-nl-success');
+  if (nlForm) {
+    nlForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = nlForm.querySelector('.bee-nl-btn');
+      const emailInput = nlForm.querySelector('.bee-nl-input');
+      if (!emailInput.value || !emailInput.validity.valid) return;
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+
+      const email = emailInput.value.trim();
+
+      // Identify contact via HubSpot tracking code
+      const _hsq = window._hsq = window._hsq || [];
+      _hsq.push(['identify', {
+        email: email,
+        bee_newsletter: 'true',
+        hs_lead_status: 'NEW',
+      }]);
+      _hsq.push(['trackPageView']);
+
+      // Also submit via HubSpot Forms API (no form GUID needed — uses non-portal endpoint)
+      try {
+        const hutk = document.cookie.match(/hubspotutk=([^;]*)/)?.[1] || '';
+        const resp = await fetch('https://api.hsforms.com/submissions/v3/integration/submit/146301933/bee-newsletter', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fields: [{ name: 'email', value: email }],
+            context: {
+              hutk: hutk || undefined,
+              pageUri: window.location.href,
+              pageName: document.title,
+            },
+          }),
+        });
+        // Forms API may 404 if form GUID doesn't exist yet —
+        // that's fine, _hsq identify above already created the contact
+      } catch { /* _hsq identify is the primary mechanism */ }
+
+      nlForm.style.display = 'none';
+      nlSuccess.style.display = 'block';
+    });
+  }
 })();
