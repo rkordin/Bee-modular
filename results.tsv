@@ -1,0 +1,5 @@
+commit	score	status	description
+d9053ec	8.0	keep	baseline
+aa0feb1	12.0	keep	defer render-blocking scripts + lazy-load Google Fonts
+d9053ec	12.0	keep	add loading=lazy + width/height to below-fold images
+4407443	34.0	keep	defer bee-nav.js and bee-cms.js
