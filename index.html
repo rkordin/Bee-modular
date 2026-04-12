@@ -721,7 +721,8 @@ body {
 .hero-sticky.finale .eng-annotation,
 .hero-sticky.finale .eng-readout,
 .hero-sticky.finale .eng-ruler,
-.hero-sticky.finale .eng-coords { opacity: 0 !important; transition: opacity 0.4s ease; }
+.hero-sticky.finale .eng-coords,
+.hero-sticky.finale .hero-dim-overlay { opacity: 0 !important; transition: opacity 0.4s ease; }
 
 @media (max-width: 768px) {
   .eng-corner, .eng-annotation, .eng-readout,
@@ -730,7 +731,9 @@ body {
 
 /* Animations */
 @keyframes heroBreath { 0%,100%{transform:translateY(0) rotateX(0) rotateY(0)} 50%{transform:translateY(-18px) rotateX(1.1deg) rotateY(0.5deg)} }
+@keyframes heroBreathMobile { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
 @keyframes heroShadowBreath { 0%,100%{width:55%;opacity:1} 50%{width:40%;opacity:0.4} }
+@keyframes heroShadowBreathMobile { 0%,100%{width:60vw;opacity:1} 50%{width:45vw;opacity:0.4} }
 @keyframes heroReveal { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
 @keyframes scrollPulse { 0%{top:-100%} 50%{top:100%} 100%{top:100%} }
 
@@ -2088,6 +2091,7 @@ html.lenis, html.lenis body { height: auto; }
 /* Desktop: hide mobile-only elements */
 .hero-readmore-btn { display: none; }
 .hero-readmore-overlay { display: none; }
+.hero-dim-overlay { display: none; }
 
 @media (max-width: 768px) {
   .bp-intro { padding: 100px 24px; }
@@ -2138,19 +2142,59 @@ html.lenis, html.lenis body { height: auto; }
   .hero-product-wrapper {
     width: 80vw;
     height: 36vh;
-    animation: none;
+    animation: heroBreathMobile 6s ease-in-out infinite;
   }
 
   .hero-product-wrapper img {
     height: 36vh;
     max-width: 80vw;
     object-fit: contain;
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15)) drop-shadow(0 8px 16px rgba(0,0,0,0.08)) !important;
   }
+
+  /* Contact shadow — visible on mobile */
+  .hero-contact-shadow {
+    display: block !important;
+    bottom: -2vh !important; left: 50% !important;
+    width: 60vw !important; height: 20px !important;
+    animation: heroShadowBreathMobile 6s ease-in-out infinite;
+  }
+
+  /* Mobile dimension labels on hero frame */
+  .hero-dim-overlay {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+  .hero-dim-overlay.show { opacity: 1; }
+  .hero-dim-label {
+    font-family: var(--font-m);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    background: rgba(248,246,243,0.85);
+    padding: 3px 8px;
+    white-space: nowrap;
+    border: 1px solid rgba(181,162,145,0.2);
+  }
+  .hero-dim-line {
+    position: absolute;
+    background: var(--accent);
+    opacity: 0.5;
+  }
+  .hero-dim-line--h { height: 1px; width: 0; transition: width 0.8s ease 0.3s; }
+  .hero-dim-line--v { width: 1px; height: 0; transition: height 0.8s ease 0.3s; }
+  .hero-dim-overlay.show .hero-dim-line--h { width: 100%; }
+  .hero-dim-overlay.show .hero-dim-line--v { height: 100%; }
 
   /* Glass zone — below image, takes remaining space */
   .hero-glass-zone {
     position: absolute;
-    top: 52vh;
+    top: 56vh;
     bottom: 0;
     left: 0;
     right: 0;
@@ -2337,8 +2381,7 @@ html.lenis, html.lenis body { height: auto; }
     -webkit-backdrop-filter: blur(4px);
   }
 
-  /* Contact shadow hidden on mobile — image is cropped at 45vh */
-  .hero-contact-shadow { display: none; }
+  /* Contact shadow — now visible on mobile with floating animation */
 
   /* ── Mobile video/finale section ── */
   .hero-sticky.finale {
@@ -2690,6 +2733,15 @@ html.lenis, html.lenis body { height: auto; }
         </video>
       </div>
       <div class="hero-contact-shadow" id="heroShadow"></div>
+      <!-- Mobile dimension overlay -->
+      <div class="hero-dim-overlay" id="heroDimOverlay">
+        <div class="hero-dim-label" style="position:absolute; bottom:-5vh; left:50%; transform:translateX(-50%);">6 000 mm — 6 m</div>
+        <div class="hero-dim-line hero-dim-line--h" style="position:absolute; bottom:calc(-5vh + 18px); left:12%; width:76%;"></div>
+        <div class="hero-dim-label" style="position:absolute; top:2vh; left:50%; transform:translateX(-50%);">2 500 mm — 2.5 m</div>
+        <div class="hero-dim-line hero-dim-line--h" style="position:absolute; top:calc(2vh + 18px); left:22%; width:56%;"></div>
+        <div class="hero-dim-label" style="position:absolute; right:-2vw; top:50%; transform:translateY(-50%) rotate(-90deg);">2 600 mm — 2.6 m</div>
+        <div class="hero-dim-line hero-dim-line--v" style="position:absolute; right:2vw; top:15%; height:70%;"></div>
+      </div>
     </div>
 
     <!-- hero-intro removed — glass panel shows from the start -->
@@ -3079,6 +3131,27 @@ window.addEventListener('load', () => {
   }
   requestAnimationFrame(sprint);
 });
+
+// ── Mobile dimension overlay on hero frame ──
+(function() {
+  const dimOverlay = document.getElementById('heroDimOverlay');
+  if (!dimOverlay) return;
+  const isMobile = window.innerWidth <= 768;
+  if (!isMobile) return;
+  // Show after 2s delay so the hero has time to load
+  setTimeout(() => {
+    dimOverlay.classList.add('show');
+    // Hide when user scrolls past stage 1
+    let hidden = false;
+    window.addEventListener('scroll', function dimScroll() {
+      if (hidden) return;
+      if (window.scrollY > window.innerHeight * 1.5) {
+        dimOverlay.classList.remove('show');
+        hidden = true;
+      }
+    });
+  }, 2500);
+})();
 
 // ── Scroll Reveal ──
 const reveals = document.querySelectorAll('.reveal');
