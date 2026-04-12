@@ -2243,13 +2243,32 @@ html.lenis, html.lenis body { height: auto; }
 
   /* READ MORE button — visible on mobile */
   .hero-readmore-btn {
-    display: block !important;
-    font-family: var(--font-m); font-size: 11px;
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-m); font-size: 12px;
+    font-weight: 500;
     letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--headline); background: none; border: none;
-    padding: 12px 0; margin-top: 8px;
+    color: var(--accent); background: none; border: none;
+    padding: 14px 0; margin-top: 12px;
     cursor: pointer; text-align: left;
-    border-bottom: 1px solid rgba(181,162,145,0.2);
+    border-bottom: 2px solid var(--accent);
+    animation: readmorePulse 2.5s ease-in-out infinite;
+    position: relative;
+  }
+  .hero-readmore-btn::after {
+    content: '→';
+    font-size: 16px;
+    display: inline-block;
+    animation: readmoreArrow 1.5s ease-in-out infinite;
+  }
+  @keyframes readmorePulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+  }
+  @keyframes readmoreArrow {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(6px); }
   }
 
   /* ── Full-screen read-more overlay ── */
