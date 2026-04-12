@@ -424,7 +424,7 @@ body {
   const ctx = canvas.getContext('2d');
   let particles = [];
   let animId;
-  const mouse = { x: null, y: null, radius: 180 };
+  const mouse = { x: null, y: null, radius: 250 };
 
   // ── BEE hexagonal module shape — from hexagonal.svg ──
   const baseShape = [
@@ -435,7 +435,7 @@ body {
     { x: 0.847, y: 0.450 },
     { x: 0.764, y: 0.567 },
   ];
-  const hexScale = 2.2;
+  const hexScale = 3.0;
   const houseShape = baseShape.map(p => ({
     x: 0.5 + (p.x - 0.5) * hexScale,
     y: 0.5 + (p.y - 0.5) * hexScale,
@@ -490,13 +490,13 @@ body {
         const dist = Math.sqrt(mdx * mdx + mdy * mdy);
         if (dist < mouse.radius) {
           const force = (mouse.radius - dist) / mouse.radius;
-          this.vx -= (mdx / dist) * force * 2;
-          this.vy -= (mdy / dist) * force * 2;
+          this.vx -= (mdx / dist) * force * 0.6;
+          this.vy -= (mdy / dist) * force * 0.6;
         }
       }
 
-      this.vx *= 0.99;
-      this.vy *= 0.99;
+      this.vx *= 0.97;
+      this.vy *= 0.97;
 
       this.draw();
     }
