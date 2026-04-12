@@ -461,6 +461,7 @@ body {
   transition: opacity 1.2s ease;
 }
 .hero-sticky.finale .hero-finale-vignette { opacity: 1; }
+.hero-sticky.finale .hero-progress { opacity: 0; }
 
 .hero-finale-tag {
   position: absolute; top: 40px; right: 48px;
@@ -2417,7 +2418,17 @@ html.lenis, html.lenis body { height: auto; }
   .hero-sticky.finale .hero-glass-zone,
   .hero-sticky.finale .hero-stage-nav { display: none !important; }
 }
-.exploded-section { position: relative; margin-top: -100vh; z-index: 2; background: var(--bg); }
+.exploded-section { position: relative; margin-top: -100vh; z-index: 2; background: transparent; }
+.exploded-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 40vh;
+  background: linear-gradient(to bottom, transparent 0%, var(--bg) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+.exploded-scroll-spacer { background: var(--bg); }
 #explodedScene {
   position: sticky; top: 0; left: 0;
   width: 100vw; height: 100vh;
