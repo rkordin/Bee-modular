@@ -3061,7 +3061,8 @@ html.lenis, html.lenis body { height: auto; }
   </div>
 </section>
 
-<!-- BLUEPRINT SECTIONS REMOVED -->
+<!-- Spacer before footer -->
+<div style="height:20vh;"></div>
 
 <!-- ═══════════ BEE FOOTER COMPONENT ═══════════ -->
 <div id="bee-footer"></div>
@@ -3238,8 +3239,8 @@ function updateHero() {
   const shadowEl = document.getElementById('heroShadow');
   const heroProductWrapperEl = document.getElementById('heroProductWrapper');
 
-  const inPreFinale = (stageIndex === 5 && withinStage > 0.8);
-  const preFinaleProgress = inPreFinale ? (withinStage - 0.8) / 0.2 : 0;
+  const inPreFinale = (stageIndex === 5 && withinStage > 0.5);
+  const preFinaleProgress = inPreFinale ? (withinStage - 0.5) / 0.5 : 0;
 
   heroSticky.classList.toggle('finale', isFinale);
   navTop.classList.toggle('hide', isFinale);
@@ -3261,29 +3262,57 @@ function updateHero() {
       heroVideo.currentTime = withinStage * heroVideo.duration;
     }
   } else if (inPreFinale) {
-    const eased = preFinaleProgress * preFinaleProgress * (3 - 2 * preFinaleProgress);
-    const bgR = Math.round(248 - eased * 248);
-    const bgG = Math.round(246 - eased * 246);
-    const bgB = Math.round(243 - eased * 243);
+    // Smooth cubic ease
+    const t = preFinaleProgress;
+    const eased = t * t * (3 - 2 * t);
+
+    // Phase 1 (0–0.4): fade text out, start darkening bg
+    // Phase 2 (0.3–0.7): slide product up, fade product out
+    // Phase 3 (0.5–1.0): fade video in from below
+
+    const bgDark = Math.min(1, eased * 1.2);
+    const bgR = Math.round(248 - bgDark * 248);
+    const bgG = Math.round(246 - bgDark * 246);
+    const bgB = Math.round(243 - bgDark * 243);
     heroSticky.style.background = `rgb(${bgR}, ${bgG}, ${bgB})`;
-    heroImages.forEach((img, i) => { img.classList.toggle('active', i === stageIndex); });
-    const productY = -eased * 110;
-    hero3dStage.style.transform = `translateY(${productY}vh)`;
-    if (shadowEl) shadowEl.style.opacity = Math.max(0, 0.3 * (1 - eased));
+
+    heroImages.forEach((img, i) => {
+      img.classList.toggle('active', i === stageIndex);
+      if (i === stageIndex) img.style.opacity = Math.max(0, 1 - eased * 2);
+    });
+
+    const productY = -eased * 40;
+    hero3dStage.style.transform = `translateY(${productY}vh) scale(${1 - eased * 0.15})`;
+    if (shadowEl) shadowEl.style.opacity = Math.max(0, 0.3 * (1 - eased * 2));
+
     if (heroVideo) {
-      if (eased < 0.85) { heroVideo.style.opacity = '0'; heroVideo.style.transform = 'translateY(100vh)'; }
-      else {
-        const videoProgress = (eased - 0.85) / 0.15;
-        heroVideo.style.opacity = String(videoProgress);
-        heroVideo.style.transform = `translateY(${(1 - videoProgress) * 30}vh)`;
+      const videoStart = 0.4;
+      if (eased < videoStart) {
+        heroVideo.style.opacity = '0';
+        heroVideo.style.transform = 'translateY(15vh)';
+      } else {
+        const vp = (eased - videoStart) / (1 - videoStart);
+        const ve = vp * vp * (3 - 2 * vp);
+        heroVideo.style.opacity = String(ve);
+        heroVideo.style.transform = `translateY(${(1 - ve) * 15}vh)`;
+        if (heroVideo.paused && ve > 0.3) {
+          heroVideo.loop = true;
+          heroVideo.play().catch(() => {});
+        }
       }
     }
-    heroStages.forEach(s => { s.classList.remove('active'); if (s.dataset.heroStage === '5') s.classList.add('exit'); });
-    heroCounter.classList.remove('show');
-    if (eased > 0.5) { navTop.classList.add('hide'); navBottom.classList.add('show'); }
+
+    // Fade out text earlier
+    if (eased > 0.15) {
+      heroStages.forEach(s => { s.classList.remove('active'); if (s.dataset.heroStage === '5') s.classList.add('exit'); });
+      heroCounter.classList.remove('show');
+    }
+    if (eased > 0.3) { navTop.classList.add('hide'); navBottom.classList.add('show'); }
   } else {
     if (heroProductWrapperEl) heroProductWrapperEl.style.transform = '';
-    if (heroVideo) { heroVideo.style.opacity = '0'; heroVideo.style.transform = 'translateY(100vh)'; }
+    if (heroVideo) { heroVideo.style.opacity = '0'; heroVideo.style.transform = 'translateY(15vh)'; }
+    // Reset image opacity from pre-finale fade
+    heroImages.forEach(img => { img.style.opacity = ''; });
     if (progress > 0.03) {
       const darkAmount = Math.min(0.03, stageProgress * 0.03);
       heroSticky.style.background = `rgba(${248 - darkAmount*600}, ${246 - darkAmount*600}, ${243 - darkAmount*600}, 1)`;
