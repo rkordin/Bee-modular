@@ -413,13 +413,21 @@ body {
 }
 
 .hero-sticky { transition: background 0.8s ease; }
-/* ═══ Video Section (standalone, between hero and exploded) ═══ */
+/* ═══ Video Section (scroll-scrub on desktop, autoplay on mobile) ═══ */
 .bee-video-section {
   position: relative;
   width: 100%;
-  height: 80vh;
-  overflow: hidden;
   background: #000;
+}
+.bee-video-sticky {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+.bee-video-spacer {
+  height: 300vh;
 }
 .bee-video-section video {
   width: 100%; height: 100%;
@@ -445,7 +453,8 @@ body {
   opacity: 0.9;
 }
 @media (max-width: 768px) {
-  .bee-video-section { height: 60vh; }
+  .bee-video-sticky { height: 60vh; position: relative; }
+  .bee-video-spacer { height: 0; }
   .bee-video-overlay { top: 24px; right: 24px; }
 }
 
@@ -2808,13 +2817,16 @@ html.lenis, html.lenis body { height: auto; }
 
 <!-- ═══════════ VIDEO SECTION ═══════════ -->
 <section class="bee-video-section" id="beeVideoSection">
-  <video id="heroVideo" muted playsinline loop autoplay preload="metadata">
-    <source src="VIDEO/BEE_MOCULAR%20HERO%201920x1600px.mp4" type="video/mp4">
-  </video>
-  <div class="bee-video-overlay">
-    <span>BEE Modular</span>
-    <em>Planted. Your coordinates.</em>
+  <div class="bee-video-sticky">
+    <video id="heroVideo" muted playsinline preload="auto">
+      <source src="VIDEO/BEE_MOCULAR%20HERO%201920x1600px.mp4" type="video/mp4">
+    </video>
+    <div class="bee-video-overlay">
+      <span>BEE Modular</span>
+      <em>Planted. Your coordinates.</em>
+    </div>
   </div>
+  <div class="bee-video-spacer"></div>
 </section>
 
 <!-- ═══════════ 3D EXPLODED VIEW SECTION ═══════════ -->
@@ -3560,8 +3572,60 @@ updateHero();
 
   // ── Background crossfade engine ──
   const bgCanvas = document.getElementById('bg-canvas');
+  // ── Video scroll-scrub (desktop only) ──
+  const videoSection = document.getElementById('beeVideoSection');
+  const scrubVideo = document.getElementById('heroVideo');
+  const isMobileVideo = window.innerWidth < 768;
+
+  if (videoSection && scrubVideo && !isMobileVideo) {
+    // Desktop: scrub video with scroll
+    scrubVideo.pause();
+    scrubVideo.removeAttribute('autoplay');
+    scrubVideo.removeAttribute('loop');
+
+    ScrollTrigger.create({
+      trigger: videoSection,
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: true,
+      onUpdate: (self) => {
+        if (scrubVideo.readyState >= 2 && scrubVideo.duration) {
+          scrubVideo.currentTime = self.progress * scrubVideo.duration;
+        }
+      },
+    });
+  } else if (scrubVideo && isMobileVideo) {
+    // Mobile: autoplay loop
+    scrubVideo.loop = true;
+    scrubVideo.play().catch(() => {});
+  }
+
+  // Dark nav for video section
+  ScrollTrigger.create({
+    trigger: '#beeVideoSection',
+    start: 'top 80%',
+    end: 'bottom 20%',
+    onEnter: () => {
+      document.getElementById('navTop').classList.add('dark-mode');
+      document.getElementById('navBottom').classList.add('dark-mode');
+    },
+    onLeave: () => {
+      document.getElementById('navTop').classList.remove('dark-mode');
+      document.getElementById('navBottom').classList.remove('dark-mode');
+    },
+    onEnterBack: () => {
+      document.getElementById('navTop').classList.add('dark-mode');
+      document.getElementById('navBottom').classList.add('dark-mode');
+    },
+    onLeaveBack: () => {
+      document.getElementById('navTop').classList.remove('dark-mode');
+      document.getElementById('navBottom').classList.remove('dark-mode');
+    },
+  });
+
   const colorDefs = [
     { selector: '#hero',            color: '#F8F6F3' },
+    { selector: '#beeVideoSection', color: '#1A1A1A' },
     { selector: '#explodedSection', color: '#F8F6F3' },
     { selector: '#bee-footer',  color: '#1A1A1A' },
   ];
