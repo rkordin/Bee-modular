@@ -218,7 +218,7 @@ import * as THREE from 'three';
         <div class="bee-ft-title-blocks">
           <div class="bee-ft-block">
             <div class="bee-ft-row"><span>Project</span> <span class="bee-ft-val">BEE Modular</span></div>
-            <div class="bee-ft-row"><span>Client</span> <span class="bee-ft-val">Beyond Engineering d.o.o.</span></div>
+            <div class="bee-ft-row"><span>Client</span> <span class="bee-ft-val">BEE Modular d.o.o.</span></div>
             <div class="bee-ft-row"><span>Scale</span> <span class="bee-ft-val">1 : 1</span></div>
             <div class="bee-ft-row"><span>Rev</span> <span class="bee-ft-val">V8</span></div>
           </div>
@@ -241,7 +241,7 @@ import * as THREE from 'three';
         <div class="bee-ft-grid">
           <div>
             <div class="bee-ft-brand">BEE Modular</div>
-            <div class="bee-ft-desc">Beyond Engineering. Hexagonal modular architecture manufactured in Slovenia. One frame. Everything else follows.</div>
+            <div class="bee-ft-desc">Hexagonal modular architecture manufactured in Slovenia. One frame. Everything else follows.<br><a href="mailto:david@bee-modular.com" style="color:#b5a291; text-decoration:none; font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.05em; margin-top:8px; display:inline-block;">david@bee-modular.com</a></div>
           </div>
           <div class="bee-ft-col">
             <div class="bee-ft-col-title">Product</div>
@@ -265,7 +265,7 @@ import * as THREE from 'three';
           </div>
         </div>
         <div class="bee-ft-bottom">
-          <div class="bee-ft-copy">© 2026 BEE Modular / Beyond Engineering d.o.o. All rights reserved.</div>
+          <div class="bee-ft-copy">© 2026 BEE Modular d.o.o. All rights reserved.</div>
           <div class="bee-ft-certs">ISO 9001 · AQAP 2110 · EN 729-3</div>
         </div>
       </footer>
