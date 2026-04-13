@@ -139,7 +139,7 @@ body {
   position: relative;
   background: transparent;
 }
-.hero-spacer { height: 675vh; }
+.hero-spacer { height: 580vh; }
 .hero-sticky {
   position: sticky; top: 0;
   height: 100vh; width: 100%;
@@ -2082,7 +2082,7 @@ html.lenis, html.lenis body { height: auto; }
   .hero-bottom-right { display: none; }
   .hero-scroll { display: none; }
   .hero-stage-text { display: none; }
-  .hero-spacer { height: 425vh; }
+  .hero-spacer { height: 360vh; }
   .bp-layer-bar { grid-template-columns: 1fr; gap: 8px; }
 
   /* ── Mobile Hero: Image Top / Text Bottom ── */
@@ -3176,7 +3176,7 @@ function updateHero() {
   }
 
   const stageProgress = Math.max(0, (progress - 0.03) / 0.97);
-  const stageIndex = Math.min(6, Math.floor(stageProgress * 7));
+  const stageIndex = Math.min(5, Math.floor(stageProgress * 6));
   const withinStage = (stageProgress * 7) - stageIndex;
 
   if (stageIndex < 6) {
@@ -3275,7 +3275,7 @@ window.addEventListener('scroll', () => {
   const totalScroll = heroEl.offsetHeight - window.innerHeight;
   const progress = Math.max(0, Math.min(1, scrolled / totalScroll));
   const stageProgress = Math.max(0, (progress - 0.03) / 0.97);
-  const stageIndex = Math.min(6, Math.floor(stageProgress * 7));
+  const stageIndex = Math.min(5, Math.floor(stageProgress * 6));
   updateScrollDots(stageIndex);
 }, { passive: true });
 
