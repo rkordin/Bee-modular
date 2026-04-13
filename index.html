@@ -413,83 +413,42 @@ body {
 }
 
 .hero-sticky { transition: background 0.8s ease; }
-.hero-sticky.finale { background: #000 !important; }
-.hero-sticky.finale .hero-hex-bg,
-.hero-sticky.finale .hero-glow,
-.hero-sticky.finale .hero-contact-shadow { opacity: 0 !important; }
-.hero-sticky.finale .hero-3d-stage {
-  transform: none !important;
-  perspective: none;
-  position: absolute; inset: 0;
-  display: block;
-  padding-left: 0;
+/* ═══ Video Section (standalone, between hero and exploded) ═══ */
+.bee-video-section {
+  position: relative;
+  width: 100%;
+  height: 80vh;
+  overflow: hidden;
+  background: #000;
 }
-.hero-sticky.finale .hero-product-wrapper {
-  animation: none !important;
-  width: 100% !important; height: 100% !important;
-  max-width: none !important;
-  position: absolute !important; inset: 0 !important;
-  transform: none !important;
-}
-.hero-sticky.finale .hero-product-wrapper img {
-  opacity: 0 !important;
-  transition: opacity 0.3s ease;
-}
-.hero-product-wrapper video {
-  opacity: 0;
-  position: absolute;
-  top: 0; left: 0;
+.bee-video-section video {
   width: 100%; height: 100%;
   object-fit: cover;
-  transform: translateY(100vh);
-  pointer-events: none;
 }
-.hero-sticky.finale .hero-product-wrapper video {
-  opacity: 1;
-  width: 100% !important; height: 100% !important;
-  max-width: none !important; max-height: none !important;
-  object-fit: cover !important;
-  top: 0 !important; left: 0 !important;
-  transform: none !important;
-  filter: none !important;
-  position: absolute !important;
-}
-.hero-finale-vignette {
-  position: absolute; inset: 0; z-index: 8;
-  background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.35) 100%);
-  opacity: 0; pointer-events: none;
-  transition: opacity 1.2s ease;
-}
-.hero-sticky.finale .hero-finale-vignette { opacity: 1; }
-.hero-sticky.finale .hero-progress { opacity: 0; }
-
-.hero-finale-tag {
-  position: absolute; top: 40px; right: 48px;
-  z-index: 15; opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 1s ease 0.6s, transform 1s ease 0.6s;
-  pointer-events: none;
+.bee-video-overlay {
+  position: absolute;
+  top: 40px; right: 48px;
   text-align: right;
+  z-index: 2;
+  pointer-events: none;
 }
-.hero-sticky.finale .hero-finale-tag { opacity: 1; transform: translateY(0); }
-.hero-finale-tag span {
+.bee-video-overlay span {
   font-family: var(--font-m); font-size: 11px;
   letter-spacing: 0.15em; text-transform: uppercase;
   color: var(--on-dark); opacity: 0.7;
 }
-.hero-finale-tag em {
+.bee-video-overlay em {
   display: block; font-style: normal;
   font-family: var(--font-h); font-size: 14px;
   font-weight: 400; color: var(--on-dark);
   letter-spacing: 0.02em; margin-top: 4px;
   opacity: 0.9;
 }
-.hero-sticky.finale .hero-stage,
-.hero-sticky.finale .hero-glass-panel {
-  opacity: 0 !important;
-  transform: translateX(-100%) !important;
-  pointer-events: none !important;
+@media (max-width: 768px) {
+  .bee-video-section { height: 60vh; }
+  .bee-video-overlay { top: 24px; right: 24px; }
 }
+
 
 .hero-counter {
   position: absolute; top: 80px; right: 48px;
@@ -712,18 +671,11 @@ body {
   width: 1px; height: 12px;
   background: rgba(0,0,0,0.08);
 }
-.hero-sticky.finale .scroll-dots { opacity: 0 !important; pointer-events: none; }
 
 @media (max-width: 768px) {
   .scroll-dots { display: none; }
 }
 
-.hero-sticky.finale .eng-corner,
-.hero-sticky.finale .eng-annotation,
-.hero-sticky.finale .eng-readout,
-.hero-sticky.finale .eng-ruler,
-.hero-sticky.finale .eng-coords,
-.hero-sticky.finale .hero-dim-overlay { opacity: 0 !important; transition: opacity 0.4s ease; }
 
 @media (max-width: 768px) {
   .eng-corner, .eng-annotation, .eng-readout,
@@ -2121,7 +2073,6 @@ html.lenis, html.lenis body { height: auto; }
   .hero-bottom-right { display: none; }
   .hero-scroll { display: none; }
   .hero-stage-text { display: none; }
-  .hero-finale-tag { top: 24px; right: 24px; }
   .hero-spacer { height: 425vh; }
   .bp-layer-bar { grid-template-columns: 1fr; gap: 8px; }
 
@@ -2403,27 +2354,13 @@ html.lenis, html.lenis body { height: auto; }
 
   /* Contact shadow — now visible on mobile with floating animation */
 
-  /* ── Mobile video/finale section ── */
-  .hero-sticky.finale {
-    background: var(--bg) !important;
-  }
-  .hero-sticky.finale .hero-product-wrapper video {
-    object-fit: cover !important;
-    height: 70vh !important;
-    width: 100% !important;
-    top: 0 !important;
-    transform: none !important;
-  }
-  .hero-sticky.finale .hero-finale-vignette { opacity: 0 !important; }
-  .hero-sticky.finale .hero-glass-zone,
-  .hero-sticky.finale .hero-stage-nav { display: none !important; }
 }
-.exploded-section { position: relative; margin-top: -100vh; z-index: 2; background: transparent; }
+.exploded-section { position: relative; z-index: 2; background: transparent; }
 .exploded-section::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0;
-  height: 40vh;
+  height: 20vh;
   background: linear-gradient(to bottom, transparent 0%, var(--bg) 100%);
   pointer-events: none;
   z-index: 1;
@@ -2758,9 +2695,6 @@ html.lenis, html.lenis body { height: auto; }
         <img src="PNG%20IMAGES%20FRAMES/BEE_MODULAR-4.webp" alt="Stage 4 — Warmth" data-hero-img="3" data-cms="true" data-cms-key="hero-4">
         <img src="PNG%20IMAGES%20FRAMES/BEE_MODULAR-5.webp" alt="Stage 5 — Glass" data-hero-img="4" data-cms="true" data-cms-key="hero-5">
         <img src="PNG%20IMAGES%20FRAMES/BEE_MODULAR-6.webp" alt="Stage 6 — Complete" data-hero-img="5" data-cms="true" data-cms-key="hero-6">
-        <video id="heroVideo" muted playsinline preload="metadata" style="pointer-events:none;">
-          <source src="VIDEO/BEE_MOCULAR%20HERO%201920x1600px.mp4" type="video/mp4">
-        </video>
       </div>
       <div class="hero-contact-shadow" id="heroShadow"></div>
     </div>
@@ -2812,7 +2746,6 @@ html.lenis, html.lenis body { height: auto; }
           <div class="hero-stage-headline">Engineered to the millimeter.<br>Grown from the <span style="color:var(--accent)">earth</span>.</div>
         </div>
       </div>
-      <div class="hero-stage" data-hero-stage="6"></div>
     </div>
 
     <div class="scroll-dots" id="scrollDots">
@@ -2860,11 +2793,6 @@ html.lenis, html.lenis body { height: auto; }
       <span>46&deg;03'N</span> 14&deg;30'E &middot; <span>EL</span> 298 m
     </div>
 
-    <div class="hero-finale-vignette"></div>
-    <div class="hero-finale-tag">
-      <span>BEE Modular</span>
-      <em>Planted. Your coordinates.</em>
-    </div>
 
     <div class="hero-counter" id="heroCounter">01 / 06</div>
     <div class="hero-progress"><div class="hero-progress-bar" id="heroProgressBar"></div></div>
@@ -2877,6 +2805,18 @@ html.lenis, html.lenis body { height: auto; }
   </div>
   <div class="hero-spacer"></div>
 </section>
+
+<!-- ═══════════ VIDEO SECTION ═══════════ -->
+<section class="bee-video-section" id="beeVideoSection">
+  <video id="heroVideo" muted playsinline loop autoplay preload="metadata">
+    <source src="VIDEO/BEE_MOCULAR%20HERO%201920x1600px.mp4" type="video/mp4">
+  </video>
+  <div class="bee-video-overlay">
+    <span>BEE Modular</span>
+    <em>Planted. Your coordinates.</em>
+  </div>
+</section>
+
 <!-- ═══════════ 3D EXPLODED VIEW SECTION ═══════════ -->
 <section class="exploded-section" id="explodedSection">
   <canvas id="explodedScene"></canvas>
@@ -3234,85 +3174,9 @@ function updateHero() {
     heroCounter.classList.remove('show');
   }
 
-  const isFinale = stageIndex === 6;
-  const heroVideo = document.getElementById('heroVideo');
   const shadowEl = document.getElementById('heroShadow');
-  const heroProductWrapperEl = document.getElementById('heroProductWrapper');
 
-  const inPreFinale = (stageIndex === 5 && withinStage > 0.5);
-  const preFinaleProgress = inPreFinale ? (withinStage - 0.5) / 0.5 : 0;
-
-  heroSticky.classList.toggle('finale', isFinale);
-  navTop.classList.toggle('hide', isFinale);
-  heroScroll.classList.toggle('hidden', isFinale);
-  navBottom.classList.toggle('show', isFinale);
-
-  if (isFinale) {
-    heroSticky.style.background = '#000';
-    heroImages.forEach((img, i) => { img.classList.toggle('active', i === 7); });
-    hero3dStage.style.transform = 'none';
-    if (shadowEl) shadowEl.style.opacity = '0';
-    if (heroProductWrapperEl) heroProductWrapperEl.style.transform = '';
-    if (heroVideo) { heroVideo.style.opacity = ''; heroVideo.style.transform = ''; }
-    if (heroVideo && heroVideo.paused) {
-      heroVideo.loop = true;
-      heroVideo.play().catch(() => {});
-    }
-    if (heroVideo && heroVideo.readyState >= 2 && window.innerWidth >= 768) {
-      heroVideo.currentTime = withinStage * heroVideo.duration;
-    }
-  } else if (inPreFinale) {
-    // Smooth cubic ease
-    const t = preFinaleProgress;
-    const eased = t * t * (3 - 2 * t);
-
-    // Phase 1 (0–0.4): fade text out, start darkening bg
-    // Phase 2 (0.3–0.7): slide product up, fade product out
-    // Phase 3 (0.5–1.0): fade video in from below
-
-    const bgDark = Math.min(1, eased * 1.2);
-    const bgR = Math.round(248 - bgDark * 248);
-    const bgG = Math.round(246 - bgDark * 246);
-    const bgB = Math.round(243 - bgDark * 243);
-    heroSticky.style.background = `rgb(${bgR}, ${bgG}, ${bgB})`;
-
-    heroImages.forEach((img, i) => {
-      img.classList.toggle('active', i === stageIndex);
-      if (i === stageIndex) img.style.opacity = Math.max(0, 1 - eased * 2);
-    });
-
-    const productY = -eased * 40;
-    hero3dStage.style.transform = `translateY(${productY}vh) scale(${1 - eased * 0.15})`;
-    if (shadowEl) shadowEl.style.opacity = Math.max(0, 0.3 * (1 - eased * 2));
-
-    if (heroVideo) {
-      const videoStart = 0.4;
-      if (eased < videoStart) {
-        heroVideo.style.opacity = '0';
-        heroVideo.style.transform = 'translateY(15vh)';
-      } else {
-        const vp = (eased - videoStart) / (1 - videoStart);
-        const ve = vp * vp * (3 - 2 * vp);
-        heroVideo.style.opacity = String(ve);
-        heroVideo.style.transform = `translateY(${(1 - ve) * 15}vh)`;
-        if (heroVideo.paused && ve > 0.3) {
-          heroVideo.loop = true;
-          heroVideo.play().catch(() => {});
-        }
-      }
-    }
-
-    // Fade out text earlier
-    if (eased > 0.15) {
-      heroStages.forEach(s => { s.classList.remove('active'); if (s.dataset.heroStage === '5') s.classList.add('exit'); });
-      heroCounter.classList.remove('show');
-    }
-    if (eased > 0.3) { navTop.classList.add('hide'); navBottom.classList.add('show'); }
-  } else {
-    if (heroProductWrapperEl) heroProductWrapperEl.style.transform = '';
-    if (heroVideo) { heroVideo.style.opacity = '0'; heroVideo.style.transform = 'translateY(15vh)'; }
-    // Reset image opacity from pre-finale fade
-    heroImages.forEach(img => { img.style.opacity = ''; });
+  {
     if (progress > 0.03) {
       const darkAmount = Math.min(0.03, stageProgress * 0.03);
       heroSticky.style.background = `rgba(${248 - darkAmount*600}, ${246 - darkAmount*600}, ${243 - darkAmount*600}, 1)`;
@@ -3346,10 +3210,6 @@ function updateHero() {
     showGlassForStage(0);
   }
 
-  // Hide glass panel during finale
-  if (stageIndex === 6) {
-    heroGlassPanel.classList.remove('active');
-  }
 }
 // ── Scroll dots + counter + nav ──
 const scrollDotsContainer = document.getElementById('scrollDots');
@@ -3527,10 +3387,6 @@ function updateGlassContent(idx) {
 
 // Show glass panel during all stages
 function showGlassForStage(idx) {
-  if (heroSticky.classList.contains('finale')) {
-    heroGlassPanel.classList.remove('active');
-    return;
-  }
   updateGlassContent(idx);
   heroGlassPanel.classList.add('active');
 }
